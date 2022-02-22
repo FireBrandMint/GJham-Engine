@@ -130,6 +130,8 @@ class MainClass
         TPS = measurer.GetTicksThisSecond();
 
         Console.WriteLine($"TPS: {TPS}");
+
+        Console.WriteLine($"Time it takes for rendering is {Window.RenderDelayMS}ms.");
     }
 
     

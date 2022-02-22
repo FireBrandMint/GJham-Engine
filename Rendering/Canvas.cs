@@ -3,10 +3,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 
 public class Canvas : Form
 {
+    public double RenderDelayMS = 0;
+
     public bool IsClosed = false;
 
     List <int> KeysPressed = new List<int>();
@@ -36,9 +39,11 @@ public class Canvas : Form
 
     void _Render (object sender, PaintEventArgs e)
     {
+        var sw = Stopwatch.StartNew();
+
         var g = CreateGraphics();
 
-        g.Clear(Color.Gray);
+        g.Clear(Engine.BackgroundColor);
 
         g.DrawLine(new Pen(Color.Black), 20, 20, 40, y2);
 
@@ -51,6 +56,14 @@ public class Canvas : Form
                 ToDraw[i].Draw(g, Lerp);
             }
         }
+
+        var tElapsed = sw.ElapsedTicks;
+
+        sw.Stop();
+
+        double msElapsed = ((double) tElapsed / (double) Stopwatch.Frequency) * 1000.0;
+
+        RenderDelayMS = msElapsed;
     }
 
     public int[] GetKeys ()
