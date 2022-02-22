@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+       <TargetFramework>net4.7.2</TargetFramework>
+       <UseWPF>true</UseWPF>
+       <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Reactive.Windows.Forms" Version="3.0.0"/>
+  </ItemGroup>
+</Project>
