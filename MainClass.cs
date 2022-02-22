@@ -34,9 +34,9 @@ class MainClass
 
     public static void Loop ()
     {
-        double ticksPerSecond = 60d;
+        double ticksPerSecond = Engine.MaxTPS;
 
-        double rendersPerSecond = 30d;
+        double rendersPerSecond = Engine.MaxFPS;
 
         Int64 swFrequency = Stopwatch.Frequency;
 
