@@ -116,11 +116,7 @@ class MainClass
 
     public static void Render(double lerp)
     {
-        if (Window == null) return;
-
-        var g = Window.CreateGraphics();
-
-        g.DrawLine(new Pen(Color.Black), 20, 20, 40, 40);
+        Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
 
     public static TickMeasurer measurer = new TickMeasurer();
@@ -133,4 +129,6 @@ class MainClass
 
         Console.WriteLine($"TPS: {TPS}");
     }
+
+    
 }
