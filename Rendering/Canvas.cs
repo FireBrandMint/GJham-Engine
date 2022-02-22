@@ -11,6 +11,10 @@ public class Canvas : Form
 
     List <int> KeysPressed = new List<int>();
 
+    private DrawableObject[] ToDraw = new DrawableObject[0];
+
+    double Lerp = 1.0;
+
     public Canvas (int width, int height, string name)
     {
         Size = new Size(width, height);
@@ -39,6 +43,14 @@ public class Canvas : Form
         g.DrawLine(new Pen(Color.Black), 20, 20, 40, y2);
 
         ++y2;
+
+        lock (ToDraw)
+        {
+            for (int i = 0; i< ToDraw.Length; ++i)
+            {
+                ToDraw[i].Draw(g, Lerp);
+            }
+        }
     }
 
     public int[] GetKeys ()
@@ -48,6 +60,16 @@ public class Canvas : Form
         {
             return KeysPressed.ToArray();
         }
+    }
+
+    public void SetDraw (DrawableObject[] objs)
+    {
+        lock (ToDraw) ToDraw = objs;
+    }
+
+    public void SetLerp (double lerp)
+    {
+        Lerp = lerp;
     }
 
     void _FormClosed(object sender, FormClosedEventArgs e)

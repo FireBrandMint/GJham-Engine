@@ -52,6 +52,11 @@ public struct FInt
         return (double)this.RawValue / (double)One;
     }
 
+    public float ToFloat ()
+    {
+        return (float) ((double)this.RawValue / (double)One);
+    }
+
     public FInt Inverse
     {
         get { return FInt.Create( -this.RawValue, false ); }

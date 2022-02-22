@@ -116,6 +116,8 @@ class MainClass
 
     public static void Render(double lerp)
     {
+        Window.SetLerp(lerp);
+
         Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
 
