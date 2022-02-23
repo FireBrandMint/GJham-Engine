@@ -29,23 +29,43 @@ public class Canvas : Form
         LostFocus += _LostFocus;
         Paint += _Render;
 
+        //DoubleBuffered = true;
+
         
         int style = NativeWinAPI.GetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE);
         style |= NativeWinAPI.WS_EX_COMPOSITED;
         NativeWinAPI.SetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE, style);
     }
 
+    //Stops it from flickering, found at 
+    //https://stackoverflow.com/questions/181374/visual-c-sharp-form-update-results-in-flickering
+
+    // EDIT: IT DOESN'T WORK COMPLETELY, WHY?
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            CreateParams cp = base.CreateParams;
+            cp.ExStyle |= 0x02000000; //WS_EX_COMPOSITED
+            return cp;
+        }
+    }
+
     int y2 = 40;
 
     void _Render (object sender, PaintEventArgs e)
     {
-        var sw = Stopwatch.StartNew();
-
-        var g = CreateGraphics();
+        var g = e.Graphics;
 
         g.Clear(Engine.BackgroundColor);
 
-        g.DrawLine(new Pen(Color.Black), 20, 20, 40, y2);
+        var sw = Stopwatch.StartNew();
+
+        int iWidth = Width, iHeight = Height;
+
+        float height = iHeight;
+
+        g.DrawLine(new Pen(Color.Black), 20, height - 20f, 40f, height - y2);
 
         ++y2;
 
