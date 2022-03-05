@@ -16,7 +16,7 @@ public class Canvas : Form
     //This buffer stores the keys that are currently pressed.
     List <int> KeysPressed = new List<int>();
 
-    //The list below is the buffer of things the screen needs to draw next render call.
+    //The list below is the buffer of things the screen needs to draw next in a _Render call.
     private DrawableObject[] ToDraw = new DrawableObject[0];
 
     double Lerp = 1.0;
