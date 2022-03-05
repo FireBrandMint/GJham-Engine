@@ -4,16 +4,19 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Reflection;
 
 
 public class Canvas : Form
 {
-    public double RenderDelayMS = 0;
 
+    // wether the window is close or not
     public bool IsClosed = false;
 
+    //This buffer stores the keys that are currently pressed.
     List <int> KeysPressed = new List<int>();
 
+    //The list below is the buffer of things the screen needs to draw next render call.
     private DrawableObject[] ToDraw = new DrawableObject[0];
 
     double Lerp = 1.0;
@@ -35,6 +38,8 @@ public class Canvas : Form
         int style = NativeWinAPI.GetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE);
         style |= NativeWinAPI.WS_EX_COMPOSITED;
         NativeWinAPI.SetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE, style);
+
+        SetDoubleBuffer(this, true);
     }
 
     //Stops it from flickering, found at 
@@ -51,23 +56,25 @@ public class Canvas : Form
         }
     }
 
-    int y2 = 40;
+    static void SetDoubleBuffer (Control ctr, bool doubleBuffered)
+    {
+        try
+        {
+            typeof(Control).InvokeMember("DoubleBuffered",
+            BindingFlags.NonPublic | BindingFlags.Instance |BindingFlags.SetProperty,
+            null, ctr, new object[] {doubleBuffered});
+        }
+        catch
+        {
+            MessageBox.Show("Couldn't double buffer the screen.");
+        }
+    }
 
     void _Render (object sender, PaintEventArgs e)
     {
         var g = e.Graphics;
 
         g.Clear(Engine.BackgroundColor);
-
-        var sw = Stopwatch.StartNew();
-
-        int iWidth = Width, iHeight = Height;
-
-        float height = iHeight;
-
-        g.DrawLine(new Pen(Color.Black), 20, height - 20f, 40f, height - y2);
-
-        ++y2;
 
         lock (ToDraw)
         {
@@ -76,14 +83,6 @@ public class Canvas : Form
                 ToDraw[i].Draw(g, Lerp);
             }
         }
-
-        var tElapsed = sw.ElapsedTicks;
-
-        sw.Stop();
-
-        double msElapsed = ((double) tElapsed / (double) Stopwatch.Frequency) * 1000.0;
-
-        RenderDelayMS = msElapsed;
     }
 
     public int[] GetKeys ()
@@ -97,6 +96,7 @@ public class Canvas : Form
 
     public void SetDraw (DrawableObject[] objs)
     {
+        //set objects to draw this frame
         lock (ToDraw) ToDraw = objs;
     }
 

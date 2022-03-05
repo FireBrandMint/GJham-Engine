@@ -118,6 +118,8 @@ class MainClass
     {
         Window.SetLerp(lerp);
 
+        Window.SetDraw(new DrawableObject[] {new DrawableTestLine()});
+
         Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
 
@@ -130,8 +132,6 @@ class MainClass
         TPS = measurer.GetTicksThisSecond();
 
         Console.WriteLine($"TPS: {TPS}");
-
-        Console.WriteLine($"Time it takes for rendering is {Window.RenderDelayMS}ms.");
     }
 
     
