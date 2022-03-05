@@ -9,9 +9,13 @@ using System.Reflection;
 
 public class Canvas : Form
 {
+    public int FPS = 0;
 
     // wether the window is close or not
     public bool IsClosed = false;
+
+    //Wether or not this window is in the rendering process.
+    public bool Updating = false;
 
     //This buffer stores the keys that are currently pressed.
     List <int> KeysPressed = new List<int>();
@@ -72,6 +76,8 @@ public class Canvas : Form
 
     void _Render (object sender, PaintEventArgs e)
     {
+        Updating = true;
+
         var g = e.Graphics;
 
         g.Clear(Engine.BackgroundColor);
@@ -80,9 +86,11 @@ public class Canvas : Form
         {
             for (int i = 0; i< ToDraw.Length; ++i)
             {
-                ToDraw[i].Draw(g, Lerp);
+                ToDraw[i]?.Draw(g, Lerp);
             }
         }
+        ++FPS;
+        Updating = false;
     }
 
     public int[] GetKeys ()

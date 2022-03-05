@@ -1,4 +1,6 @@
-public struct Vector2
+using System.Drawing;
+
+public readonly struct Vector2
 {
     public static readonly Vector2 ZERO;
 
@@ -120,5 +122,10 @@ public struct Vector2
     public static Vector2 operator / (Vector2 v1, FInt d2)
     {
         return new Vector2 (v1.x / d2, v1.y / d2);
+    }
+
+    public PointF ToPoint ()
+    {
+        return new PointF(x.ToFloat(), y.ToFloat());
     }
 }

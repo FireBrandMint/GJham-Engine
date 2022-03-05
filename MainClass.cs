@@ -17,11 +17,40 @@ class MainClass
 
     public static int TPS = 0;
 
+    public static int FPS = 0;
+
     public static List<int> CurrentKeys;
 
-    static void Main(string[] args)
+    //entity list below!
+
+    private static List<Entity> Entities;
+
+    private static List<Entity> DrawableEntities;
+
+    public static void Main(string[] args)
     {
         Window = new Canvas(512, 512, "default");
+
+        Entities = new List<Entity>();
+        DrawableEntities = new List<Entity>();
+
+        //TEST
+
+        Vector2 a = new Vector2(20, 20);
+        Vector2 b = new Vector2(40, 40);
+
+        for (int i = 0; i< 50; ++i)
+        {
+            var lp = new DTestLineProvider();
+
+            lp.line = new Vector2[] {a, b};
+
+            EntityCommand.Instance(lp);
+
+            b = new Vector2(b.x, b.y + (FInt) 3);
+        }
+
+        //TEST AREA END
 
         MainThread = Thread.CurrentThread;
 
@@ -100,6 +129,7 @@ class MainClass
 
     static void Tick ()
     {
+
         if(CurrentKeys.Count!=0)
         {
             Console.Write("Controles sendo pressionados: ");
@@ -112,13 +142,27 @@ class MainClass
             Window.Close();
             Window.Dispose();
         }
+
+        foreach (Entity e in Entities)
+        {
+            e.Tick();
+        }
     }
 
     public static void Render(double lerp)
     {
+        if(Window.Updating) return;
+
         Window.SetLerp(lerp);
 
-        Window.SetDraw(new DrawableObject[] {new DrawableTestLine()});
+        DrawableObject[] dObjects = new DrawableObject[DrawableEntities.Count];
+
+        for (int i = 0; i< DrawableEntities.Count; ++i)
+        {
+            dObjects[i] = DrawableEntities[i].GetDrawable();
+        }
+
+        Window.SetDraw(dObjects);
 
         Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
@@ -131,8 +175,30 @@ class MainClass
 
         TPS = measurer.GetTicksThisSecond();
 
+        FPS = Window.FPS;
+
+        Window.FPS = 0;
+
         Console.WriteLine($"TPS: {TPS}");
+
+        Console.WriteLine($"FPS: {FPS}");
     }
 
-    
+    public static void AddEntity (Entity entity)
+    {
+        if (entity.IsTickable) Entities.Add(entity);
+        if (entity.IsDrawable) DrawableEntities.Add(entity);
+
+        entity.EnterTree();
+    }
+
+    public static void RemoveEntity (Entity entity)
+    {
+        if (entity.IsDestroyed) return;
+
+        if (entity.IsTickable) Entities.Remove(entity);
+
+        if(entity.IsDrawable) DrawableEntities.Remove(entity);
+        entity.IsDestroyed = true;
+    }
 }

@@ -2,8 +2,16 @@ using System.Drawing;
 
 public class DrawableTestLine : DrawableObject
 {
+    PointF A, B;
+
+    public DrawableTestLine(Vector2 a, Vector2 b)
+    {
+        A = a.ToPoint();
+        B = b.ToPoint();
+    }
+
     public void Draw(Graphics g, double lerp)
     {
-        g.DrawLine(new Pen(Color.Black), 20, 20f, 40f, 40f);
+        g.DrawLine(new Pen(Color.Black), A.X, A.Y, B.X, B.Y);
     }
 }
