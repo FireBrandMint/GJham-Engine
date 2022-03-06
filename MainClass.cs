@@ -100,6 +100,8 @@ class MainClass
             if (delta >= 1.0)
             {
                 --delta;
+                //Sets 'TPSSlowdown' to the amount of ticks that will ocurr in this moment to compensate for a slowdown
+                //if it's 0, it means there's no slowdown and everything is fine.
                 Engine.TPSSlowdown = (int) delta;
                 GetInputs();
                 Tick();
@@ -172,6 +174,7 @@ class MainClass
         Window.SetDraw(dObjects);
 
         //Asks politely for the screen to actually draw those things
+        // I ASKED POLITELY
         Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
 
