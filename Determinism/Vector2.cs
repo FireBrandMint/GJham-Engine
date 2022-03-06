@@ -50,6 +50,7 @@ public readonly struct Vector2
         return new Vector2(x, y);
     }
 
+    //The direction of angle of v1 pointing at v2
     public Vector2 AngleVector (Vector2 v1, Vector2 v2)
     {
         return (v2 - v1).Normalized();

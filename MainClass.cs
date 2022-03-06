@@ -21,7 +21,7 @@ class MainClass
 
     // Ticks per second.
     public static int TPS = 0;
-    
+
     // Frames per second.
     public static int FPS = 0;
 

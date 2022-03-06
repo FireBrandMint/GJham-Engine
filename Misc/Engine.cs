@@ -19,5 +19,6 @@ public static class Engine
     //The ideal frames per second
     public static readonly double MaxFPS = 180;
 
+    //Ticks this tick that are about to be executed very soon due to a slowdown
     public static int TPSSlowdown = 0;
 }
