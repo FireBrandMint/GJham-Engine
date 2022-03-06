@@ -109,6 +109,8 @@ class MainClass
             if (renderDelta >= 1.0)
             {
                 Render(delta > 1.0? delta - ((int) delta): delta);
+
+                //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
                 if (renderDelta >=2.0) renderDelta=0.0;
                 else --renderDelta;
             }
@@ -152,19 +154,24 @@ class MainClass
 
     public static void Render(double lerp)
     {
+        //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
 
+        //Sets lerp for the screen itself interpolate between last tick and current tick
+        //just in case the screen can render more than 60 FPS
         Window.SetLerp(lerp);
 
+        //Creates buffer for rendering
         DrawableObject[] dObjects = new DrawableObject[DrawableEntities.Count];
-
+        //populates buffer with output from the entities that can be rendered
         for (int i = 0; i< DrawableEntities.Count; ++i)
         {
             dObjects[i] = DrawableEntities[i].GetDrawable();
         }
-
+        //Sends the things that must be rendered to the screen
         Window.SetDraw(dObjects);
 
+        //Asks politely for the screen to actually draw those things
         Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
     }
 
