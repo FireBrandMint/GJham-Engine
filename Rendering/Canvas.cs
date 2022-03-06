@@ -80,8 +80,10 @@ public class Canvas : Form
 
         var g = e.Graphics;
 
+        //Clears last frame
         g.Clear(Engine.BackgroundColor);
 
+        //Draws next frame
         lock (ToDraw)
         {
             for (int i = 0; i< ToDraw.Length; ++i)
@@ -89,6 +91,7 @@ public class Canvas : Form
                 ToDraw[i]?.Draw(g, Lerp);
             }
         }
+        
         ++FPS;
         Updating = false;
     }

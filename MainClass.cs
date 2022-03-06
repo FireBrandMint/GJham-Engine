@@ -7,16 +7,22 @@ using System.Collections.Generic;
 
 class MainClass
 {
+    //The 'screen' thread, ends when the screen is closed.
     public static Thread MainThread;
 
+    //Process thread, executes 'Render' and 'Tick' calls, ends when 'MainThread' ends.
     public static Thread ProcessThread;
 
+    //The actual window of 'MainThread'
     public static Canvas Window;
 
+    //The amount of ticks since the engine started, can also be returned by 'Engine.Ticks'.
     public static Int64 TickCount = 0;
 
+    // Ticks per second.
     public static int TPS = 0;
-
+    
+    // Frames per second.
     public static int FPS = 0;
 
     public static List<int> CurrentKeys;
