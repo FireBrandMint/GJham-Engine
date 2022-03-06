@@ -11,4 +11,6 @@ public static class Engine
 
     //The ideal frames per second
     public static readonly double MaxFPS = 180;
+
+    public static int TPSSlowdown = 0;
 }

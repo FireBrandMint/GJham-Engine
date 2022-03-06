@@ -3,6 +3,7 @@ using System;
 public struct FInt
 {
     // New determininistic point from https://stackoverflow.com/questions/605124/fixed-point-math-in-c
+    // Coudn't get my deterministic point figured out because of sin, cos and other things =(
 
     public long RawValue;
     public const int SHIFT_AMOUNT = 12; //12 is 4096

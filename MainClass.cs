@@ -99,10 +99,11 @@ class MainClass
 
             if (delta >= 1.0)
             {
+                --delta;
+                Engine.TPSSlowdown = (int) delta;
                 GetInputs();
                 Tick();
                 ++TickCount;
-                --delta;
             }
 
             if (renderDelta >= 1.0)
