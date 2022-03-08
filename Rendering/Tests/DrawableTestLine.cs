@@ -2,6 +2,8 @@ using System.Drawing;
 
 public class DrawableTestLine : DrawableObject
 {
+    public int z {get;set;}
+
     PointF A, B;
 
     public DrawableTestLine(Vector2 a, Vector2 b)

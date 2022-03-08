@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Reflection;
+using System.Linq;
 
 
 public class Canvas : Form
@@ -86,9 +87,16 @@ public class Canvas : Form
         //Draws next frame
         lock (ToDraw)
         {
-            for (int i = 0; i< ToDraw.Length; ++i)
+            var qry = from p in ToDraw
+            orderby p.z
+            select p;
+
+            DrawableObject[] toDraw = qry.ToArray<DrawableObject>();
+
+
+            for (int i = 0; i< toDraw.Length; ++i)
             {
-                ToDraw[i]?.Draw(g, Lerp);
+                toDraw[i]?.Draw(g, Lerp);
             }
         }
         

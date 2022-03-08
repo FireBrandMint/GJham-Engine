@@ -8,6 +8,9 @@ public interface Entity
     bool IsDestroyed{get;set;}
 
     //What will execute when it is instanced, even before next frame.
+
+    int ZValue {get;set;}
+
     void EnterTree();
 
     void Tick ();

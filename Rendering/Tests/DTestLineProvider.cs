@@ -8,6 +8,8 @@ public class DTestLineProvider : Entity
 
     public bool IsDestroyed{get;set;}
 
+    public int ZValue {get;set;}
+
     public Vector2[] line = null;
 
     public void EnterTree()
