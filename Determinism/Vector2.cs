@@ -1,4 +1,5 @@
 using System.Drawing;
+using SFML.Graphics;
 
 public readonly struct Vector2
 {
@@ -128,5 +129,10 @@ public readonly struct Vector2
     public PointF ToPoint ()
     {
         return new PointF(x.ToFloat(), y.ToFloat());
+    }
+
+    public Vertex ToVertex ()
+    {
+        return new Vertex(new SFML.System.Vector2f(x.ToFloat(), y.ToFloat()));
     }
 }

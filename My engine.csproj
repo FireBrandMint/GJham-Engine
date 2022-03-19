@@ -1,14 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net4.7.2</TargetFramework>
-		<UseWPF>true</UseWPF>
-		<UseWindowsForms>true</UseWindowsForms>
+		<TargetFramework>net5.0</TargetFramework>
 		<LangVersion>10.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Reactive.Windows.Forms" Version="3.0.0"/>
-		<PackageReference Include="SkiaSharp" Version="2.80.3"/>
-		<PackageReference Include="Xamarin.Forms" Version="4.3.0.991211"/>
+		<PackageReference Include="sfml-system" Version="2.4.2"/>
+		<PackageReference Include="SFML.Net" Version="2.5.0"/>
+		<PackageReference Include="SFML.Window" Version="2.5.0"/>
+		<PackageReference Include="SFML.Graphics" Version="2.5.0"/>
 	</ItemGroup>
 </Project>

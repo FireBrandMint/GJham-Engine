@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Collections.Generic;
+using SFML.System;
 
 class MainClass
 {
-    //The 'screen' thread, ends when the screen is closed.
-    public static Thread MainThread;
-
-    //Process thread, executes 'Render' and 'Tick' calls, ends when 'MainThread' ends.
-    public static Thread ProcessThread;
 
     //The actual window of 'MainThread'
     public static Canvas Window;
@@ -58,13 +53,7 @@ class MainClass
 
         //TEST AREA END
 
-        MainThread = Thread.CurrentThread;
-
-        ProcessThread = new Thread(Loop);
-
-        ProcessThread.Start();
-
-        Application.Run(Window);
+        Loop();
     }
 
     public static void Loop ()
@@ -89,7 +78,7 @@ class MainClass
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
-        while (MainThread.IsAlive)
+        while (!Window.IsClosed)
         {
             Int64 currTick = stopwatch.ElapsedTicks;
 
@@ -148,10 +137,9 @@ class MainClass
             Console.WriteLine();
         }
 
-        if(CurrentKeys.Contains((int)Keys.Escape))
+        if(CurrentKeys.Contains((int)SFML.Window.Keyboard.Key.Escape))
         {
             Window.Close();
-            Window.Dispose();
         }
 
         foreach (Entity e in Entities)
@@ -181,7 +169,7 @@ class MainClass
 
         //Asks politely for the screen to actually draw those things
         // I ASKED POLITELY
-        Window.BeginInvoke( (MethodInvoker) delegate { Window.Refresh(); } );
+        Window.Refresh();
     }
 
     public static TickMeasurer measurer = new TickMeasurer();

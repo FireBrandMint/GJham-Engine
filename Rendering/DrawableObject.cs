@@ -1,9 +1,10 @@
-using System.Drawing;
+using SFML.Window;
+using SFML.Graphics;
 
 
 public interface DrawableObject
 {
     int z {get;set;}
 
-    void Draw(Graphics g, double lerp);
+    void Draw(RenderWindow window, double lerp);
 }

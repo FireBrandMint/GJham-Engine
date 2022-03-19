@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net4.7.2/My Engine.exe",
+            "program": "${workspaceFolder}/bin/Debug/net5.0/My Engine.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
