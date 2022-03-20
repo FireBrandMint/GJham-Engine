@@ -33,8 +33,10 @@ public class DTestLineProvider : Entity
     public void Tick ()
     {
         LastPosition = Position;
+
+        int factor = (((int)Engine.MaxTPS) / 10);
         
-        if (t < 10)
+        if (t < 20)
         {
             Position += new Vector2((FInt)10,(FInt)0);
 
