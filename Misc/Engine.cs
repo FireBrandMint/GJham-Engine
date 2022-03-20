@@ -14,7 +14,7 @@ public static class Engine
     public static long Ticks {get => MainClass.TickCount;} 
 
     //The ideal ticks per second.
-    public static readonly double MaxTPS = 60;
+    public static readonly double MaxTPS = 10;
 
     //The ideal frames per second
     public static readonly double MaxFPS = 180;

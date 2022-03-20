@@ -11,6 +11,9 @@ public interface Entity
 
     int ZValue {get;set;}
 
+    //Function that is executed BEFORE ALL THE OTHERS to assure that the object is 100% functionable
+    void Init();
+
     void EnterTree();
 
     void Tick ();

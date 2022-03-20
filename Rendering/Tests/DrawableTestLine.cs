@@ -1,5 +1,4 @@
 using SFML.Graphics;
-using System.Drawing;
 
 public class DrawableTestLine : DrawableObject
 {
@@ -7,10 +6,22 @@ public class DrawableTestLine : DrawableObject
 
     Vertex A, B;
 
-    public DrawableTestLine(Vector2 a, Vector2 b)
+    public DrawableTestLine(Vector2 a, Vector2 b, Color color)
     {
         A = a.ToVertex();
         B = b.ToVertex();
+
+        A.Color = color;
+        B.Color = color;
+    }
+
+    public DrawableTestLine(Vector2 a, Vector2 b, Color color, Color color2)
+    {
+        A = a.ToVertex();
+        B = b.ToVertex();
+
+        A.Color = color;
+        B.Color = color2;
     }
 
     public void Draw(RenderWindow w, double lerp)

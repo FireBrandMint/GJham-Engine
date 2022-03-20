@@ -32,6 +32,8 @@ public class Canvas
 
     double Lerp = 1.0;
 
+    string Status = "OPEN";
+
     uint WIDTH, HEIGHT;
     string NAME;
 
@@ -44,7 +46,7 @@ public class Canvas
         HEIGHT = height;
         NAME = name;
 
-        Window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), NAME);
+        /*Window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), NAME);
 
         Window.Closed += _FormClosed;
         Window.KeyPressed += _KeyDown;
@@ -53,47 +55,11 @@ public class Canvas
 
         Window.SetActive(true);
 
-        Window.RequestFocus();
+        Window.RequestFocus();*/
 
-        //Paint += _Render;
-
-        //DoubleBuffered = true;
-
-        
-        //int style = NativeWinAPI.GetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE);
-        //style |= NativeWinAPI.WS_EX_COMPOSITED;
-        //NativeWinAPI.SetWindowLong(this.Handle, NativeWinAPI.GWL_EXSTYLE, style);
-
-        //SetDoubleBuffer(this, true);
+        Thread runThread = new Thread(Run);
+        runThread.Start();
     }
-
-    //Stops it from flickering, found at 
-    //https://stackoverflow.com/questions/181374/visual-c-sharp-form-update-results-in-flickering
-
-    // EDIT: IT DOESN'T WORK COMPLETELY, WHY?
-    //protected override CreateParams CreateParams
-    //{
-    //    get
-    //    {
-    //        CreateParams cp = base.CreateParams;
-    //        cp.ExStyle |= 0x02000000; //WS_EX_COMPOSITED
-    //        return cp;
-    //    }
-    //}
-
-    //static void SetDoubleBuffer (Control ctr, bool doubleBuffered)
-    //{
-    //    try
-    //    {
-    //        typeof(Control).InvokeMember("DoubleBuffered",
-    //        BindingFlags.NonPublic | BindingFlags.Instance |BindingFlags.SetProperty,
-    //        null, ctr, new object[] {doubleBuffered});
-    //    }
-    //    catch
-    //    {
-    //        MessageBox.Show("Couldn't double buffer the screen.");
-    //    }
-    //}
 
     void _Render ()
     {
@@ -102,23 +68,26 @@ public class Canvas
         Window.Clear(Color.Black);
 
         //Draws next frame
-        var qry = from p in ToDraw
-        orderby p.z
-        select p;
-
-        DrawableObject[] toDraw = qry.ToArray<DrawableObject>();
-
-
-        for (int i = 0; i< toDraw.Length; ++i)
+        lock (ToDraw)
         {
-            toDraw[i]?.Draw(Window, Lerp);
+            var qry = from p in ToDraw
+            orderby p.z
+            select p;
+
+            DrawableObject[] toDraw = qry.ToArray<DrawableObject>();
+
+
+            for (int i = 0; i< toDraw.Length; ++i)
+            {
+                toDraw[i]?.Draw(Window, Lerp);
+            }
         }
-        
-        ++FPS;
-        Updating = false;
 
         Window.DispatchEvents();
         Window.Display();
+        
+        ++FPS;
+        Updating = false;
     }
 
     public int[] GetKeys ()
@@ -133,7 +102,11 @@ public class Canvas
     public void SetDraw (DrawableObject[] objs)
     {
         //set objects to draw this frame
-        lock (ToDraw) ToDraw = objs;
+        lock (ToDraw)
+        {
+
+            ToDraw = objs;
+        }
     }
 
     public void SetLerp (double lerp)
@@ -165,7 +138,9 @@ public class Canvas
 
     public void Refresh ()
     {
-        _Render();
+        //_Render();
+
+        AllowRendering.Set();
     }
 
     public void Run()
@@ -177,10 +152,18 @@ public class Canvas
         Window.KeyReleased += _KeyUp;
         Window.LostFocus += _LostFocus;
 
+        Window.RequestFocus();
+
         while(!IsClosed)
         {
+
             AllowRendering.WaitOne();
+
+            lock(Status) if(Status == "CLOSED") break;
+
             _Render();
+
+            lock(Status) if(Status == "CLOSED") break;
 
             AllowRendering.Reset();
         }
@@ -190,6 +173,9 @@ public class Canvas
     {
         Window.Close();
         IsClosed = true;
+
+        lock (Status) Status = "CLOSED";
+        AllowRendering.Set();
     }
 }
 

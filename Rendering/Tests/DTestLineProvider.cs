@@ -1,3 +1,5 @@
+using SFML.Graphics;
+
 public class DTestLineProvider : Entity
 {
     //test for drawable entity
@@ -12,19 +14,43 @@ public class DTestLineProvider : Entity
 
     public Vector2[] line = null;
 
+    Vector2 Position = new Vector2();
+
+    Vector2 LastPosition;
+
+    public void Init()
+    {
+        LastPosition = Position;
+    }
+
     public void EnterTree()
     {
 
     }
 
+    int t = 0;
+
     public void Tick ()
     {
+        LastPosition = Position;
+        
+        if (t < 10)
+        {
+            Position += new Vector2((FInt)10,(FInt)0);
 
+            ++t;
+        }
+        else
+        {
+            Position -= new Vector2((FInt)t * 10,(FInt)0);
+
+            t=0;
+        }
     }
 
     public DrawableObject GetDrawable ()
     {
         if (line == null) return null;
-        return new DrawableTestLine(line[0], line[1]);
+        return new DrawableLine2D(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition);
     }
 }

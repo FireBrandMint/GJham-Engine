@@ -40,7 +40,7 @@ class MainClass
         Vector2 a = new Vector2(20, 20);
         Vector2 b = new Vector2(40, 40);
 
-        for (int i = 0; i< 50; ++i)
+        for (int i = 0; i< 1; ++i)
         {
             var lp = new DTestLineProvider();
 
