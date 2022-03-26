@@ -38,6 +38,11 @@ public class ByteWriter: IDisposable
         Data.Add(value);
     }
 
+    public void WriteBytes (byte[] value)
+    {
+        Data.AddRange(value);
+    }
+
     public void WriteString (string value)
     {
         var bytes = Encoding.ASCII.GetBytes(value);
