@@ -30,6 +30,7 @@ class MainClass
 
     public static void Main(string[] args)
     {
+
         Window = new Canvas(512, 512, "default");
 
         Entities = new List<Entity>();
@@ -40,7 +41,7 @@ class MainClass
         Vector2 a = new Vector2(20, 20);
         Vector2 b = new Vector2(40, 40);
 
-        for (int i = 0; i< 1; ++i)
+        for (int i = 0; i< 100; ++i)
         {
             var lp = new DTestLineProvider();
 
@@ -148,24 +149,42 @@ class MainClass
         }
     }
 
+    private static long LastTickCount = -1;
+
     public static void Render(double lerp)
     {
         //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
 
-        //Sets lerp for the screen itself interpolate between last tick and current tick
-        //just in case the screen can render more than 60 FPS
-
-        //Creates buffer for rendering
-        DrawableObject[] dObjects = new DrawableObject[DrawableEntities.Count];
-        //populates buffer with output from the entities that can be rendered
-        for (int i = 0; i< DrawableEntities.Count; ++i)
+        //This 'if' prevents the program from updating the array of things to render
+        //multiple times between ticks, wich isn't necessary
+        if (LastTickCount != TickCount)
         {
-            dObjects[i] = DrawableEntities[i].GetDrawable();
-        }
-        //Sends the things that must be rendered to the screen
-        Window.SetDraw(dObjects);
+            //Creates buffer for rendering
+            DrawableObject[] dObjects = new DrawableObject[DrawableEntities.Count];
 
+            //the count of objects that aren't null on the array
+            int count = 0;
+
+            //populates buffer with output from the entities that can be rendered
+            for (int i = 0; i< DrawableEntities.Count; ++i)
+            {
+                var drawable = DrawableEntities[i].GetDrawable();
+
+                if (drawable != null)
+                {
+                    dObjects[count] = drawable;
+                    ++count;
+                }
+            }
+            //Sends the things that must be rendered to the screen
+            Window.SetDraw(dObjects, count);
+
+            LastTickCount = TickCount;
+        }
+
+        //Sets lerp for the screen itself to interpolate between last tick and current tick
+        //just in case the screen can render more than the amount of TPS
         Window.SetLerp(lerp < 1.0? lerp : 1.0);
 
         //Asks politely for the screen to actually draw those things

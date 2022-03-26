@@ -30,6 +30,11 @@ public class Canvas
     //The list below is the buffer of things the screen needs to draw next in a _Render call.
     private DrawableObject[] ToDraw = new DrawableObject[0];
 
+    //The actual lenght of the ToDraw array
+    int ToDrawCount = 0;
+
+    bool ToDrawOrganized = false;
+
     double Lerp = 1.0;
 
     string Status = "OPEN";
@@ -58,6 +63,7 @@ public class Canvas
         Window.RequestFocus();*/
 
         Thread runThread = new Thread(Run);
+        runThread.Priority = ThreadPriority.AboveNormal;
         runThread.Start();
     }
 
@@ -65,26 +71,66 @@ public class Canvas
     {
         Updating = true;
 
+        Stopwatch performanceData = null;
+        if (FPS < 2 && !ToDrawOrganized)
+        {
+            performanceData = Stopwatch.StartNew();
+        }
+
         Window.Clear(Color.Black);
 
         //Draws next frame
+        DrawableObject[] toDraw;
+
         lock (ToDraw)
         {
-            var qry = from p in ToDraw
-            orderby p.z
-            select p;
-
-            DrawableObject[] toDraw = qry.ToArray<DrawableObject>();
-
-
-            for (int i = 0; i< toDraw.Length; ++i)
+            if (!ToDrawOrganized)
             {
-                toDraw[i]?.Draw(Window, Lerp);
+                DrawableObject[] td = new DrawableObject[ToDrawCount];
+                Array.Copy(ToDraw, td, ToDrawCount);
+
+                toDraw = (from p in td
+                orderby p.z
+                select p).ToArray<DrawableObject>();
+            }
+            else
+            {
+                toDraw = new DrawableObject[ToDrawCount];
+                Array.Copy(ToDraw, toDraw, ToDrawCount);
             }
         }
 
+        for (int i = 0; i< toDraw.Length; ++i)
+        {
+            toDraw[i].Draw(Window, Lerp);
+        }
+
+        if(!ToDrawOrganized)
+        {
+            ToDraw = toDraw;
+            ToDrawOrganized = true;
+        }
+        
+
         Window.DispatchEvents();
         Window.Display();
+
+        if (performanceData != null)
+        {
+            double ticksPassed = performanceData.ElapsedTicks;
+
+            if (ticksPassed == 0) Console.WriteLine("Rendering took no time at all.");
+            else
+            {
+                double MSPassed = (ticksPassed / (double) Stopwatch.Frequency) * 1000;
+
+                double performance = (1000d / Engine.MaxFPS) / MSPassed;
+
+                Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per frame!");
+            }
+
+            performanceData.Stop();
+        }
         
         ++FPS;
         Updating = false;
@@ -99,13 +145,14 @@ public class Canvas
         }
     }
 
-    public void SetDraw (DrawableObject[] objs)
+    public void SetDraw (DrawableObject[] objs, int count)
     {
         //set objects to draw this frame
         lock (ToDraw)
         {
-
             ToDraw = objs;
+            ToDrawOrganized = false;
+            ToDrawCount = count;
         }
     }
 
