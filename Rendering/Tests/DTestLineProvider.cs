@@ -10,6 +10,8 @@ public class DTestLineProvider : Entity
 
     public bool IsDestroyed{get;set;}
 
+    public bool CantProcess{get;set;}
+
     public int ZValue {get;set;}
 
     public Vector2[] line = null;

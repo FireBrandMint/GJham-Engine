@@ -24,13 +24,12 @@ class MainClass
 
     //entity list below!
 
-    private static List<Entity> Entities;
+    public static List<Entity> Entities;
 
     private static List<Entity> DrawableEntities;
 
     public static void Main(string[] args)
     {
-
         Window = new Canvas(512, 512, "default");
 
         Entities = new List<Entity>();
@@ -143,8 +142,14 @@ class MainClass
             Window.Close();
         }
 
+        ProcessEntities();
+    }
+
+    public static void ProcessEntities ()
+    {
         foreach (Entity e in Entities)
         {
+            if (e.CantProcess) continue;
             e.Tick();
         }
     }

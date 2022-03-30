@@ -4,6 +4,8 @@ public interface Entity
 
     bool IsTickable{get;}
 
+    bool CantProcess{get;set;}
+
     //Indicates wether or not the entity has been terminated
     bool IsDestroyed{get;set;}
 
