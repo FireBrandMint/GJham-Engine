@@ -82,38 +82,48 @@ public class Canvas
         //Draws next frame
         DrawableObject[] toDraw;
 
+        long organizeTime = 0;
+        if (performanceData != null) organizeTime = performanceData.ElapsedTicks;
+
         lock (ToDraw)
         {
-            if (!ToDrawOrganized)
-            {
-                DrawableObject[] td = new DrawableObject[ToDrawCount];
-                Array.Copy(ToDraw, td, ToDrawCount);
 
-                toDraw = (from p in td
-                orderby p.z
-                select p).ToArray<DrawableObject>();
-            }
-            else
-            {
-                toDraw = new DrawableObject[ToDrawCount];
-                Array.Copy(ToDraw, toDraw, ToDrawCount);
-            }
+            //if (!ToDrawOrganized)
+            //{
+                toDraw = Organize(ToDraw, ToDrawCount);
+            //}
+            //else
+            //{
+            //    toDraw = new DrawableObject[ToDrawCount];
+            //    Array.Copy(ToDraw, toDraw, ToDrawCount);
+            //}
+
+            
         }
+        if (performanceData != null) organizeTime = performanceData.ElapsedTicks - organizeTime;
+
+        long drawTime = 0;
+        if (performanceData != null) drawTime = performanceData.ElapsedTicks;
 
         for (int i = 0; i< toDraw.Length; ++i)
         {
-            toDraw[i].Draw(Window, Lerp);
-        }
-
-        if(!ToDrawOrganized)
-        {
-            ToDraw = toDraw;
-            ToDrawOrganized = true;
+            DrawableObject tdr = toDraw[i]; 
+            if (tdr.IsOptimizable(toDraw[i+1])) i+= tdr.Optimize(toDraw, i, Lerp, Window); 
+            else tdr.Draw(Window, Lerp);
         }
         
 
         Window.DispatchEvents();
         Window.Display();
+
+        if (performanceData != null) drawTime = performanceData.ElapsedTicks - drawTime;
+
+        //if(!ToDrawOrganized)
+        //{
+        //    ToDrawOrganized = true;
+
+        //    ToDraw = toDraw;
+        //}
 
         if (performanceData != null)
         {
@@ -127,6 +137,10 @@ public class Canvas
                 double performance = (1000d / Engine.MaxFPS) / MSPassed;
 
                 Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per frame!");
+                double dr = drawTime== 0.0 ? 0.0 : (double) drawTime / ticksPassed;
+                double ot = organizeTime == 0.0 ? 0.0 : (double) organizeTime / ticksPassed;
+                Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
+
             }
 
             performanceData.Stop();
@@ -134,6 +148,17 @@ public class Canvas
         
         ++FPS;
         Updating = false;
+    }
+
+    //Method that takes part in organizing the list of render objects
+    private DrawableObject[] Organize(DrawableObject[] drawable, int size)
+    {
+        DrawableObject[] td = new DrawableObject[ToDrawCount];
+        Array.Copy(ToDraw, td, size);
+
+        return (from p in td
+        orderby p.z
+        select p).ToArray<DrawableObject>();
     }
 
     public int[] GetKeys ()

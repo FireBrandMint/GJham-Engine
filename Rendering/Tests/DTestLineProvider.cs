@@ -55,6 +55,6 @@ public class DTestLineProvider : Entity
     public DrawableObject GetDrawable ()
     {
         if (line == null) return null;
-        return new DrawableLine2D(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition);
+        return new DrawableLine2D(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition, ZValue);
     }
 }
