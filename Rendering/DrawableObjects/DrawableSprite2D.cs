@@ -4,6 +4,7 @@ using System;
 
 public class DrawableSprite2D : DrawableObject
 {
+
     Sprite Image;
 
     Vector2f LastPos, CurrPos;
@@ -23,15 +24,23 @@ public class DrawableSprite2D : DrawableObject
         return false;
     }
 
-    public int Optimize (DrawableObject[] objs, int currIndex, double lerp, RenderWindow w)
+    public int Optimize (DrawableObject[] objs, int currIndex, float lerp, RenderWindow w)
     {
         throw new NotImplementedException("Method not implemented!");
     }
 
-    public void Draw(RenderWindow w, double lerp)
+    public void Draw(RenderWindow w, float lerp, Vector2f windowSize)
     {
         Image.Position = RenderMath.Lerp(LastPos, CurrPos, (float) lerp);
 
-        w.Draw(Image);
+        FloatRect imgSize = (FloatRect)Image.TextureRect;
+
+        Vector2f imgScale = RenderMath.Multiply(new Vector2f (imgSize.Width, imgSize.Height), Image.Scale);
+
+        FloatRect imgRect = new FloatRect(Image.Position, imgScale);
+
+        FloatRect canvasRect = new FloatRect(new Vector2f(), windowSize);
+
+        if (canvasRect.Intersects(imgRect)) w.Draw(Image);
     }
 }

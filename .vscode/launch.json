@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/bin/Debug/net5.0/My Engine.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "stopAtEntry": false
         },
         {

@@ -40,7 +40,7 @@ public class DrawableLine2D : DrawableObject
         z = _z;
     }
 
-    public void Draw(RenderWindow w, double lerp)
+    public void Draw(RenderWindow w, float lerp, Vector2f windowSize)
     {
 
         //Vertex a = av.ToVertex();
@@ -62,25 +62,34 @@ public class DrawableLine2D : DrawableObject
         return obj is DrawableLine2D;
     }
 
-    public int Optimize (DrawableObject[] objs, int currIndex, double lerp, RenderWindow w)
+    public int Optimize (DrawableObject[] objs, int currIndex, float lerp, RenderWindow w)
     {
-        float fLerp = (float) lerp;
+        float fLerp = lerp;
 
         int jump = 0;
 
-        Vertex[] verts;
+        //Vertex[] verts;
+
+        VertexArray vertArray = new VertexArray(PrimitiveType.Lines);
+
+        this.ComputeVert(vertArray, lerp);
 
         int optCount = 0;
 
-        for (int i = currIndex; i< objs.Length; ++i)
+        for (int i = currIndex + 1; i< objs.Length; ++i)
         {
-            if(IsOptimizable(objs[i])) ++optCount;
+            if(IsOptimizable(objs[i]))
+            {
+                ++optCount;
+
+                (objs[i] as DrawableLine2D).ComputeVert(vertArray ,lerp);
+            }
             else break;
         }
 
-        jump = optCount - 1;
+        jump = optCount;
 
-        verts = new Vertex[optCount * 2];
+        /*verts = new Vertex[optCount * 2];
 
         this.ComputeVert(verts, 0, fLerp);
 
@@ -93,6 +102,10 @@ public class DrawableLine2D : DrawableObject
         }
 
         w.Draw(verts, PrimitiveType.Lines);
+
+        */
+
+        w.Draw(vertArray);
 
         return jump;
     }
@@ -109,5 +122,19 @@ public class DrawableLine2D : DrawableObject
 
         vertArr[index] = a;
         vertArr[index + 1] = b;
+    }
+
+    public void ComputeVert(VertexArray vertArr, float lerp)
+    {
+        Vector2f p = RenderMath.Lerp(LastPos, CurrPos, lerp);
+
+        Vertex a = new Vertex(A.ToVectorF() + p);
+        Vertex b = new Vertex(B.ToVectorF() + p);
+
+        a.Color = Color1;
+        b.Color = Color2;
+
+        vertArr.Append(a);
+        vertArr.Append(b);
     }
 }

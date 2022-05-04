@@ -8,10 +8,12 @@ using System.Linq;
 using SFML.Window;
 using System.Threading;
 using SFML.Graphics;
+using SFML.System;
 
 
 public class Canvas
 {
+
     private RenderWindow Window;
 
     ManualResetEvent AllowRendering = new ManualResetEvent(false);
@@ -39,7 +41,7 @@ public class Canvas
 
     string Status = "OPEN";
 
-    uint WIDTH, HEIGHT;
+    Vector2u SIZE;
     string NAME;
 
     public Canvas (uint width, uint height, string name)
@@ -47,8 +49,7 @@ public class Canvas
         //Size = new Size(width, height);
         //Text = name;
 
-        WIDTH = width;
-        HEIGHT = height;
+        SIZE = new Vector2u(width, height);
         NAME = name;
 
         /*Window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), NAME);
@@ -97,19 +98,21 @@ public class Canvas
             //    toDraw = new DrawableObject[ToDrawCount];
             //    Array.Copy(ToDraw, toDraw, ToDrawCount);
             //}
-
-            
         }
         if (performanceData != null) organizeTime = performanceData.ElapsedTicks - organizeTime;
 
         long drawTime = 0;
         if (performanceData != null) drawTime = performanceData.ElapsedTicks;
 
+        Vector2f wSize = (Vector2f)SIZE;
+
+        float fLerp = (float) Lerp;
+
         for (int i = 0; i< toDraw.Length; ++i)
         {
             DrawableObject tdr = toDraw[i]; 
-            if (tdr.IsOptimizable(toDraw[i+1])) i+= tdr.Optimize(toDraw, i, Lerp, Window); 
-            else tdr.Draw(Window, Lerp);
+            if (tdr.IsOptimizable(toDraw[i+1])) i+= tdr.Optimize(toDraw, i, fLerp, Window); 
+            else tdr.Draw(Window, fLerp, wSize);
         }
         
 
@@ -136,10 +139,10 @@ public class Canvas
 
                 double performance = (1000d / Engine.MaxFPS) / MSPassed;
 
-                Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per frame!");
+                //Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per frame!");
                 double dr = drawTime== 0.0 ? 0.0 : (double) drawTime / ticksPassed;
                 double ot = organizeTime == 0.0 ? 0.0 : (double) organizeTime / ticksPassed;
-                Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
+                //Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
 
             }
 
@@ -217,7 +220,7 @@ public class Canvas
 
     public void Run()
     {
-        Window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), NAME);
+        Window = new RenderWindow(new VideoMode(SIZE.X, SIZE.Y), NAME);
 
         Window.Closed += _FormClosed;
         Window.KeyPressed += _KeyDown;

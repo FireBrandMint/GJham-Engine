@@ -92,6 +92,8 @@ class MainClass
 
             LastTick = currTick;
 
+            bool operationExecuted = false;
+
             if (delta >= 1.0)
             {
                 --delta;
@@ -101,7 +103,10 @@ class MainClass
                 GetInputs();
                 Tick();
                 ++TickCount;
+
+                operationExecuted = true;
             }
+
 
             if (renderDelta >= 1.0)
             {
@@ -110,12 +115,65 @@ class MainClass
                 //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
                 if (renderDelta >=2.0) renderDelta=0.0;
                 else --renderDelta;
+
+                operationExecuted = true;
             }
 
             if (secondTickCount >= swFrequency)
             {
                 OnSecond();
                 secondTickCount-= swFrequency;
+
+                operationExecuted = true;
+            }
+
+            if (!operationExecuted && delta < 1.0 && renderDelta < 1.0 && secondTickCount < swFrequency)
+            {
+                double tTime = delta != 0.0 ? ((1.0 - delta) * tickExecute)/ swFrequency : 0.0;
+                double rTime = renderDelta != 0.0 ? ((1.0 - renderDelta) * renderExecute)/ swFrequency : 0.0;
+                double sTime = secondTickCount != 0 ?(double) (swFrequency - secondTickCount) / swFrequency : 0.0;
+
+                char chosenTime;
+
+                double sleepTime;
+
+                if (tTime < rTime)
+                {
+                    sleepTime = tTime;
+
+                    chosenTime = 't';
+                }
+                else
+                {
+                    sleepTime = rTime;
+
+                    chosenTime = 'r';
+                }
+
+                if (sleepTime > sTime)
+                {
+                    sleepTime = sTime;
+
+                    chosenTime = 's';
+                }
+
+                int sleepMsec = (int)(sleepTime * 1000.0);
+
+                if (sleepMsec > 0)
+                {
+                    if(AntiConsoleSpam.antiConsoleSpam.CanWriteLine(23, 200))
+                    {
+                        string chosenMsg;
+
+                        if (chosenTime == 't') chosenMsg = $"of tick time with inverse delta {1.0 - delta}, wich is {sleepTime * 1000.0}MS";
+                        else if (chosenTime == 'r') chosenMsg = $"of render time with inverse delta {1.0 - renderDelta}, wich is {sleepTime * 1000.0}MS";
+                        else chosenMsg = $"of render time with inverse ticks {swFrequency - secondTickCount}, wich is {sleepTime * 1000.0}MS";
+
+                        Console.WriteLine($"Slept for {sleepMsec} miliseconds {chosenMsg}!");
+                    }
+
+                    Thread.Sleep(sleepMsec);
+                }
             }
         }
         
