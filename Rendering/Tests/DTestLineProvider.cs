@@ -40,13 +40,13 @@ public class DTestLineProvider : Entity
         
         if (t < 20)
         {
-            Position += new Vector2((FInt)10,(FInt)0);
+            Position += new Vector2((FInt)10,(FInt)(-5));
 
             ++t;
         }
         else
         {
-            Position -= new Vector2((FInt)t * 10,(FInt)0);
+            Position -= new Vector2((FInt)t * 10,(FInt)t * -5 );
 
             t=0;
         }

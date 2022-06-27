@@ -124,6 +124,8 @@ class MainClass
                 OnSecond();
                 secondTickCount-= swFrequency;
 
+                GC.Collect(0, GCCollectionMode.Forced, false);
+
                 operationExecuted = true;
             }
 

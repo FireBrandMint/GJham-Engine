@@ -5,6 +5,21 @@ public struct FInt
     // New determininistic point from https://stackoverflow.com/questions/605124/fixed-point-math-in-c
     // Coudn't get my deterministic point figured out because of sin, cos and other things =(
 
+    ///<summary>
+    ///The lowest negative value possible for this datatype.
+    ///</summary>
+    public static readonly FInt MinValue;
+    ///<summary>
+    ///The highest positive value possible for this datatype.
+    ///</summary>
+    public static readonly FInt MaxValue;
+
+    static FInt()
+    {
+        MinValue = FInt.Create(long.MinValue, false);
+        MaxValue = FInt.Create(long.MaxValue, false);
+    }
+
     public long RawValue;
     public const int SHIFT_AMOUNT = 12; //12 is 4096
 
@@ -173,6 +188,13 @@ public struct FInt
     public static FInt operator -( int other, FInt one )
     {
         return (FInt)other - one;
+    }
+
+    public static FInt operator - (FInt one)
+    {
+        FInt fInt;
+        fInt.RawValue = -one.RawValue;
+        return fInt;
     }
     #endregion
 
@@ -360,6 +382,6 @@ public struct FInt
 
     public override string ToString()
     {
-        return ((double) this).ToString();
+        return ((double) this.RawValue / One).ToString();
     }
 }

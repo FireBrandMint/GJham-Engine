@@ -58,12 +58,47 @@ public readonly struct Vector2
         return (v2 - v1).Normalized();
     }
 
-    public bool InRangeSquared(Vector2 v1, Vector2 v2, FInt range)
+    public static bool InRange(Vector2 v1, Vector2 v2, FInt range)
     {
-        FInt dx = v1.x - v1.x;
-        FInt dy = v1.y - v1.y;
+        FInt dx = v1.x - v2.x;
+        FInt dy = v1.y - v2.y;
 
         return dx*dx + dy*dy <=  range * range;
+    }
+
+    public static bool InRangeSquared(Vector2 v1, Vector2 v2, FInt range)
+    {
+        FInt dx = v1.x - v2.x;
+        FInt dy = v1.y - v2.y;
+
+        return dx*dx + dy*dy <=  range;
+    }
+
+
+    public static FInt DistanceSquared(Vector2 v1, Vector2 v2)
+    {
+        FInt dx = v1.x - v2.x;
+        FInt dy = v1.y - v2.y;
+
+        return dx*dx + dy*dy;
+    }
+
+    public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt angle)
+    {
+        FInt sin = DeterministicMath.SinD(angle);
+        FInt cos = DeterministicMath.CosD(angle);
+ 
+        // Translate point back to origin
+        FInt x = toRotate.x - center.x;
+        FInt y = toRotate.y - center.y;
+ 
+        // Rotate point
+        FInt xnew = x * cos - y * sin;
+        FInt ynew = x * sin + y * cos;
+     
+        // Translate point back
+        Vector2 newPoint = new Vector2(xnew + center.x, ynew + center.y);
+        return newPoint;
     }
 
     public FInt Length ()
@@ -82,6 +117,11 @@ public readonly struct Vector2
         {
             return this / length;
         }
+    }
+
+    public static FInt DotProduct (Vector2 pt1, Vector2 pt2)
+    {
+        return (pt1.x * pt2.x) + (pt1.y * pt2.y);
     }
 
     public override string ToString()
@@ -125,6 +165,11 @@ public readonly struct Vector2
     public static Vector2 operator / (Vector2 v1, FInt d2)
     {
         return new Vector2 (v1.x / d2, v1.y / d2);
+    }
+
+    public static Vector2 operator - (Vector2 v1)
+    {
+        return new Vector2(-v1.x, -v1.y);
     }
 
     public PointF ToPoint ()

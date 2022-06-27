@@ -14,7 +14,7 @@ public static class Engine
     public static long Ticks {get => MainClass.TickCount;} 
 
     //The set amount of ticks the program is set to try to process every second
-    public static readonly double MaxTPS = 20;
+    public static readonly double MaxTPS = 60;
 
     //The set amount of rendered frames the program is set to try to process every second
     public static readonly double MaxFPS = 180;
