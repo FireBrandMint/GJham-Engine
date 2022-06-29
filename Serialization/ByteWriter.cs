@@ -51,6 +51,11 @@ public class ByteWriter: IDisposable
         Data.AddRange(bytes);
     }
 
+    public void WriteFInt (FInt value)
+    {
+        WriteInt64(value.RawValue);
+    }
+
     public void WriteFloat (float value)
     {
         Data.AddRange(BitConverter.GetBytes(value));

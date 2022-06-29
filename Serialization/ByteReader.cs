@@ -54,6 +54,13 @@ public class ByteReader : IDisposable
         return value;
     }
 
+    public FInt ReadFInt ()
+    {
+        Int64 value = ReadInt64();
+
+        return FInt.Create(value, false);
+    }
+
     public float ReadFloat ()
     {
         var value = BitConverter.ToSingle(Data, index);

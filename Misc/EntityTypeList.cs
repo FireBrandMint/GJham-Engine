@@ -34,13 +34,20 @@ public class EntityTypeList
 
         for (int i = 0; i < array.Length; ++i)
         {
-            string type = array[i].Name;
+            Type type = array[i];
 
-            if (type == entityName) continue;
+            string typeName = type.Name;
 
-            list += $"\n        {{\"{type}\", Instance{type}}},";
+            if (typeName == entityName) continue;
 
-            fileText += $"\n    private static Entity Instance{type} () => new {type}();";
+            PropertyInfo[] properties = type.GetProperties(
+                BindingFlags.Instance|
+                BindingFlags.Public
+            );
+
+            list += $"\n        {{\"{typeName}\", Instance{typeName}}},";
+
+            fileText += $"\n    private static Entity Instance{typeName} () => new {typeName}();";
         }
 
         list+= "\n    };";
