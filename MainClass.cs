@@ -30,6 +30,18 @@ class MainClass
 
     public static void Main(string[] args)
     {
+        for (int i = 0; i< args.Length; ++i)
+        {
+            if (args[i] == "doListing")
+            {
+                EntityTypeList.ListAll();
+                Console.WriteLine("\nEntity instancer class complete.");
+
+                GC.Collect();
+                return;
+            }
+        }
+
         Window = new Canvas(512, 512, "default");
 
         Entities = new List<Entity>();

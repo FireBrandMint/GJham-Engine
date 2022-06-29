@@ -227,7 +227,11 @@ public class Canvas
         Window.KeyReleased += _KeyUp;
         Window.LostFocus += _LostFocus;
 
+        Window.SetVerticalSyncEnabled(true);
+
         Window.RequestFocus();
+
+        int checkTimer = 180;
 
         while(!IsClosed)
         {
@@ -241,7 +245,20 @@ public class Canvas
             lock(Status) if(Status == "CLOSED") break;
 
             AllowRendering.Reset();
+
+            if(checkTimer <= 0)
+            {
+                if(!Window.IsOpen) break;
+
+                checkTimer = 180;
+            }
+
+            --checkTimer;
         }
+
+        IsClosed = true;
+
+        lock(Status) Status = "CLOSED";
     }
 
     public void Close()

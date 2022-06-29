@@ -10,15 +10,17 @@ public static class Engine
     //Amount of frames executed last second.
     public static int FPS { get=> MainClass.FPS; }
 
-    //Tick count since the engine started
+    ///<summary>
+    ///Tick count since the engine started
+    ///</summary>
     public static long Ticks {get => MainClass.TickCount;} 
 
     //The set amount of ticks the program is set to try to process every second
     public static readonly double MaxTPS = 60;
 
     //The set amount of rendered frames the program is set to try to process every second
-    public static readonly double MaxFPS = 180;
+    public static readonly double MaxFPS = 100;
 
-    //These are the amount of ticks that are about to be executed very soon to conpensate for a slowdown
+    //This is the amount of ticks that are about to be executed very soon to conpensate for a slowdown
     public static int TPSSlowdown = 0;
 }

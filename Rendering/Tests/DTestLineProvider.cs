@@ -1,4 +1,5 @@
 using SFML.Graphics;
+using System;
 
 public class DTestLineProvider : Entity
 {
@@ -38,7 +39,7 @@ public class DTestLineProvider : Entity
 
         int factor = (((int)Engine.MaxTPS) / 10);
         
-        if (t < 20)
+        if (t < 60)
         {
             Position += new Vector2((FInt)10,(FInt)(-5));
 
