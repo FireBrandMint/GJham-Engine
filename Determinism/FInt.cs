@@ -47,8 +47,7 @@ public struct FInt
     public static FInt Create( double DoubleValue )
     {
         FInt fInt;
-        DoubleValue *= (double)One;
-        fInt.RawValue = (int)Math.Round( DoubleValue );
+        fInt.RawValue = (Int64)Math.Round( DoubleValue * One );
         return fInt;
     }
     #endregion
@@ -323,6 +322,16 @@ public struct FInt
     public static explicit operator FInt( bool src )
     {
         return src? (FInt) 1: (FInt) 0;
+    }
+
+    public static explicit operator FInt(float src)
+    {
+        return FInt.Create((double)src);
+    }
+
+    public static explicit operator FInt(double src)
+    {
+        return FInt.Create(src);
     }
 
     public static explicit operator bool( FInt src )

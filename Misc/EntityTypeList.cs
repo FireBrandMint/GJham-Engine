@@ -146,7 +146,7 @@ public class EntityTypeList
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 1086275545: entity.IsDestroyed = reader.ReadBool(); break; case 1255664404: entity.CantProcess = reader.ReadBool(); break; case -1649701350: entity.ZValue = reader.ReadInt32(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1995721985: entity.IsDestroyed = reader.ReadBool(); break; case 619938417: entity.CantProcess = reader.ReadBool(); break; case -1751692787: entity.ZValue = reader.ReadInt32(); break; }}
         return entity;
     }
 

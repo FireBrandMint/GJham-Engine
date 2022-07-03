@@ -111,8 +111,7 @@ public class Canvas
         for (int i = 0; i< toDraw.Length; ++i)
         {
             DrawableObject tdr = toDraw[i]; 
-            if (tdr.IsOptimizable(toDraw[i+1])) i+= tdr.Optimize(toDraw, i, fLerp, Window); 
-            else tdr.Draw(Window, fLerp, wSize);
+            tdr.Draw(Window, fLerp, wSize);
         }
         
 
