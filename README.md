@@ -14,7 +14,7 @@ Still in development, any help is appreciated.
 
 4. Prefab-like system.
 
-5. No goddam encapsulation. (it's bad for memory usage and C# GC is bad)
+5. No goddam encapsulation. (it's bad for memory usage and C# GC is bad with big memory)
 
 6. Bearable performance.
 
