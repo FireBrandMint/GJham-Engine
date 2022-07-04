@@ -14,7 +14,7 @@ Still in development, any help is appreciated.
 
 4. Prefab-like system.
 
-5. No goddam encapsulation. (it's bad for memory usage and C# GC is bad)
+5. No goddam encapsulation. (it's bad for memory usage and C# GC is bad with big memory)
 
 6. Bearable performance.
 
@@ -24,4 +24,4 @@ Still in development, any help is appreciated.
 
 9. All is free. (probably will have donation page if people actually become interested in this project)
 
-10. Probably 3d after i finish 2d, if i can finish it that is.
+10. Probably 3d after i finish 2d.
