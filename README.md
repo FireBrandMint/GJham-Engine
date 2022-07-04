@@ -6,6 +6,8 @@ Still in development, any help is appreciated.
 
 # Goals from BIG-BIG-BIG to less important
 
+0. All is free. (probably will have donation page if people actually become interested in this project)
+
 1. Completely deterministic unless the user messes up.
 
 2. Fixing an issue with float where rendering gets distorted the higher your coordenates are. (this will be done by calculating the final rendering position with the camera before casting to float)
@@ -22,6 +24,4 @@ Still in development, any help is appreciated.
 
 8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory and probably ends up in gen 2)
 
-9. All is free. (probably will have donation page if people actually become interested in this project)
-
-10. Probably 3d after i finish 2d.
+9. Probably 3d after i finish 2d.
