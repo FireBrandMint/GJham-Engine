@@ -339,6 +339,7 @@ public struct FInt
         FInt fInt;
         fInt.RawValue = src.RawValue;
         return fInt;
+        //
     }
 
     public static explicit operator bool( FInt src )
