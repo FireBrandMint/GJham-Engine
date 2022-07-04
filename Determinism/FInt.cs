@@ -334,6 +334,13 @@ public struct FInt
         return FInt.Create(src);
     }
 
+    public static explicit operator FInt(FInt32 src)
+    {
+        FInt fInt;
+        fInt.RawValue = src.RawValue;
+        return fInt;
+    }
+
     public static explicit operator bool( FInt src )
     {
         return src.RawValue > 0;
