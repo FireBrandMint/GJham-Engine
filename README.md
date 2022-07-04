@@ -23,3 +23,5 @@ Still in development, any help is appreciated.
 8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory and probably ends up in gen 2)
 
 9. All is free. (probably will have donation page if people actually become interested in this project)
+
+10. Probably 3d after i finish 2d, if i can finish it that is.
