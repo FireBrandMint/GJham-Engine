@@ -20,6 +20,6 @@ Still in development, any help is appreciated.
 
 7. Editor(s).
 
-8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory)
+8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory and probably ends up in gen 2)
 
 9. All is free. (probably will have donation page if people actually become interested in this project)
