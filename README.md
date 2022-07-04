@@ -4,7 +4,7 @@ Actually a library because the UI will probably look 15 years old and there will
 
 Still in development, any help is appreciated.
 
-# Promisses from BIG-BIG-BIG to less important
+# Goals from BIG-BIG-BIG to less important
 
 1. Completely deterministic unless the user messes up.
 
