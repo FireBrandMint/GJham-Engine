@@ -69,7 +69,7 @@ public struct FInt
 
     public float ToFloat ()
     {
-        return (float) ((double)this.RawValue / (double)One);
+        return (float) ((double)this.RawValue / One);
     }
 
     public FInt Inverse
