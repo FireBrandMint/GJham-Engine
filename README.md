@@ -12,7 +12,7 @@ Still in development, any help is appreciated.
 
 2. Fixing an issue with float where rendering gets distorted the higher your coordenates are. (this will be done by calculating the final rendering position with the camera before casting to float)
 
-3. A built-in... FREE multiple server hosting system so you can host more than one server in the same port. (for tournaments in fighting games or if somehow you want to host a 2d MMO in this, i don't think you should... but hey, let's make that easier, it might be good for someone with a inovative ideia... and not an MMO)
+3. A built-in... multiple server hosting system so you can host more than one server in the same port. (for tournaments in fighting games or if somehow you want to host a 2d MMO in this, i don't think you should... but hey, let's make that easier, it might be good for someone with a inovative ideia... and not an MMO)
 
 4. Prefab-like system.
 
