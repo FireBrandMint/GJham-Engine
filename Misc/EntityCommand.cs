@@ -24,12 +24,12 @@ public class EntityCommand
     //Rolls all entities forward except the entity in the argument
     public static void RollEntitiesForwardExcept (int amountOfTimes, Entity entity)
     {
-        bool CantProcess = entity.CantProcess;
+        bool CanProcess = entity.CanProcess;
 
-        entity.CantProcess = true;
+        entity.CanProcess = false;
 
         RollEntitiesForward(amountOfTimes);
 
-        entity.CantProcess = CantProcess;
+        entity.CanProcess = CanProcess;
     }
 }

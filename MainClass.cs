@@ -26,7 +26,7 @@ class MainClass
 
     public static List<Entity> Entities;
 
-    private static List<Entity> DrawableEntities;
+    private static List<RenderEntity> DrawableEntities;
 
     public static void Main(string[] args)
     {
@@ -45,7 +45,7 @@ class MainClass
         Window = new Canvas(512, 512, "default");
 
         Entities = new List<Entity>();
-        DrawableEntities = new List<Entity>();
+        DrawableEntities = new List<RenderEntity>();
 
         //TEST
 
@@ -221,8 +221,7 @@ class MainClass
     {
         foreach (Entity e in Entities)
         {
-            if (e.CantProcess) continue;
-            e.Tick();
+            if (e.CanProcess) e.Tick();
         }
     }
 
@@ -238,7 +237,7 @@ class MainClass
         if (LastTickCount != TickCount)
         {
             //Creates buffer for rendering
-            DrawableObject[] dObjects = new DrawableObject[DrawableEntities.Count];
+            DrawableObject[] dObjects = new DrawableObject[RenderEntity.VisibleEntityCount];
 
             //the count of objects that aren't null on the array
             int count = 0;
@@ -246,14 +245,20 @@ class MainClass
             //populates buffer with output from the entities that can be rendered
             for (int i = 0; i< DrawableEntities.Count; ++i)
             {
-                var drawable = DrawableEntities[i].GetDrawable();
+                var entity = DrawableEntities[i];
 
-                if (drawable != null)
+                if (entity.IsVisible)
                 {
-                    dObjects[count] = drawable;
-                    ++count;
+                    var drawable = entity.GetDrawable();
+
+                    if (drawable != null)
+                    {
+                        dObjects[count] = drawable;
+                        ++count;
+                    }
                 }
             }
+            
             //Sends the things that must be rendered to the screen
             Window.SetDraw(dObjects, count);
 
@@ -289,7 +294,7 @@ class MainClass
     public static void AddEntity (Entity entity)
     {
         if (entity.IsTickable) Entities.Add(entity);
-        if (entity.IsDrawable) DrawableEntities.Add(entity);
+        if (entity.IsDrawable) DrawableEntities.Add((RenderEntity)entity);
 
         entity.EnterTree();
     }
@@ -298,9 +303,12 @@ class MainClass
     {
         if (entity.IsDestroyed) return;
 
+        entity.LeaveTree();
+
         if (entity.IsTickable) Entities.Remove(entity);
 
-        if(entity.IsDrawable) DrawableEntities.Remove(entity);
+        if(entity.IsDrawable) DrawableEntities.Remove((RenderEntity)entity);
+
         entity.IsDestroyed = true;
     }
 }

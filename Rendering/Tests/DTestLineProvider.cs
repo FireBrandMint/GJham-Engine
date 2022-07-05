@@ -1,39 +1,24 @@
 using SFML.Graphics;
 using System;
 
-public class DTestLineProvider : Entity
+public class DTestLineProvider : RenderEntity
 {
     //test for drawable entity
-
-    public bool IsDrawable{get => true;}
-
-    public bool IsTickable{get => true;}
-
-    public bool IsDestroyed{get;set;}
-
-    public bool CantProcess{get;set;}
-
-    public int ZValue {get;set;}
-
     public Vector2[] line = null;
 
     Vector2 Position = new Vector2();
 
     Vector2 LastPosition;
 
-    public void Init()
+    public override void Init()
     {
+        base.Init();
         LastPosition = Position;
-    }
-
-    public void EnterTree()
-    {
-
     }
 
     int t = 0;
 
-    public void Tick ()
+    public override void Tick ()
     {
         LastPosition = Position;
 
@@ -53,9 +38,17 @@ public class DTestLineProvider : Entity
         }
     }
 
-    public DrawableObject GetDrawable ()
+    DrawableLine2D drawable = null;
+
+    public override DrawableObject GetDrawable ()
     {
         if (line == null) return null;
-        return new DrawableLine2D(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition, ZValue);
+
+        if (drawable == null) drawable = new DrawableLine2D(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition, ZValue);
+        else drawable.Reinitialize(line[0], line[1], Color.Cyan, Color.Red, Position, LastPosition, ZValue);
+
+        return drawable;
     }
+
+    protected override bool Tickable() => true;
 }

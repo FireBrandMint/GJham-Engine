@@ -4,7 +4,7 @@ public interface Entity
 
     bool IsTickable{get;}
 
-    bool CantProcess{get;set;}
+    bool CanProcess{get;set;}
 
     //Indicates wether or not the entity has been terminated
     bool IsDestroyed{get;set;}
@@ -17,6 +17,8 @@ public interface Entity
     void Init();
 
     void EnterTree();
+
+    void LeaveTree();
 
     void Tick ();
 

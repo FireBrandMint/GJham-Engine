@@ -43,4 +43,14 @@ public class DrawableSprite2D : DrawableObject
 
         if (canvasRect.Intersects(imgRect)) w.Draw(Image);
     }
+
+    public bool Optimizable (DrawableObject obj)
+    {
+        return false;
+    }
+
+    public void DrawOptimizables(RenderWindow window, DrawableObject[] dObjects, uint index, uint count, float lerp)
+    {
+
+    }
 }

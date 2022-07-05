@@ -108,9 +108,63 @@ public class Canvas
 
         float fLerp = (float) Lerp;
 
-        for (int i = 0; i< toDraw.Length; ++i)
+        bool optimizing = false;
+
+        uint optIndex = 0;
+
+        uint optCount = 0;
+
+        DrawableObject optObject = null;
+
+        uint tdLenght = (uint)toDraw.Length;
+
+        for (uint i = 0; i< tdLenght; ++i)
         {
-            DrawableObject tdr = toDraw[i]; 
+            DrawableObject tdr = toDraw[i];
+
+            if (i + 1 == tdLenght)
+            {
+                tdr.Draw(Window, fLerp, wSize);
+
+                if(optimizing)
+                {
+                    if(optObject.Optimizable(tdr)) ++optCount;
+                    else tdr.Draw(Window, fLerp, wSize);
+
+                    optObject.DrawOptimizables(Window, toDraw,  optIndex, optCount, fLerp);
+                }
+                else tdr.Draw(Window, fLerp, wSize);
+
+                continue;
+            }
+
+            if (optimizing)
+            {
+                if(optObject.Optimizable(tdr))
+                {
+                    ++optCount;
+                }
+                else
+                {
+                    tdr.Draw(Window, fLerp, wSize);
+
+                    optObject.DrawOptimizables(Window, toDraw,  optIndex, optCount, fLerp);
+
+                    optimizing = false;
+                }
+            }
+            else
+            {
+                if (tdr.Optimizable(toDraw[i + 1]))
+                {
+                    optIndex = i;
+                    optCount = 1;
+                    optimizing = true;
+
+                    optObject = tdr;
+                }
+            }
+
             tdr.Draw(Window, fLerp, wSize);
         }
         
@@ -136,12 +190,12 @@ public class Canvas
             {
                 double MSPassed = (ticksPassed / (double) Stopwatch.Frequency) * 1000;
 
-                double performance = (1000d / Engine.MaxFPS) / MSPassed;
+                long performance = (long)(1000d / MSPassed);
 
-                //Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per frame!");
+                Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per second!");
                 double dr = drawTime== 0.0 ? 0.0 : (double) drawTime / ticksPassed;
                 double ot = organizeTime == 0.0 ? 0.0 : (double) organizeTime / ticksPassed;
-                //Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
+                Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
 
             }
 
@@ -177,7 +231,23 @@ public class Canvas
         //set objects to draw this frame
         lock (ToDraw)
         {
-            ToDraw = objs;
+            if (count <= ToDraw.Length)
+            {
+                for(int i = 0; i< count; ++i)
+                {
+                    ToDraw[i] = objs[i];
+                }
+
+                //if(count > ToDraw.Length)
+                //{
+                //    for (int i = count; i < ToDraw.Length; ++i)
+                //    {
+                //        ToDraw[i] = null;
+                //    }
+                //}
+            }
+            else ToDraw = objs;
+
             ToDrawOrganized = false;
             ToDrawCount = count;
         }

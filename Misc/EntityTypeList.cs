@@ -143,15 +143,22 @@ public class EntityTypeList
     }
 
     //Activation methods!
+    private static Entity InstanceRenderEntity (ByteReader reader, int propertyCount)
+    {
+        RenderEntity entity = new RenderEntity();
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -2112139007: entity.IsDestroyed = reader.ReadBool(); break; case 1168225005: entity.CanProcess = reader.ReadBool(); break; case 600704669: entity.ZValue = reader.ReadInt32(); break; case -2011992182: entity.IsVisible = reader.ReadBool(); break; }}
+        return entity;
+    }
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1995721985: entity.IsDestroyed = reader.ReadBool(); break; case 619938417: entity.CantProcess = reader.ReadBool(); break; case -1751692787: entity.ZValue = reader.ReadInt32(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -2112139007: entity.IsDestroyed = reader.ReadBool(); break; case 1168225005: entity.CanProcess = reader.ReadBool(); break; case 600704669: entity.ZValue = reader.ReadInt32(); break; case -2011992182: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
 
     private static Dictionary<String, ETypeCreate> EntityInstancers = new Dictionary<string, ETypeCreate>()
     {
+        {"RenderEntity", InstanceRenderEntity},
         {"DTestLineProvider", InstanceDTestLineProvider},
     };
 }
