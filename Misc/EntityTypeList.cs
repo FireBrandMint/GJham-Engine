@@ -70,7 +70,7 @@ public static class EntityTypeList
 
                 if (AcceptedTypesOut.TryGetValue(field.GetType(), out valueMethod))
                 {
-                    fileText+= $"case {field.Name.GetStableHashCode()}: entity.{field.Name} = {valueMethod}; break;";
+                    fileText+= $"case {field.Name.GetDeterministicHashCode()}: entity.{field.Name} = {valueMethod}; break;";
                 }
             }
 
@@ -89,7 +89,7 @@ public static class EntityTypeList
 
                 if (AcceptedTypesOut.TryGetValue(property.PropertyType, out valueMethod))
                 {
-                    fileText+= $"case {property.Name.GetStableHashCode()}: entity.{property.Name} = {valueMethod}; break; ";
+                    fileText+= $"case {property.Name.GetDeterministicHashCode()}: entity.{property.Name} = {valueMethod}; break; ";
                 }
             }
 
@@ -142,7 +142,7 @@ public static class EntityTypeList
         return GetLoadableTypes(asm).Where(it.IsAssignableFrom).ToList();
     }
 
-    public static int GetStableHashCode(this string str)
+    public static int GetDeterministicHashCode(this string str)
     {
         unchecked
         {
@@ -165,13 +165,13 @@ public static class EntityTypeList
     private static Entity InstanceRenderEntity (ByteReader reader, int propertyCount)
     {
         RenderEntity entity = new RenderEntity();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 543496674: entity.IsDestroyed = reader.ReadBool(); break; case -852776190: entity.CanProcess = reader.ReadBool(); break; case 80697755: entity.ZValue = reader.ReadInt32(); break; case -644697448: entity.IsVisible = reader.ReadBool(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 543496674: entity.IsDestroyed = reader.ReadBool(); break; case -852776190: entity.CanProcess = reader.ReadBool(); break; case 80697755: entity.ZValue = reader.ReadInt32(); break; case -644697448: entity.IsVisible = reader.ReadBool(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
 
