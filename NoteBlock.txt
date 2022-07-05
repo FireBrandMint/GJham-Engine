@@ -1,0 +1,10 @@
+Info for multi server system.
+
+https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-use-anonymous-pipes-for-local-interprocess-communication
+https://stackoverflow.com/questions/528652/what-is-the-simplest-method-of-inter-process-communication-between-2-c-sharp-pro
+https://stackoverflow.com/questions/5083954/send-message-in-c-sharp
+https://docs.microsoft.com/pt-br/dotnet/standard/io/how-to-use-named-pipes-for-network-interprocess-communication
+
+For compilation.
+https://stackoverflow.com/questions/45702/how-to-compile-a-net-application-to-native-code
+https://stackoverflow.com/questions/54542158/c-sharp-compile-net-core-3-0-to-native-code-through-visual-studio-2019
