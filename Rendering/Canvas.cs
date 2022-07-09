@@ -340,7 +340,76 @@ public class Canvas
     }
 }
 
-internal static class NativeWinAPI
+public class TextureHolder
+{
+    private static Dictionary<int, TextureHolder> TextureDict = new System.Collections.Generic.Dictionary<int, TextureHolder>();
+
+    public Texture texture;
+
+    int refCount = 0;
+
+    bool disposed = false;
+
+    private TextureHolder(ref String path)
+    {
+        texture = new Texture(path);
+        refCount = 1;
+    }
+
+    void AddRef() => ++refCount;
+
+    bool RemoveRef()
+    {
+        int c = refCount - 1;
+
+        bool result = c == 0;
+
+        refCount = c;
+
+        return result;
+    }
+
+    void Dispose()
+    {
+        if (disposed) return;
+
+        texture.Dispose();
+
+        disposed = true;
+    }
+
+    public static void RegisterTextureRef(String path)
+    {
+        TextureHolder holder;
+
+        if (TextureDict.TryGetValue(path.GetHashCode(), out holder))
+        {
+            holder.AddRef();
+        }
+        else
+        {
+            TextureDict.Add(path.GetHashCode(), new TextureHolder(ref path));
+        }
+    }
+
+    public static void UnregisterTextureRef(String path)
+    {
+        int hash = path.GetHashCode();
+
+        TextureHolder holder = TextureDict[hash];
+        if (holder.RemoveRef())
+        {
+            holder.Dispose();
+
+            TextureDict.Remove(hash);
+        }
+    }
+
+    public static Texture GetTexture(String path) => TextureDict[path.GetHashCode()].texture;
+}
+
+//Old useless code for a windows forms problem.
+/*internal static class NativeWinAPI
 {
     internal static readonly int GWL_EXSTYLE = -20;
     internal static readonly int WS_EX_COMPOSITED = 0x02000000;
@@ -350,4 +419,4 @@ internal static class NativeWinAPI
 
     [DllImport("user32")]
     internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-}
+}*/
