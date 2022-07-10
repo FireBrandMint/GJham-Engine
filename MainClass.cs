@@ -8,6 +8,7 @@ using System.IO;
 
 class MainClass
 {
+    public static bool Running = true;
 
     //The actual window of 'MainThread'
     public static Canvas Window;
@@ -50,8 +51,8 @@ class MainClass
 
         //TEST
 
-        Vector2 a = new Vector2(20, 20);
-        Vector2 b = new Vector2(40, 40);
+        Vector2 a = new Vector2(20, 210);
+        Vector2 b = new Vector2(40, 230);
 
         for (int i = 0; i< 100; ++i)
         {
@@ -61,8 +62,15 @@ class MainClass
 
             EntityCommand.Instance(lp);
 
-            b = new Vector2(b.x, b.y + (FInt) 3);
+            b = new Vector2(b.x + 1, b.y);
         }
+
+        EntityCommand.Instance(new RTestSpriteProvider
+        {
+            Position = new Vector2(40, 40),
+            BoundriesSet = false,
+            TexturePath = @".\assets\Generic.png"
+        });
 
         //TEST AREA END
 
@@ -91,7 +99,7 @@ class MainClass
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
-        while (!Window.IsClosed)
+        while (true)
         {
             Int64 currTick = stopwatch.ElapsedTicks;
 
@@ -123,6 +131,8 @@ class MainClass
 
             if (renderDelta >= 1.0)
             {
+                if(Window.IsClosed) break;
+
                 Render(delta);
 
                 //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
@@ -193,6 +203,14 @@ class MainClass
         }
         
         stopwatch.Stop();
+
+        Running = false;
+
+        Window.Close();
+
+        TextureHolder.Close();
+
+        Console.WriteLine("Ended main thread.");
     }
 
     static void GetInputs()

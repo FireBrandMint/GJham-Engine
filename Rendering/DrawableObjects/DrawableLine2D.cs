@@ -68,39 +68,38 @@ public class DrawableLine2D : DrawableObject
         z = _z;
     }
 
-    public void Draw(RenderWindow w, float lerp, Vector2f windowSize)
+    public void Draw(RenderArgs args)
     {
 
         //Vertex a = av.ToVertex();
         //Vertex b = B.ToVertex();
 
-        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)lerp);
+        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)args.lerp);
 
-        Vertex a = new Vertex((A + p).ToVectorF());
-        Vertex b = new Vertex((B + p).ToVectorF());
+        Vertex a = new Vertex((Vector2f)(A + p));
+        Vertex b = new Vertex((Vector2f)(B + p));
 
         a.Color = Color1;
         b.Color = Color2;
 
-        w.Draw(new Vertex[2] {a, b}, PrimitiveType.Lines);
+        args.w.Draw(new Vertex[2] {a, b}, PrimitiveType.Lines);
     }
 
     public bool Optimizable (DrawableObject obj) => obj is DrawableLine2D;
 
-    public void DrawOptimizables(RenderWindow window, DrawableObject[] dObjects, uint index, uint count, float lerp)
+    public void DrawOptimizables(RenderArgs args, DrawableObject[] dObjects, uint index, uint count)
     {
+
         VertexArray array = new VertexArray(PrimitiveType.Lines, count * 2);
 
         uint arrInd = 0;
 
         for(uint i = index; i< index + count; ++i)
         {
-            ((DrawableLine2D)dObjects[i]).FillVA(array, arrInd, lerp);
+            ((DrawableLine2D)dObjects[i]).FillVA(array, arrInd, args.lerp);
 
             arrInd+=2;
         }
-
-        window.Draw(array);
 
         array.Dispose();
     }

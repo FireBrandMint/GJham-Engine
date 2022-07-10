@@ -174,10 +174,17 @@ public static class EntityTypeList
         for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
+    private static Entity InstanceRTestSpriteProvider (ByteReader reader, int propertyCount)
+    {
+        RTestSpriteProvider entity = new RTestSpriteProvider();
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -63831078: entity.TexturePath = reader.ReadString(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
+        return entity;
+    }
 
     private static Dictionary<String, ETypeCreate> EntityInstancers = new Dictionary<string, ETypeCreate>()
     {
         {"RenderEntity", InstanceRenderEntity},
         {"DTestLineProvider", InstanceDTestLineProvider},
+        {"RTestSpriteProvider", InstanceRTestSpriteProvider},
     };
 }

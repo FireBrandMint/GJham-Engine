@@ -309,6 +309,16 @@ public struct FInt
         return FInt.Create( src ) ;
     }
 
+    public static explicit operator uint( FInt src )
+    {
+        return (uint)( src.RawValue >> SHIFT_AMOUNT );
+    }
+
+    public static explicit operator FInt( uint src )
+    {
+        return FInt.Create( (int)src ) ;
+    }
+
     public static explicit operator FInt( long src )
     {
         return FInt.Create( src, true );

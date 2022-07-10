@@ -63,6 +63,8 @@ public class Canvas
 
         Window.RequestFocus();*/
 
+        TextureHolder.StartThread();
+
         Thread runThread = new Thread(Run);
         runThread.Priority = ThreadPriority.AboveNormal;
         runThread.Start();
@@ -118,22 +120,29 @@ public class Canvas
 
         uint tdLenght = (uint)toDraw.Length;
 
+        RenderArgs args = new RenderArgs()
+        {
+            w = Window,
+            lerp = fLerp,
+            windowSize = wSize
+        };
+
         for (uint i = 0; i< tdLenght; ++i)
         {
             DrawableObject tdr = toDraw[i];
 
             if (i + 1 == tdLenght)
             {
-                tdr.Draw(Window, fLerp, wSize);
+                tdr.Draw(args);
 
                 if(optimizing)
                 {
                     if(optObject.Optimizable(tdr)) ++optCount;
-                    else tdr.Draw(Window, fLerp, wSize);
+                    else tdr.Draw(args);
 
-                    optObject.DrawOptimizables(Window, toDraw,  optIndex, optCount, fLerp);
+                    optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
                 }
-                else tdr.Draw(Window, fLerp, wSize);
+                else tdr.Draw(args);
 
                 continue;
             }
@@ -146,9 +155,9 @@ public class Canvas
                 }
                 else
                 {
-                    tdr.Draw(Window, fLerp, wSize);
+                    tdr.Draw(args);
 
-                    optObject.DrawOptimizables(Window, toDraw,  optIndex, optCount, fLerp);
+                    optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
 
                     optimizing = false;
                 }
@@ -165,7 +174,7 @@ public class Canvas
                 }
             }
 
-            tdr.Draw(Window, fLerp, wSize);
+            tdr.Draw(args);
         }
         
 
@@ -300,8 +309,6 @@ public class Canvas
 
         Window.RequestFocus();
 
-        int checkTimer = 180;
-
         while(!IsClosed)
         {
 
@@ -309,25 +316,19 @@ public class Canvas
 
             lock(Status) if(Status == "CLOSED") break;
 
-            _Render();
-
+            if (Window.IsOpen) _Render();
+            else break;
+ 
             lock(Status) if(Status == "CLOSED") break;
 
             AllowRendering.Reset();
-
-            if(checkTimer <= 0)
-            {
-                if(!Window.IsOpen) break;
-
-                checkTimer = 180;
-            }
-
-            --checkTimer;
         }
 
         IsClosed = true;
 
         lock(Status) Status = "CLOSED";
+
+        Console.WriteLine("Ended window thread.");
     }
 
     public void Close()
@@ -350,9 +351,27 @@ public class TextureHolder
 
     bool disposed = false;
 
+    static ManualResetEvent operate = new ManualResetEvent(false);
+
+    static Object lockOperate = new Object();
+
+    static Queue<string> RegQueue = new Queue<string>();
+
+    static Queue<string> DeregQueue = new Queue<string>();
+
     private TextureHolder(ref String path)
     {
-        texture = new Texture(path);
+        try
+        {
+            texture = new Texture(path);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine($"Couldn't load texture \"{path}\", error message: {e.Message}");
+        }
+
+        Console.WriteLine($"Loaded texture \"{path}\".");
+
         refCount = 1;
     }
 
@@ -378,13 +397,25 @@ public class TextureHolder
         disposed = true;
     }
 
-    public static void RegisterTextureRef(String path)
+    public static void RegisterTextureRef(ref String path)
+    {
+        lock(RegQueue) RegQueue.Enqueue(path);
+        lock(lockOperate) operate.Set();
+    }
+
+    public static void UnregisterTextureRef(ref String path)
+    {
+        lock(DeregQueue) DeregQueue.Enqueue(path);
+        lock(lockOperate) operate.Set();
+    }
+
+    private static void RegRefInternal(String path)
     {
         TextureHolder holder;
 
         if (TextureDict.TryGetValue(path.GetHashCode(), out holder))
         {
-            holder.AddRef();
+            lock (holder) holder.AddRef();
         }
         else
         {
@@ -392,20 +423,125 @@ public class TextureHolder
         }
     }
 
-    public static void UnregisterTextureRef(String path)
+    private static void DeregRefInternal(String path)
     {
         int hash = path.GetHashCode();
 
         TextureHolder holder = TextureDict[hash];
-        if (holder.RemoveRef())
+        lock (holder)
         {
-            holder.Dispose();
+            if (holder.RemoveRef())
+            {
+                holder.Dispose();
 
-            TextureDict.Remove(hash);
+                TextureDict.Remove(hash);
+            }
         }
     }
 
-    public static Texture GetTexture(String path) => TextureDict[path.GetHashCode()].texture;
+    public static Texture GetTexture(ref String path)
+    {
+        lock (TextureDict)
+        {
+            TextureHolder holder;
+
+            if(TextureDict.TryGetValue(path.GetHashCode(), out holder))
+            {
+                lock (holder) return holder.texture;
+            }
+
+            return null;
+        }
+    }
+
+    private static void ThreadCode()
+    {
+        while (MainClass.Running)
+        {
+            operate.WaitOne();
+            if(!MainClass.Running) break;
+            lock(lockOperate) operate.Reset();
+
+            lock(TextureDict)
+            {
+                string curr = null;
+                bool hasValue = false;
+
+                RepReg:
+                hasValue = false;
+
+                lock (RegQueue)
+                {
+                    if(RegQueue.Count > 0)
+                    {
+                        curr = RegQueue.Dequeue();
+                        hasValue = true;
+                    }
+                }
+
+                if(hasValue)
+                {
+                    RegRefInternal(curr);
+
+                    goto RepReg;
+                }
+
+                RepDereg:
+
+                hasValue = false;
+
+                lock(DeregQueue)
+                {
+                    if(DeregQueue.Count > 0)
+                    {
+                        curr = DeregQueue.Dequeue();
+                        hasValue = true;
+                    }
+                }
+
+                if (hasValue)
+                {
+                    DeregRefInternal(curr);
+
+                    goto RepDereg;
+                }
+
+                lock (RegQueue) if(RegQueue.Count > 0) goto RepReg;
+                lock (DeregQueue) if(DeregQueue.Count > 0) goto RepDereg;
+            }
+        }
+
+        Console.WriteLine("Ended texture holder thread.");
+    }
+
+    private static bool threadStarted = false;
+
+    public static void StartThread()
+    {
+        if(threadStarted) return;
+
+        Thread thread = new Thread(ThreadCode);
+        thread.Start();
+
+        threadStarted = true;
+    }
+
+    public static void Close()
+    {
+        if(threadStarted)
+        {
+            operate.Set();
+        }
+    }
+}
+
+public class RenderArgs
+{
+    public RenderWindow w;
+
+    public float lerp;
+
+    public Vector2f windowSize;
 }
 
 //Old useless code for a windows forms problem.

@@ -83,10 +83,10 @@ public readonly struct Vector2
         return dx*dx + dy*dy;
     }
 
-    public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt angle)
+    public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt degrees)
     {
-        FInt sin = DeterministicMath.SinD(angle);
-        FInt cos = DeterministicMath.CosD(angle);
+        FInt sin = DeterministicMath.SinD(degrees);
+        FInt cos = DeterministicMath.CosD(degrees);
  
         // Translate point back to origin
         FInt x = toRotate.x - center.x;
@@ -170,6 +170,41 @@ public readonly struct Vector2
     public static Vector2 operator - (Vector2 v1)
     {
         return new Vector2(-v1.x, -v1.y);
+    }
+
+    public static bool operator == (Vector2 v1, Vector2 v2)
+    {
+        return v1.x == v2.x && v1.y == v2.y;
+    }
+
+    public static bool operator != (Vector2 v1, Vector2 v2)
+    {
+        return v1.x != v2.x && v1.y != v2.y;
+    }
+
+    public static bool operator == (Vector2 v1, FInt d2)
+    {
+        return v1.x == d2 && v1.y == d2;
+    }
+
+    public static bool operator != (Vector2 v1, FInt d2)
+    {
+        return v1.x != d2 && v1.y != d2;
+    }
+
+    public static explicit operator Vector2f (Vector2 v1)
+    {
+        return v1.ToVectorF();
+    }
+
+    public override bool Equals (object o)
+    {
+        return (Vector2) o == this;
+    }
+
+    public override int GetHashCode()
+    {
+        return (int)x + (int)y;
     }
 
     public PointF ToPoint ()
