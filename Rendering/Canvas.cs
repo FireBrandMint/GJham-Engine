@@ -26,6 +26,8 @@ public class Canvas
     //Wether or not this window is in the rendering process.
     public bool Updating = false;
 
+    public ManualResetEvent WaitRendering = new ManualResetEvent(true);
+
     //This buffer stores the keys that are currently pressed.
     List <int> KeysPressed = new List<int>();
 
@@ -35,14 +37,15 @@ public class Canvas
     //The actual lenght of the ToDraw array
     int ToDrawCount = 0;
 
-    bool ToDrawOrganized = false;
-
     double Lerp = 1.0;
-
-    string Status = "OPEN";
 
     Vector2u SIZE;
     string NAME;
+
+    //Rendering time it took.
+    long RenderingTs = 0;
+    double OrganizePercent = 0;
+    double DrawPercent = 0;
 
     public Canvas (uint width, uint height, string name)
     {
@@ -72,13 +75,11 @@ public class Canvas
 
     void _Render ()
     {
-        Updating = true;
+        WaitRendering.Reset();
 
-        Stopwatch performanceData = null;
-        if (FPS < 2 && !ToDrawOrganized)
-        {
-            performanceData = Stopwatch.StartNew();
-        }
+        Stopwatch performanceData = Stopwatch.StartNew();
+
+        Updating = true;
 
         Window.Clear(new Color(50, 50, 50));
 
@@ -101,10 +102,10 @@ public class Canvas
             //    Array.Copy(ToDraw, toDraw, ToDrawCount);
             //}
         }
-        if (performanceData != null) organizeTime = performanceData.ElapsedTicks - organizeTime;
+        organizeTime = performanceData.ElapsedTicks - organizeTime;
 
         long drawTime = 0;
-        if (performanceData != null) drawTime = performanceData.ElapsedTicks;
+        drawTime = performanceData.ElapsedTicks;
 
         Vector2f wSize = (Vector2f)SIZE;
 
@@ -181,7 +182,7 @@ public class Canvas
         Window.DispatchEvents();
         Window.Display();
 
-        if (performanceData != null) drawTime = performanceData.ElapsedTicks - drawTime;
+        drawTime = performanceData.ElapsedTicks - drawTime;
 
         //if(!ToDrawOrganized)
         //{
@@ -190,29 +191,36 @@ public class Canvas
         //    ToDraw = toDraw;
         //}
 
-        if (performanceData != null)
-        {
-            double ticksPassed = performanceData.ElapsedTicks;
+        long ticksPassed = performanceData.ElapsedTicks;
 
-            if (ticksPassed == 0) Console.WriteLine("Rendering took no time at all.");
+        performanceData.Stop();
+
+        RenderingTs += ticksPassed;
+
+        DrawPercent += drawTime== 0.0 ? 0.0 : (double) drawTime / ticksPassed;
+        DrawPercent/=2;
+        OrganizePercent += organizeTime == 0.0 ? 0.0 : (double) organizeTime / ticksPassed;
+        OrganizePercent/=2;
+
+        if (FPS == 0)
+        {
+
+            if (RenderingTs < 200) Console.WriteLine("Rendering took no time at all.");
             else
             {
-                double MSPassed = (ticksPassed / (double) Stopwatch.Frequency) * 1000;
-
-                long performance = (long)(1000d / MSPassed);
-
-                Console.WriteLine($"Rendering took {MSPassed}MS, it could be executed {performance} times per second!");
-                double dr = drawTime== 0.0 ? 0.0 : (double) drawTime / ticksPassed;
-                double ot = organizeTime == 0.0 ? 0.0 : (double) organizeTime / ticksPassed;
-                Console.WriteLine($"Draw time: {dr *100.0}%, OrganizeTime: {ot * 100.0}%");
-
+                Console.WriteLine($"Rendering took {String.Format("{0:0.000}", ((double)RenderingTs / (double) Stopwatch.Frequency) * 1000)}MS!");
+                Console.WriteLine($"Draw time: {DrawPercent *100.0}%, OrganizeTime: {OrganizePercent * 100.0}%");
             }
 
-            performanceData.Stop();
+            RenderingTs = 0;
+            DrawPercent = 0;
+            OrganizePercent = 0;
+
         }
         
         ++FPS;
         Updating = false;
+        WaitRendering.Set();
     }
 
     //Method that takes part in organizing the list of render objects
@@ -256,8 +264,6 @@ public class Canvas
                 //}
             }
             else ToDraw = objs;
-
-            ToDrawOrganized = false;
             ToDrawCount = count;
         }
     }
@@ -291,8 +297,6 @@ public class Canvas
 
     public void Refresh ()
     {
-        //_Render();
-
         AllowRendering.Set();
     }
 
@@ -313,20 +317,13 @@ public class Canvas
         {
 
             AllowRendering.WaitOne();
-
-            lock(Status) if(Status == "CLOSED") break;
+            AllowRendering.Reset();
 
             if (Window.IsOpen) _Render();
             else break;
- 
-            lock(Status) if(Status == "CLOSED") break;
-
-            AllowRendering.Reset();
         }
 
         IsClosed = true;
-
-        lock(Status) Status = "CLOSED";
 
         Console.WriteLine("Ended window thread.");
     }
@@ -335,8 +332,7 @@ public class Canvas
     {
         Window.Close();
         IsClosed = true;
-
-        lock (Status) Status = "CLOSED";
+        
         AllowRendering.Set();
     }
 }

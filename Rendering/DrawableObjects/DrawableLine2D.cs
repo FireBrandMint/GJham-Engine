@@ -2,7 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 
-public class DrawableLine2D : DrawableObject
+public sealed class DrawableLine2D : DrawableObject
 {
     public int z {get;set;}
 

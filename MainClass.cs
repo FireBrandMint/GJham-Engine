@@ -51,7 +51,7 @@ class MainClass
 
         //TEST
 
-        /*
+        
         Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);
 
@@ -64,7 +64,7 @@ class MainClass
             EntityCommand.Instance(lp);
 
             b = new Vector2(b.x + 1, b.y);
-        }*/
+        }
 
         /*EntityCommand.Instance(new RTestSpriteProvider
         {
@@ -152,7 +152,7 @@ class MainClass
                 Render(delta);
 
                 //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
-                if (renderDelta >=2.0) renderDelta=0.0;
+                if (renderDelta >=2.0) renderDelta-= (int) renderDelta;
                 else --renderDelta;
 
                 operationExecuted = true;
@@ -178,20 +178,16 @@ class MainClass
 
                 double sleepTime;
 
-                if (tTime < rTime)
-                {
-                    sleepTime = tTime;
-
-                    chosenTime = 't';
-                }
-                else
+                sleepTime = tTime;
+                chosenTime = 't';
+                if(rTime < sleepTime)
                 {
                     sleepTime = rTime;
 
                     chosenTime = 'r';
                 }
 
-                if (sleepTime > sTime)
+                if (sTime < sleepTime)
                 {
                     sleepTime = sTime;
 
@@ -266,6 +262,9 @@ class MainClass
     {
         //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
+
+        //If the window is still rendering something else, WAIT!
+        //if(Window.Updating) Window.WaitRendering.WaitOne();
 
         //This 'if' prevents the program from updating the array of things to render
         //multiple times between ticks, wich isn't necessary

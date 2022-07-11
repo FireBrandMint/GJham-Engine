@@ -2,7 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 
-public class DrawableSprite2D : DrawableObject
+public sealed class DrawableSprite2D : DrawableObject
 {
 
     bool SprStatic;
@@ -48,16 +48,6 @@ public class DrawableSprite2D : DrawableObject
         Result = new VertexArray(PrimitiveType.Quads, 4);
     }
 
-    public bool IsOptimizable (DrawableObject obj)
-    {
-        return false;
-    }
-
-    public int Optimize (DrawableObject[] objs, int currIndex, float lerp, RenderWindow w)
-    {
-        throw new NotImplementedException("Method not implemented!");
-    }
-
     public void Draw(RenderArgs args)
     {
         RenderStates states = new RenderStates();
@@ -96,7 +86,7 @@ public class DrawableSprite2D : DrawableObject
         {
             Texture = texture,
             Transform = Transform.Identity,
-            BlendMode = BlendMode.None
+            BlendMode = BlendMode.None,
         };
 
         VertexArray arr = new VertexArray(PrimitiveType.Quads, count * 4);
@@ -121,10 +111,15 @@ public class DrawableSprite2D : DrawableObject
     {
         TryRecalculateVertex(texSize, lerp);
 
-        arr[index] = Result[0];
-        arr[index + 1] = Result[1];
-        arr[index + 2] = Result[2];
-        arr[index + 3] = Result[3];
+        var res0 = Result[0];
+        var res1 = Result[1];
+        var res2 = Result[2];
+        var res3 = Result[3];
+
+        arr[index] = res0;
+        arr[index + 1] = res1;
+        arr[index + 2] = res2;
+        arr[index + 3] = res3;
     }
 
     public void DisposeResources()
