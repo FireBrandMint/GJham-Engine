@@ -6,7 +6,7 @@ public class RTestSpriteProvider : RenderEntity
 
     string _TexturePath = "";
 
-    FInt Rotation = (FInt)0;
+    bool TextureChanged = false;
 
     public string TexturePath
     {
@@ -29,15 +29,23 @@ public class RTestSpriteProvider : RenderEntity
                     TextureHolder.RegisterTextureRef(ref value);
                     HasTexture = true;
                 }
+
+                TextureChanged = true;
             }
 
             _TexturePath = value;
         }
     }
 
+    public bool IsStatic = true;
+
     Vector2 LastPosition;
 
     public Vector2 Position = new Vector2();
+
+    public FInt Rotation = (FInt)45;
+
+    public bool Rotate = true;
 
     bool inTree = false;
 
@@ -60,6 +68,17 @@ public class RTestSpriteProvider : RenderEntity
         inTree = true;
     }
 
+    public override void Tick()
+    {
+        base.Tick();
+
+        if(!Rotate) return;
+
+        Rotation += 1;
+
+        if(Rotation > 360) Rotation -= 360;
+    }
+
     DrawableSprite2D drawable = null;
     bool dInitialized = false;
 
@@ -72,13 +91,15 @@ public class RTestSpriteProvider : RenderEntity
             drawable = new DrawableSprite2D(
                 TexturePath, LastPosition, Position, 
                 new Vector2u[]{TextureAreaTopLeft, TextureAreaBottomRight},
-                BoundriesSet, Rotation);
+                BoundriesSet, Rotation, IsStatic);
             
             dInitialized = true;
         }
         else
         {
-            //TODO: reset object
+            if(TextureChanged) drawable.ChangeTexturePath(_TexturePath);
+
+            drawable.SetRotation(Rotation);
         }
 
         return drawable;
@@ -86,8 +107,19 @@ public class RTestSpriteProvider : RenderEntity
 
     public override void LeaveTree()
     {
-        TexturePath = "";
+        TexturePath = null;
         
         inTree = false;
+
+        if(drawable != null)
+        {
+            drawable.DisposeResources();
+            drawable = null;
+        }
+    }
+
+    protected override bool Tickable()
+    {
+        return true;
     }
 }

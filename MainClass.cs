@@ -51,6 +51,7 @@ class MainClass
 
         //TEST
 
+        /*
         Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);
 
@@ -63,14 +64,29 @@ class MainClass
             EntityCommand.Instance(lp);
 
             b = new Vector2(b.x + 1, b.y);
-        }
+        }*/
 
-        EntityCommand.Instance(new RTestSpriteProvider
+        /*EntityCommand.Instance(new RTestSpriteProvider
         {
             Position = new Vector2(40, 40),
             BoundriesSet = false,
             TexturePath = @".\assets\Generic.png"
-        });
+        });*/
+
+        for(int y = 0; y<= 10; ++y)
+        {
+            for(int x = 0; x <= 10; ++x)
+            {
+                EntityCommand.Instance(new RTestSpriteProvider
+                {
+                    Position = new Vector2(51 * x, y*51),
+                    BoundriesSet = false,
+                    TexturePath = @".\assets\Generic.png",
+                    Rotation = (FInt)(x *12),
+                    Rotate = true,
+                });
+            }
+        }
 
         //TEST AREA END
 

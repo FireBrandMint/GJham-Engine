@@ -4,11 +4,16 @@ using System;
 
 public class DrawableSprite2D : DrawableObject
 {
+
+    bool SprStatic;
+
     bool Same = false;
 
     bool TextureUpdated = true;
 
-    string TexturePath;
+    public string TexturePath;
+
+    public int TexturePathHash;
 
     Vector2 LastPos, CurrPos;
 
@@ -24,10 +29,10 @@ public class DrawableSprite2D : DrawableObject
 
     public int z {get;set;}
 
-    public DrawableSprite2D (string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees)
+    public DrawableSprite2D (string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
     {
+        TexturePathHash = pathToTexture.GetHashCode();
         TexturePath = pathToTexture;
-        Console.WriteLine($"TexturePath is {TexturePath}");
         
         LastPos = lastPos;
         CurrPos = currPos;
@@ -37,6 +42,10 @@ public class DrawableSprite2D : DrawableObject
         BSet = bounderiesSet;
 
         Rotation = rotationDegrees;
+
+        SprStatic = isStatic;
+
+        Result = new VertexArray(PrimitiveType.Quads, 4);
     }
 
     public bool IsOptimizable (DrawableObject obj)
@@ -53,14 +62,7 @@ public class DrawableSprite2D : DrawableObject
     {
         RenderStates states = new RenderStates();
 
-        if(TextureUpdated)
-        {
-            CurrTexture = TextureHolder.GetTexture(ref TexturePath);
-
-            TextureUpdated = false;
-        }
-
-        states.Texture = CurrTexture;
+        states.Texture = TryCashTexture();
 
         states.Transform = Transform.Identity;
 
@@ -78,12 +80,58 @@ public class DrawableSprite2D : DrawableObject
 
     public bool Optimizable (DrawableObject obj)
     {
-        return false;
+        return obj is DrawableSprite2D spr && TexturePathHash == spr.TexturePathHash && TexturePath == spr.TexturePath;
     }
 
     public void DrawOptimizables(RenderArgs args, DrawableObject[] dObjects, uint index, uint count)
     {
-        throw new MissingMethodException();
+        var texture = TryCashTexture();
+
+        if(texture == null) return;
+
+        float lerp = args.lerp;
+        Vector2u texSize = texture.Size;
+
+        RenderStates states = new RenderStates()
+        {
+            Texture = texture,
+            Transform = Transform.Identity,
+            BlendMode = BlendMode.None
+        };
+
+        VertexArray arr = new VertexArray(PrimitiveType.Quads, count * 4);
+
+        uint vertIndex = 0;
+
+        for(uint i = index; i < index + count; ++i)
+        {
+            DrawableSprite2D curr = (DrawableSprite2D)dObjects[i];
+
+            curr.FillBatch(arr, vertIndex, texSize, lerp);
+
+            vertIndex+=4;
+        }
+
+        args.w.Draw(arr, states);
+
+        arr.Dispose();
+    }
+
+    public void FillBatch(VertexArray arr, uint index, Vector2u texSize, float lerp)
+    {
+        TryRecalculateVertex(texSize, lerp);
+
+        arr[index] = Result[0];
+        arr[index + 1] = Result[1];
+        arr[index + 2] = Result[2];
+        arr[index + 3] = Result[3];
+    }
+
+    public void DisposeResources()
+    {
+        CurrTexture = null;
+
+        Result.Dispose();
     }
 
     private void ResolveNoBoundries(Vector2u texSize)
@@ -99,13 +147,13 @@ public class DrawableSprite2D : DrawableObject
 
     public void TryRecalculateVertex(Vector2u texSize, float lerp)
     {
-        if(Same) return;
+        if(SprStatic && Same) return;
 
         Same = true;
-       
-        VertexArray quads = new VertexArray(PrimitiveType.Quads, 4);
 
         ResolveNoBoundries(texSize);
+
+        if(SprStatic) lerp = 1f;
 
         Vector2 halves = new Vector2((FInt) (Bounderies[1].X - Bounderies[0].X) / 2, (FInt) (Bounderies[1].Y - Bounderies[0].Y) / 2);
 
@@ -117,17 +165,25 @@ public class DrawableSprite2D : DrawableObject
         FInt angle = (FInt)Rotation;
 
         //Top left
-        quads[0] = new Vertex((Vector2f)Vector2.RotateVec(pos - halves, pos, angle), Color.White, texTopLef);
+        Result[0] = new Vertex(Vector2.RotateVec(pos - halves, pos, angle).ToVectorF(), texTopLef);
         //Bottom left
-        quads[1] = new Vertex((Vector2f)Vector2.RotateVec(new Vector2(pos.x - halves.x, pos.y + halves.y), pos, angle), new Vector2f(texTopLef.X, texBotRig.Y));
+        Result[1] = new Vertex(Vector2.RotateVec(new Vector2(pos.x - halves.x, pos.y + halves.y), pos, angle).ToVectorF(), new Vector2f(texTopLef.X, texBotRig.Y));
         //Bottom right
-        quads[2] = new Vertex((Vector2f)Vector2.RotateVec(pos + halves, pos, angle), texBotRig);
+        Result[2] = new Vertex(Vector2.RotateVec(pos + halves, pos, angle).ToVectorF(), texBotRig);
         //Top right
-        quads[3] = new Vertex((Vector2f)Vector2.RotateVec(new Vector2(pos.x + halves.x, pos.y - halves.y), pos, angle), new Vector2f(texBotRig.X, texTopLef.Y));
+        Result[3] = new Vertex(Vector2.RotateVec(new Vector2(pos.x + halves.x, pos.y - halves.y), pos, angle).ToVectorF(), new Vector2f(texBotRig.X, texTopLef.Y));
+    }
 
-        if(Result != null) Result.Dispose();
+    public Texture TryCashTexture()
+    {
+        if(TextureUpdated)
+        {
+            CurrTexture = TextureHolder.GetTexture(ref TexturePath);
 
-        Result = quads;
+            TextureUpdated = false;
+        }
+
+        return CurrTexture;
     }
 
     public void SetPosValues(Vector2 current, Vector2 last)
@@ -138,14 +194,19 @@ public class DrawableSprite2D : DrawableObject
         LastPos = last;
     }
 
+    public void SetRotation(FInt rot)
+    {
+        Same = Same & rot == Rotation;
+
+        Rotation = rot;
+    }
+
     public void ChangeTexturePath(string newPath)
     {
-        if(!TexturePath.Equals(newPath))
-        {
-            TextureUpdated = true;
+        TextureUpdated = true;
 
-            TexturePath = newPath;
-        }
+        TexturePathHash = newPath.GetHashCode();
+        TexturePath = newPath;
     }
 
     public void ChangeBoundries(Vector2u texTopLef, Vector2u texBotRig)

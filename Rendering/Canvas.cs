@@ -80,7 +80,7 @@ public class Canvas
             performanceData = Stopwatch.StartNew();
         }
 
-        Window.Clear(Color.Black);
+        Window.Clear(new Color(50, 50, 50));
 
         //Draws next frame
         DrawableObject[] toDraw;
