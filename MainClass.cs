@@ -144,18 +144,27 @@ class MainClass
                 operationExecuted = true;
             }
 
+            if(Engine.FPSLimiter)
+            {
+                if(renderDelta >= 1.0)
+                {
+                    if(Window.IsClosed) break;
 
-            if (renderDelta >= 1.0)
+                    Render(delta);
+
+                    //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
+                    if (renderDelta >=2.0) renderDelta-= (int) renderDelta;
+                    else --renderDelta;
+
+                    operationExecuted = true;
+                }
+            }
+            else
             {
                 if(Window.IsClosed) break;
 
+                renderDelta = 0.0;
                 Render(delta);
-
-                //If there's a slowdown, the pending 'Render' calls are set to 0 to not overwelm the program
-                if (renderDelta >=2.0) renderDelta-= (int) renderDelta;
-                else --renderDelta;
-
-                operationExecuted = true;
             }
 
             if (secondTickCount >= swFrequency)
@@ -180,7 +189,7 @@ class MainClass
 
                 sleepTime = tTime;
                 chosenTime = 't';
-                if(rTime < sleepTime)
+                if(Engine.FPSLimiter && rTime < sleepTime)
                 {
                     sleepTime = rTime;
 
@@ -194,11 +203,11 @@ class MainClass
                     chosenTime = 's';
                 }
 
-                int sleepMsec = (int)(sleepTime * 1000.0);
+                int sleepMsec = (int)(sleepTime * 1000.0); 
 
                 if (sleepMsec > 0)
                 {
-                    if(AntiConsoleSpam.antiConsoleSpam.CanWriteLine(23, 200))
+                    if(AntiConsoleSpam.antiConsoleSpam.CanWriteLine(23, 200 * (Engine.FPSLimiter ? 1 : 10)))
                     {
                         string chosenMsg;
 
@@ -208,6 +217,8 @@ class MainClass
 
                         Console.WriteLine($"Slept for {sleepMsec} miliseconds {chosenMsg}!");
                     }
+
+                    if(!Engine.FPSLimiter) sleepMsec = 1;
 
                     Thread.Sleep(sleepMsec);
                 }

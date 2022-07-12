@@ -25,6 +25,11 @@ public static class Engine
     ///</summary>
     public static readonly double MaxFPS = 180;
 
+    ///<summary>
+    ///Is the FPS limited to the 'MaxFPS' field on this same class.
+    ///</summary>
+    public static bool FPSLimiter = true;
+
     //This is the amount of ticks that are about to be executed very soon to conpensate for a slowdown
     public static int TPSSlowdown = 0;
 }
