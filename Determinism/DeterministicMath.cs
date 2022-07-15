@@ -79,44 +79,42 @@ public class DeterministicMath
     ///</summary>
     public static FInt SinD(FInt degrees)
     {
+        //Factor that represents
+        //the divide in value of sin degree table.
         FInt factor = FInt.Create(1) / 4;
 
         FInt maxAngle = FInt.Create(360);
 
         bool isNegative = false;
 
+        //If it's negative, make it calculable.
         if (degrees < 0)
         {
             isNegative = true;
             degrees *= -1;
         }
 
-        if (degrees > maxAngle)
-        {
-            degrees = degrees - maxAngle * (int)(degrees/maxAngle);
-        }
-        //if it's negative invert it, for example, -45 becomes 315
+        //If the angle is higher than 360, correct it. For example, 366 becomes 6.
+        if (degrees > maxAngle) degrees = degrees - maxAngle * (int)(degrees/maxAngle);
+
+        //if it's negative invert it back to positive, for example, -45 becomes 315
         if (isNegative) degrees = maxAngle - degrees;
+            //Calculate the rough position of the value you're looking for.
+        int position = (int)(degrees.RawValue/ factor.RawValue);
+        long impreciseDegreesRaw = position * factor.RawValue;
 
-        if(!(degrees== 0 || degrees== (FInt) 360))
+        //If the values isn't in the table correct it somehow, i don't remember how i did this.
+        if (degrees.RawValue > impreciseDegreesRaw)
         {
-            int position = (int)(degrees.RawValue/ factor.RawValue);
+            FInt t = FInt.Create(degrees.RawValue - impreciseDegreesRaw) / (int)factor.RawValue;
 
-            long impreciseDegreesRaw = position * factor.RawValue;
+            FInt valu1 = FInt.Create(SIN_DEGREE_TABLE_4[position], false);
+            FInt valu2 = FInt.Create(SIN_DEGREE_TABLE_4[position + 1], false);
 
-            if (degrees.RawValue > impreciseDegreesRaw)
-            {
-                FInt t = FInt.Create(degrees.RawValue - impreciseDegreesRaw) / (int)factor.RawValue;
-
-                FInt valu1 = FInt.Create(SIN_DEGREE_TABLE_4[position], false);
-                FInt valu2 = FInt.Create(SIN_DEGREE_TABLE_4[position + 1], false);
-
-                return Lerp(valu1, valu2, t);
-            }
-
-            return FInt.Create(SIN_DEGREE_TABLE_4[position], false);
+            return Lerp(valu1, valu2, t);
         }
-        else return (FInt)0;
+
+        return FInt.Create(SIN_DEGREE_TABLE_4[position], false);
     }
 
     ///<summary>

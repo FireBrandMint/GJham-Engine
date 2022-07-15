@@ -10,6 +10,9 @@ using System.Diagnostics;
 
 delegate Entity ETypeCreate (ByteReader reader, int propertyCount);
 
+///<summary>
+///This is a list of entity types so the program
+///can find wich entity is wich.
 public static class EntityTypeList
 {
     //https://stackoverflow.com/questions/752/how-to-create-a-new-object-instance-from-a-type
@@ -23,7 +26,7 @@ public static class EntityTypeList
     {
         Stopwatch watch = Stopwatch.StartNew();
 
-        string currFile = Directory.GetCurrentDirectory() + @"\Misc\EntityTypeList.cs";
+        string currFile = Directory.GetCurrentDirectory() + @"\Prefab system\EntityTypeList.cs";
 
         string fileText = File.ReadAllText(currFile);
 

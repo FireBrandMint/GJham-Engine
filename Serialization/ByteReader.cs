@@ -1,6 +1,10 @@
 
 using System;
 using System.Text;
+
+///<summary>
+///Byte array reader.
+///</summary>
 public class ByteReader : IDisposable
 {
     byte[] Data;

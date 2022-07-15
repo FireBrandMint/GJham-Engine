@@ -15,7 +15,7 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
             IDObjectDictG value = InternalDict[key.GetHashCode()];
 
-            if(key.Equals(value.Key))
+            if(KeyComparer.Equals(key, value.Key))
             {
                 return value.Value;
             }
@@ -27,7 +27,7 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
                     value = InternalDict[hash];
 
-                    if (key.Equals(value.Key)) return value.Value;
+                    if (KeyComparer.Equals(key, value.Key)) return value.Value;
                 }
             }
 
@@ -39,7 +39,7 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
             IDObjectDictG val = InternalDict[key.GetHashCode()];
 
-            if(key.Equals(val.Key))
+            if(KeyComparer.Equals(key, val.Key))
             {
                 InternalDict[hash] = new IDObjectDictG(val.Key, value);
             }
@@ -51,7 +51,7 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
                     val = InternalDict[hash];
 
-                    if (key.Equals(val.Key)) InternalDict[hash] = new IDObjectDictG(key, value);
+                    if (KeyComparer.Equals(key, val.Key)) InternalDict[hash] = new IDObjectDictG(key, value);
                 }
             }
         }
@@ -64,6 +64,13 @@ public class GDictionary<K, V> : IDictionary<K, V>
     public int Count => InternalDict.Count;
 
     public bool IsReadOnly => false;
+
+    private EqualityComparer<K> KeyComparer;
+
+    public GDictionary()
+    {
+        KeyComparer = EqualityComparer<K>.Default;
+    }
 
     public void Add(K key, V value)
     {
@@ -118,7 +125,26 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
     public bool Contains(KeyValuePair<K, V> item)
     {
-        throw new NotImplementedException();
+        K key = item.Key;
+
+        int hash = key.GetHashCode();
+
+        IDObjectDictG val;
+
+        if(InternalDict.TryGetValue(hash, out val))
+        {
+            if (KeyComparer.Equals(key, val.Key)) return true;
+
+            ++hash;
+            while(InternalDict.TryGetValue(hash, out val))
+            {
+                if (KeyComparer.Equals(key, val.Key)) return true;
+
+                ++hash;
+            }
+        }
+
+        return false;
     }
 
     public bool ContainsKey(K key)
@@ -129,12 +155,12 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
         if(InternalDict.TryGetValue(hash, out val))
         {
-            if (key.Equals(val.Key)) return true;
+            if (KeyComparer.Equals(key, val.Key)) return true;
 
             ++hash;
             while(InternalDict.TryGetValue(hash, out val))
             {
-                if (key.Equals(val.Key)) return true;
+                if (KeyComparer.Equals(key, val.Key)) return true;
 
                 ++hash;
             }
@@ -155,17 +181,118 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
     public bool Remove(K key)
     {
-        throw new NotImplementedException();
+        int hash = key.GetHashCode();
+
+        IDObjectDictG val;
+
+        while(InternalDict.TryGetValue(hash, out val))
+        {
+            if(KeyComparer.Equals(key, val.Key))
+            {
+                InternalDict.Remove(hash);
+                ++hash;
+
+                if(!InternalDict.ContainsKey(hash)) goto end;
+
+                int lastHash = hash-1;
+
+                while (InternalDict.TryGetValue(hash, out val))
+                {
+                    if(!KeyComparer.Equals(key, val.Key)) continue;
+
+                    InternalDict[lastHash] = InternalDict[hash];
+
+                    lastHash = hash;
+
+                    ++hash;
+                }
+
+                InternalDict.Remove(lastHash);
+
+                end:
+
+                return true;
+            }
+
+            ++hash;
+        }
+
+        return false;
     }
 
     public bool Remove(KeyValuePair<K, V> item)
     {
-        throw new NotImplementedException();
+        K key = item.Key;
+
+        int hash = key.GetHashCode();
+
+        IDObjectDictG val;
+
+        while(InternalDict.TryGetValue(hash, out val))
+        {
+            if(KeyComparer.Equals(key, val.Key))
+            {
+                InternalDict.Remove(hash);
+                ++hash;
+
+                if(!InternalDict.ContainsKey(hash)) goto end;
+
+                int lastHash = hash-1;
+
+                while (InternalDict.TryGetValue(hash, out val))
+                {
+                    if(!KeyComparer.Equals(key, val.Key)) continue;
+
+                    InternalDict[lastHash] = InternalDict[hash];
+
+                    lastHash = hash;
+
+                    ++hash;
+                }
+
+                InternalDict.Remove(lastHash);
+
+                end:
+
+                return true;
+            }
+
+            ++hash;
+        }
+
+        return false;
     }
 
     public bool TryGetValue(K key, [MaybeNullWhen(false)] out V value)
     {
-        throw new NotImplementedException();
+        int hash = key.GetHashCode();
+
+        IDObjectDictG val;
+
+        if(InternalDict.TryGetValue(hash, out val))
+        {
+            if (KeyComparer.Equals(key, val.Key))
+            {
+                value = val.Value;
+                return true;
+            }
+
+            ++hash;
+            while(InternalDict.TryGetValue(hash, out val))
+            {
+                if (KeyComparer.Equals(key, val.Key))
+                {
+                    value = val.Value;
+                    return true;
+                }
+
+                ++hash;
+            }
+        }
+            
+        value = default(V);
+        return false;
+        
     }
 
     IEnumerator IEnumerable.GetEnumerator()

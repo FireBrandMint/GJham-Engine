@@ -142,7 +142,7 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void TryRecalculateVertex(Vector2u texSize, float lerp)
     {
-        if(SprStatic && Same) return;
+        if(Same) return;
 
         Same = true;
 
@@ -152,7 +152,10 @@ public sealed class DrawableSprite2D : DrawableObject
 
         Vector2 halves = new Vector2((FInt) (Bounderies[1].X - Bounderies[0].X) / 2, (FInt) (Bounderies[1].Y - Bounderies[0].Y) / 2);
 
-        Vector2 pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp);
+        Vector2 pos;
+
+        if(SprStatic) pos = CurrPos;
+        else pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp);
 
         Vector2f texTopLef = (Vector2f)Bounderies[0];
         Vector2f texBotRig = (Vector2f)Bounderies[1];

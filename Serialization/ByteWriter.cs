@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 
+///<summary>
+///Buffer to write basic values into a byte array.
+///</summary>
 public class ByteWriter: IDisposable
 {
     List<byte> Data;
@@ -16,6 +19,11 @@ public class ByteWriter: IDisposable
     public ByteWriter(byte[] bytes)
     {
         Data = new List<byte> (bytes);
+    }
+
+    public ByteWriter(int capacity)
+    {
+        Data = new List<byte>(capacity);
     }
 
     public void WriteInt32 (Int32 value)

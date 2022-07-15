@@ -49,8 +49,10 @@ class MainClass
         Entities = new List<Entity>();
         DrawableEntities = new List<RenderEntity>();
 
-        //TEST
+        #region TEST AREA
 
+        // Sin of 3.31982421875
+        Console.WriteLine(DeterministicMath.SinD(FInt.Create(13598, false)).ToString());
         
         Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);
@@ -88,8 +90,13 @@ class MainClass
             }
         }
 
-        //TEST AREA END
+        #endregion TEST AREA
 
+
+        //This starts the Tick, Render and OnSecond loop.
+        //How often they are executed depends on certain
+        //values found on the Engine class...
+        //Except OnSecond wich happens every second.
         Loop();
     }
 
@@ -137,7 +144,6 @@ class MainClass
                 //Sets 'TPSSlowdown' to the amount of ticks that will ocurr in this moment to compensate for a slowdown
                 //if it's 0, it means there's no slowdown and everything is fine.
                 Engine.TPSSlowdown = (int) delta;
-                GetInputs();
                 Tick();
                 ++TickCount;
 
@@ -227,27 +233,35 @@ class MainClass
         
         stopwatch.Stop();
 
-        Running = false;
-
-        Window.Close();
-
-        TextureHolder.Close();
-
-        Console.WriteLine("Ended main thread.");
+        OnEndProcess();
     }
 
+    ///<summary>
+    ///Gets inputs as int, can be cast back to SFML.Window.Keyboard.Key
+    ///to further clarify what inputs these are, it is not cast now
+    ///because i will probably make a dictionary on a input class later
+    ///on.
+    ///</summary>
     static void GetInputs()
     {
         CurrentKeys = new List<int>(Window.GetKeys());
     }
 
+    ///<summary>
+    ///Processes gets the inputs pressend and ticks.
+    ///</summary>
     static void Tick ()
     {
+        GetInputs();
 
         if(CurrentKeys.Count!=0)
         {
-            Console.Write("Controles sendo pressionados: ");
-            foreach(int i in CurrentKeys) Console.Write($"{i} ");
+            Console.Write("Controls being pressed: ");
+            foreach(int i in CurrentKeys)
+            {
+                var key = (SFML.Window.Keyboard.Key)i;
+                Console.Write(key.ToString());
+            }
             Console.WriteLine();
         }
 
@@ -259,6 +273,9 @@ class MainClass
         ProcessEntities();
     }
 
+    ///<summary>
+    ///Ticks entities, what did you expect?
+    ///</summary>
     public static void ProcessEntities ()
     {
         foreach (Entity e in Entities)
@@ -267,6 +284,9 @@ class MainClass
         }
     }
 
+    //Small value for a necessary processing.
+    //But you never need to know what it does,
+    //so don't even ask.
     private static long LastTickCount = -1;
 
     public static void Render(double lerp)
@@ -278,7 +298,8 @@ class MainClass
         //if(Window.Updating) Window.WaitRendering.WaitOne();
 
         //This 'if' prevents the program from updating the array of things to render
-        //multiple times between ticks, wich isn't necessary
+        //multiple times between ticks, wich isn't necessary and would be too
+        //costly.
         if (LastTickCount != TickCount)
         {
             //Creates buffer for rendering
@@ -321,6 +342,10 @@ class MainClass
 
     public static TickMeasurer measurer = new TickMeasurer();
 
+    ///<summary>
+    ///Runs every second mostly ro record performance.
+    ///Not that important.
+    ///</summary>
     public static void OnSecond ()
     {
         measurer.Update();
@@ -336,6 +361,38 @@ class MainClass
         Console.WriteLine($"FPS: {FPS}");
     }
 
+    ///<summary>
+    ///Executes when process ends.
+    ///</summary>
+    static void OnEndProcess()
+    {
+        Running = false;
+
+        //Closes window and it's rendering thread. (if it isn't already closed)
+        Window.Close();
+
+        //Closes texture loader thread.
+        TextureHolder.Close();
+
+        //Finalizes all entities.
+        for(int i = Entities.Count-1; i<=0; --i)
+        {
+            RemoveEntity(Entities[i]);
+        }
+        for(int i = DrawableEntities.Count-1; i<=0; --i)
+        {
+            RemoveEntity(DrawableEntities[i]);
+        }
+
+        //Nice message to finalize :)
+        Console.WriteLine("Ended main thread.");
+    }
+
+    ///<summary>
+    ///Adds entity to processing, duh.
+    ///Same method can be executed from the EntityCommand class at Misc/EntityCommand,
+    ///it's name there is 'Instance'.
+    ///</summary>
     public static void AddEntity (Entity entity)
     {
         if (entity.IsTickable) Entities.Add(entity);
@@ -344,6 +401,11 @@ class MainClass
         entity.EnterTree();
     }
 
+    ///<summary>
+    ///Removes entity from processing, duh duh.
+    ///Same method can be executed from the EntityCommand class at Misc/EntityCommand,
+    ///it's name there is 'Destroy'.
+    ///</summary>
     public static void RemoveEntity (Entity entity)
     {
         if (entity.IsDestroyed) return;
