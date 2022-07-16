@@ -88,7 +88,7 @@ public class RTestSpriteProvider : RenderEntity
 
         if(!dInitialized)
         {
-            drawable = new DrawableSprite2D(
+            drawable = new DrawableSprite2D( ZValue,
                 TexturePath, LastPosition, Position, 
                 new Vector2u[]{TextureAreaTopLeft, TextureAreaBottomRight},
                 BoundriesSet, Rotation, IsStatic);
@@ -97,6 +97,8 @@ public class RTestSpriteProvider : RenderEntity
         }
         else
         {
+            drawable.z = ZValue;
+
             if(TextureChanged) drawable.ChangeTexturePath(_TexturePath);
 
             drawable.SetRotation(Rotation);

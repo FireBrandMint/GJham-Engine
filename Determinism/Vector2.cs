@@ -2,6 +2,9 @@ using System.Drawing;
 using SFML.Graphics;
 using SFML.System;
 
+///<summary>
+///Deterministic Vector2D.
+///</summary>
 public readonly struct Vector2
 {
     public static readonly Vector2 ZERO;

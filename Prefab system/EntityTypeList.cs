@@ -11,8 +11,13 @@ using System.Diagnostics;
 delegate Entity ETypeCreate (ByteReader reader, int propertyCount);
 
 ///<summary>
-///This is a list of entity types so the program
+///This is a class with a list of entity types so the program
 ///can find wich entity is wich.
+///It does this by running the program with the doListing
+///initialization argument wich rewrites the code in this
+///and closes the program. Then it relaunches again with
+///a second request to initialize the program after the first one
+///to compile the new code.
 public static class EntityTypeList
 {
     //https://stackoverflow.com/questions/752/how-to-create-a-new-object-instance-from-a-type
@@ -42,7 +47,7 @@ public static class EntityTypeList
 
         string entityName = typeof(Entity).Name;
 
-        string list = "   private static Dictionary<String, ETypeCreate> EntityInstancers = new Dictionary<string, ETypeCreate>()\n    {";
+        string list = "   private static GDictionary<String, ETypeCreate> EntityInstancers = new GDictionary<string, ETypeCreate>()\n    {";
 
         for (int i = 0; i < array.Length; ++i)
         {
@@ -116,6 +121,11 @@ public static class EntityTypeList
         watch.Stop();
     }
 
+    ///<summary>
+    ///Acceped types of fields that prefab can modify.
+    ///Method to extract them by reading bytes from a buffer
+    ///must be specified as value.
+    ///</summary>
     private static Dictionary<Type, String> AcceptedTypesOut  = new Dictionary<Type, string>()
     {
         {typeof(Int32), "reader.ReadInt32()"},
@@ -164,6 +174,7 @@ public static class EntityTypeList
         }
     }
 
+    //Below line marks where the program rewrites the code, DO NOT modify it even a little bit.
     //Activation methods!
     private static Entity InstanceRenderEntity (ByteReader reader, int propertyCount)
     {
@@ -184,7 +195,7 @@ public static class EntityTypeList
         return entity;
     }
 
-    private static Dictionary<String, ETypeCreate> EntityInstancers = new Dictionary<string, ETypeCreate>()
+    private static GDictionary<String, ETypeCreate> EntityInstancers = new GDictionary<string, ETypeCreate>()
     {
         {"RenderEntity", InstanceRenderEntity},
         {"DTestLineProvider", InstanceDTestLineProvider},

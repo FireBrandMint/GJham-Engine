@@ -78,10 +78,18 @@ public class GDictionary<K, V> : IDictionary<K, V>
 
         if(InternalDict.ContainsKey(hash))
         {
+            #if DEBUG
+
+            if (KeyComparer.Equals(key ,InternalDict[hash].Key))
+            throw new Exception($"Not possible to add more than one value with the same key. \"{key.ToString()}\" already exists.");
+
+            #endif
             hash+=1;
 
             while (InternalDict.ContainsKey(hash))
             {
+                if (KeyComparer.Equals(key ,InternalDict[hash].Key))
+                throw new Exception($"Not possible to add more than one value with the same key. \"{key.ToString()}\" already exists.");
                 ++hash;
             }
 

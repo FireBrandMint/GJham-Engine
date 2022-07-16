@@ -29,8 +29,10 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public int z {get;set;}
 
-    public DrawableSprite2D (string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
+    public DrawableSprite2D (int _z, string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
     {
+        z = _z;
+
         TexturePathHash = pathToTexture.GetHashCode();
         TexturePath = pathToTexture;
         

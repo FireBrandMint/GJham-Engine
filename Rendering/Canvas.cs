@@ -1,9 +1,7 @@
 using System;
-//using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-//using System.Reflection;
 using System.Linq;
 using SFML.Window;
 using System.Threading;
