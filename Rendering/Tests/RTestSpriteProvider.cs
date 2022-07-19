@@ -99,6 +99,14 @@ public class RTestSpriteProvider : RenderEntity
             player = true;
         } else player = false;
 
+
+        if(!player)
+        {
+            poly.Rotation = (FInt) 45;
+
+            Rotation = (FInt)45;
+        }
+
         inTree = true;
     }
 
@@ -162,7 +170,7 @@ public class RTestSpriteProvider : RenderEntity
                 {
                     double time = ((double) stopwatch.ElapsedTicks / Stopwatch.Frequency) * 1000;
 
-                    Console.WriteLine($"PLAYER INTERSECTS, TOOK {time}MS");
+                    Console.WriteLine($"PLAYER INTERSECTS {result.Separation}, TOOK {time}MS");
                     
                     FInt factor = FInt.Create(1) + FInt.Create(1) / 1000;
 

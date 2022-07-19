@@ -51,9 +51,9 @@ public class ConvexPolygon
         UpdateRange();
 
         //solves position
-        for(int i = 0; i< OriginalModel.Length; ++i)
+        for(int i = 0; i< ResultModel.Length; ++i)
         {
-            ResultModel[i] = OriginalModel[i] + Position;
+            ResultModel[i] = ResultModel[i] + Position;
         }
 
         Updated = false;
@@ -303,7 +303,7 @@ public class ConvexPolygon
                 
                 FInt normaly = polygon[i2].x - polygon[i1].x;
 
-                Vector2 normal = new Vector2(normalx, -normaly).FastNormalized();
+                Vector2 normal = new Vector2(normalx, -normaly).Normalized();
                 
                 FInt minA = FInt.MaxValue;
                 FInt maxA = FInt.MinValue;
@@ -331,7 +331,7 @@ public class ConvexPolygon
 
                 if(maxA < minB || maxB < minA) goto doesntIntersect;
 
-                FInt distMin = maxB - minA;
+                FInt distMin = DeterministicMath.Min( maxB, maxA ) - DeterministicMath.Max(minA, minB);
                 if (polyi == 0) distMin *= -1;
 
                 FInt distMinAbs = DeterministicMath.Abs(distMin);
