@@ -75,16 +75,16 @@ class MainClass
             TexturePath = @".\assets\Generic.png"
         });*/
 
-        for(int y = 0; y<= 10; ++y)
+        for(int y = 3; y< 4; ++y)
         {
-            for(int x = 0; x <= 10; ++x)
+            for(int x = 3; x < 5; ++x)
             {
                 EntityCommand.Instance(new RTestSpriteProvider
                 {
                     Position = new Vector2(51 * x, y*51),
                     BoundriesSet = false,
                     TexturePath = @".\assets\Generic.png",
-                    Rotation = (FInt)(x *12),
+                    //Rotation = (FInt)(x *12),
                     Rotate = true,
                 });
             }
@@ -256,13 +256,14 @@ class MainClass
 
         if(CurrentKeys.Count!=0)
         {
-            Console.Write("Controls being pressed: ");
+            /*Console.Write("Controls being pressed: ");
             foreach(int i in CurrentKeys)
             {
                 var key = (SFML.Window.Keyboard.Key)i;
                 Console.Write(key.ToString());
             }
             Console.WriteLine();
+            */
         }
 
         if(CurrentKeys.Contains((int)SFML.Window.Keyboard.Key.Escape))

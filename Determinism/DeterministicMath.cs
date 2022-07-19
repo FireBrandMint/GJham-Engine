@@ -244,4 +244,14 @@ public class DeterministicMath
         return value <= min && value >= max;
     }
 
+    public static FInt Min(FInt a1, FInt a2)
+    {
+        return a1 < a2 ? a1 : a2;
+    }
+
+    public static FInt Max(FInt a1, FInt a2)
+    {
+        return a1 > a2 ? a1 : a2;
+    }
+
 }

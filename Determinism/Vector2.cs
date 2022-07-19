@@ -34,6 +34,18 @@ public readonly struct Vector2
         y = (FInt)y_;
     }
 
+    public Vector2(int x_, FInt y_)
+    {
+        x=(FInt)x_;
+        y=y_;
+    }
+
+    public Vector2(FInt x_, int y_)
+    {
+        x=x_;
+        y= (FInt)y_;
+    }
+
     public Vector2 Create()
     {
         return new Vector2(FInt.Create(0), FInt.Create(0));
@@ -122,9 +134,25 @@ public readonly struct Vector2
         }
     }
 
-    public static FInt DotProduct (Vector2 pt1, Vector2 pt2)
+    ///<summary>
+    ///Fast length, only used for physics calculations DO NOT use it unless
+    ///it is specifically to determine velocity with 'FastNormalized'.
+    ///</summary>
+    public FInt FastLength()
     {
-        return (pt1.x * pt2.x) + (pt1.y * pt2.y);
+        return DeterministicMath.Abs(x) + DeterministicMath.Abs(y);
+    }
+
+    public Vector2 FastNormalized()
+    {
+        FInt length = FastLength();
+
+        return new Vector2(x/length, y/length);
+    }
+
+    public static FInt DotProduct (Vector2 normal, Vector2 pt2)
+    {
+        return (normal.x * pt2.x) + (normal.y * pt2.y);
     }
 
     public override string ToString()
