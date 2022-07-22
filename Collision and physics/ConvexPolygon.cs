@@ -205,7 +205,7 @@ public class ConvexPolygon
                 
                 FInt normaly = polygon[i2].x - polygon[i1].x;
 
-                Vector2 normal = new Vector2(normalx, -normaly).Normalized();
+                Vector2 normal = new Vector2(normalx, normaly).Normalized();
                 
                 FInt minA = FInt.MaxValue;
                 FInt maxA = FInt.MinValue;
@@ -233,22 +233,23 @@ public class ConvexPolygon
 
                 if(maxA < minB || maxB < minA) goto doesntIntersect;
 
+                //FInt distMin = DeterministicMath.Min(maxA, maxB) - DeterministicMath.Max(minA, minB);
                 FInt distMin = maxB - minA;
-                if (polyi == 0) distMin *= -1;
+                distMin *= -1 + polyi * 2;
 
                 FInt distMinAbs = DeterministicMath.Abs(distMin);
 
                 if (distMinAbs < shortestDist)
                 {
                     shortestDist = distMinAbs;
-                    distance = distMin;
+                    distance = distMinAbs;
 
                     vector = normal;
                 }
             }
         }
 
-        result.Separation = vector * distance;
+        result.Separation = vector * distance * -1;
 
         return;
 
@@ -303,7 +304,7 @@ public class ConvexPolygon
                 
                 FInt normaly = polygon[i2].x - polygon[i1].x;
 
-                Vector2 normal = new Vector2(normalx, -normaly).Normalized();
+                Vector2 normal = new Vector2(normalx, normaly).FastNormalized();
                 
                 FInt minA = FInt.MaxValue;
                 FInt maxA = FInt.MinValue;
@@ -331,22 +332,23 @@ public class ConvexPolygon
 
                 if(maxA < minB || maxB < minA) goto doesntIntersect;
 
-                FInt distMin = DeterministicMath.Min( maxB, maxA ) - DeterministicMath.Max(minA, minB);
-                if (polyi == 0) distMin *= -1;
+                //FInt distMin = DeterministicMath.Min(maxA, maxB) - DeterministicMath.Max(minA, minB);
+                FInt distMin = maxB - minA;
+                distMin *= -1 + polyi * 2;
 
                 FInt distMinAbs = DeterministicMath.Abs(distMin);
 
                 if (distMinAbs < shortestDist)
                 {
                     shortestDist = distMinAbs;
-                    distance = distMin;
+                    distance = distMinAbs;
 
                     vector = normal;
                 }
             }
         }
 
-        result.Separation = vector * distance;
+        result.Separation = vector * distance * -1;
 
         return;
 

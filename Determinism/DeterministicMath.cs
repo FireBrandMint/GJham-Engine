@@ -34,6 +34,8 @@ public class DeterministicMath
 
     public static FInt Sqrt( FInt f )
     {
+
+
         byte numberOfIterations = 8;
         if ( f.RawValue > 0x64000 )
             numberOfIterations = 12;

@@ -164,7 +164,7 @@ public class RTestSpriteProvider : RenderEntity
 
                 var stopwatch = Stopwatch.StartNew();
 
-                poly.IntersectsInfoFast(curr, result);
+                poly.IntersectsInfo(curr, result);
 
                 if(result.Intersects)
                 {
@@ -174,7 +174,7 @@ public class RTestSpriteProvider : RenderEntity
                     
                     FInt factor = FInt.Create(1) + FInt.Create(1) / 1000;
 
-                    Position = Position - result.Separation * factor;
+                    Position = Position - result.Separation;
                 }
 
                 stopwatch.Stop();
