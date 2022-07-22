@@ -102,7 +102,7 @@ public class RTestSpriteProvider : RenderEntity
 
         if(!player)
         {
-            FInt rot = (FInt) 135;
+            FInt rot = (FInt) 80;
 
             poly.Rotation = rot;
 
@@ -176,7 +176,7 @@ public class RTestSpriteProvider : RenderEntity
                     
                     FInt factor = FInt.Create(1) + FInt.Create(1) / 1000;
 
-                    Position = Position - result.Separation;
+                    Position = Position - result.Separation * factor;
                 }
 
                 stopwatch.Stop();

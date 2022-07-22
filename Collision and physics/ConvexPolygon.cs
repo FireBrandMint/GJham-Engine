@@ -133,7 +133,7 @@ public sealed class ConvexPolygon
         return Normals;
     }
 
-    public bool Intersects(ConvexPolygon poly)
+    public bool PolyIntersects(ConvexPolygon poly)
     {
         Vector2[] a = GetModel();
         Vector2[] b = poly.GetModel();
@@ -359,7 +359,7 @@ public sealed class ConvexPolygon
 
             for(int i1 = 0; i1 < polygon.Length; ++i1)
             {
-                int i2 = (i1 + 1) % polygon.Length;
+                //int i2 = (i1 + 1) % polygon.Length;
 
                 normal = normals[i1];
                 
