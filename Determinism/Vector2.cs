@@ -23,9 +23,9 @@ public readonly struct Vector2
 
         for(long i = 0; i < cap; ++i)
         {
-            Vector2 curr = new Vector2(FInt.Create(i, false), FInt.Create(cap - i, false));
+            Vector2 curr = new Vector2(FInt.Create(i * 2, false), FInt.Create((cap - i) * 2, false));
 
-            Vector2 currNormalized = (curr * (int)cap).Normalized();
+            Vector2 currNormalized = (curr).Normalized();
 
             fNorm[i] = currNormalized;
         }
@@ -173,17 +173,22 @@ public readonly struct Vector2
 
         //Console.WriteLine($"{length}, {mult2} / {length} = {mult2/length} = {index}");
 
-        Vector2 currVec = FastNormalizeTable2[index];
+        Vector2 currVec;
+
+        lock (FastNormalizeTable2) currVec = FastNormalizeTable2[index];
 
         var xN = currVec.x;
 
         var yN = currVec.y;
 
-        //Console.WriteLine($"{mult2} = {currVec}")
+        if(x < 0) xN *=-1;
+        if(y < 0) yN *=-1;
 
-        //Console.WriteLine($"{vecFast} = {new Vector2(xN, yN)}");
+        currVec = new Vector2(xN, yN);
 
-        return new Vector2(xN, yN);
+        Console.WriteLine($"{mult2} = {currVec}");
+
+        return currVec;
     }
 
     public static FInt DotProduct (Vector2 normal, Vector2 pt2)

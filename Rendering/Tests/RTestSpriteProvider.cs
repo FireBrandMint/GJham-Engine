@@ -102,9 +102,11 @@ public class RTestSpriteProvider : RenderEntity
 
         if(!player)
         {
-            poly.Rotation = (FInt) 45;
+            FInt rot = (FInt) 135;
 
-            Rotation = (FInt)45;
+            poly.Rotation = rot;
+
+            Rotation = rot;
         }
 
         inTree = true;
@@ -164,7 +166,7 @@ public class RTestSpriteProvider : RenderEntity
 
                 var stopwatch = Stopwatch.StartNew();
 
-                poly.IntersectsInfo(curr, result);
+                poly.PolyIntersectsInfoFast(curr, result);
 
                 if(result.Intersects)
                 {
@@ -180,7 +182,6 @@ public class RTestSpriteProvider : RenderEntity
                 stopwatch.Stop();
             }
         }
-        else poly.Position = Position;
     }
 
     DrawableSprite2D drawable = null;

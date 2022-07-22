@@ -1,22 +1,26 @@
 
-public class ConvexPolygon
+public sealed class ConvexPolygon
 {
     bool Updated = false;
+
+    bool NormalsUpdated = false;
 
     Vector2[] OriginalModel;
 
     Vector2 _pos;
 
-    public Vector2 Position {get{return _pos;} set{Updated = true; _pos = value;}}
+    public Vector2 Position {get{return _pos;} set{Updated = Updated && value == _pos; _pos = value;}}
 
     FInt _rot;
 
     ///<summary>
     ///Rotation in degrees.
     ///</summary>
-    public FInt Rotation {get{return _rot;} set {Updated = true; _rot = value;}}
+    public FInt Rotation {get{return _rot;} set {Updated = Updated && value == _rot; NormalsUpdated = NormalsUpdated && value == _rot; _rot = value;}}
 
     Vector2[] ResultModel;
+
+    Vector2[] Normals;
 
     public FInt RangeX;
 
@@ -31,11 +35,13 @@ public class ConvexPolygon
         Rotation = rotation;
 
         ResultModel = new Vector2[model.Length];
+
+        Normals = new Vector2[model.Length];
     }
 
     void UpdateModel()
     {
-        if (!Updated) return;
+        if (Updated) return;
 
         //solves rotation
         Vector2 center = Vector2.ZERO;
@@ -56,7 +62,7 @@ public class ConvexPolygon
             ResultModel[i] = ResultModel[i] + Position;
         }
 
-        Updated = false;
+        Updated = true;
     }
 
     private void UpdateRange()
@@ -80,11 +86,51 @@ public class ConvexPolygon
         RangeY = rangY;
     }
 
+    private void UpdateNormals()
+    {
+        if(NormalsUpdated) return;
+
+        int len = ResultModel.Length - 1;
+
+        Vector2 p1, p2;
+        FInt normalx, normaly;
+        
+        for(int i = 0; i< len; ++i)
+        {
+            p1 = ResultModel[i];
+            p2 = ResultModel[i+1];
+
+            normalx = -(p2.y - p1.y);
+                
+            normaly = p2.x - p1.x;
+
+            Normals[i] = new Vector2(normalx, normaly).Normalized();
+        }
+
+        p1 = ResultModel[len];
+        p2 = ResultModel[0];
+
+        normalx = -(p2.y - p1.y);
+                
+        normaly = p2.x - p1.x;
+
+        Normals[len] = new Vector2(normalx, normaly).Normalized();
+
+        NormalsUpdated = true;
+    }
+
     public Vector2[] GetModel()
     {
         UpdateModel();
 
         return ResultModel;
+    }
+
+    public Vector2[] GetNormals()
+    {
+        UpdateNormals();
+
+        return Normals;
     }
 
     public bool Intersects(ConvexPolygon poly)
@@ -158,7 +204,7 @@ public class ConvexPolygon
         return false;
     }
 
-    public void IntersectsInfo(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfo(ConvexPolygon poly, CollisionResult result)
     {
         result.Intersects = true;
 
@@ -257,7 +303,7 @@ public class ConvexPolygon
         result.Intersects = false;
     }
 
-    public void IntersectsInfoFast(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfoFast(ConvexPolygon poly, CollisionResult result)
     {
         result.Intersects = true;
 
@@ -292,22 +338,33 @@ public class ConvexPolygon
 
         Vector2 vector = new Vector2();
 
+        FInt minA, maxA, minB, maxB;
+        Vector2 normal;
+
         for(int polyi = 0; polyi < 2; ++polyi)
         {
-            Vector2[] polygon = polyi == 0 ? a : b;
+            Vector2[] polygon;
+            Vector2[] normals;
+
+            if(polyi == 0)
+            {
+                polygon = a;
+                normals = this.GetNormals();
+            }
+            else
+            {
+                polygon = b;
+                normals = poly.GetNormals();
+            }
 
             for(int i1 = 0; i1 < polygon.Length; ++i1)
             {
                 int i2 = (i1 + 1) % polygon.Length;
 
-                FInt normalx = -(polygon[i2].y - polygon[i1].y);
+                normal = normals[i1];
                 
-                FInt normaly = polygon[i2].x - polygon[i1].x;
-
-                Vector2 normal = new Vector2(normalx, normaly).FastNormalized();
-                
-                FInt minA = FInt.MaxValue;
-                FInt maxA = FInt.MinValue;
+                minA = FInt.MaxValue;
+                maxA = FInt.MinValue;
 
 
                 //Projects verts for poly 'a' for min max.
@@ -320,8 +377,8 @@ public class ConvexPolygon
                 }
 
                 //Projects verts for poly 'b' for min max.
-                FInt minB = FInt.MaxValue;
-                FInt maxB = FInt.MinValue;
+                minB = FInt.MaxValue;
+                maxB = FInt.MinValue;
                 for(int bi = 0; bi < b.Length; ++bi)
                 {
                     FInt projected = Vector2.DotProduct(normal, b[bi]);
@@ -334,7 +391,6 @@ public class ConvexPolygon
 
                 //FInt distMin = DeterministicMath.Min(maxA, maxB) - DeterministicMath.Max(minA, minB);
                 FInt distMin = maxB - minA;
-                distMin *= -1 + polyi * 2;
 
                 FInt distMinAbs = DeterministicMath.Abs(distMin);
 
