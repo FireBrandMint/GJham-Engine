@@ -11,6 +11,8 @@ public class TextureHolder
 
     public Texture texture;
 
+    string texPath;
+
     int refCount = 0;
 
     bool disposed = false;
@@ -19,11 +21,15 @@ public class TextureHolder
 
     static Object lockOperate = new Object();
 
-    static Queue<string> RegQueue = new Queue<string>();
+    static Queue<(string path, int ttk)> RegQueue = new Queue<(string path, int ttk)>();
 
     static Queue<string> DeregQueue = new Queue<string>();
 
-    private TextureHolder(ref String path)
+    static List<TextureHolder> ToRemove = new List<TextureHolder>();
+
+    int TimeToKillLimit, TimeToKill;
+
+    private TextureHolder(ref String path, int timeToKill)
     {
         try
         {
@@ -33,6 +39,11 @@ public class TextureHolder
         {
             Console.WriteLine($"Couldn't load texture \"{path}\", error message: {e.Message}");
         }
+
+        TimeToKill = timeToKill;
+        TimeToKillLimit = TimeToKill;
+
+        texPath = path;
 
         Console.WriteLine($"Loaded texture \"{path}\".");
 
@@ -52,6 +63,13 @@ public class TextureHolder
         return result;
     }
 
+    bool TickKill(int ms)
+    {
+        TimeToKill -= ms;
+
+        return TimeToKill <= 0;
+    }
+
     void Dispose()
     {
         if (disposed) return;
@@ -61,9 +79,30 @@ public class TextureHolder
         disposed = true;
     }
 
-    public static void RegisterTextureRef(ref String path)
+    ///<summary>
+    ///Registers a reference of a texture (and loads it in a thread if it doesn't exist)
+    ///and the time in MS to remove it from memory when there's
+    ///no reference to it.
+    ///</summary>
+    public static void RegisterTextureRef(ref String path, int timeToKill)
     {
-        lock(RegQueue) RegQueue.Enqueue(path);
+        string p = path;
+
+        lock(ToRemove)
+        {
+            for(int i = 0; i< ToRemove.Count; ++i)
+            {
+                var curr = ToRemove[i];
+
+                if(curr.texPath == p)
+                {
+                    RegAgainInternal(curr, i);
+                    return;
+                }
+            }
+        }
+
+        lock(RegQueue) RegQueue.Enqueue((p, timeToKill));
         lock(lockOperate) operate.Set();
     }
 
@@ -78,17 +117,21 @@ public class TextureHolder
     ///starts loading it in a thread if said texture
     ///doesn't already exist in memory.
     ///</summary>
-    private static void RegRefInternal(String path)
+    private static void RegRefInternal(String path, int timeToKill)
     {
         TextureHolder holder;
 
         if (TextureDict.TryGetValue(path, out holder))
         {
-            lock (holder) holder.AddRef();
+            lock (holder)
+            {
+                holder.AddRef();
+                if(holder.TimeToKillLimit < timeToKill) holder.TimeToKillLimit = timeToKill;
+            }
         }
         else
         {
-            TextureDict.Add(path, new TextureHolder(ref path));
+            TextureDict.Add(path, new TextureHolder(ref path, timeToKill));
         }
     }
 
@@ -106,9 +149,27 @@ public class TextureHolder
         {
             if (holder.RemoveRef())
             {
-                holder.Dispose();
-
                 TextureDict.Remove(path);
+
+                lock(ToRemove)
+                {
+                    holder.TimeToKill = holder.TimeToKillLimit;
+                    ToRemove.Add(holder);
+                }
+            }
+        }
+    }
+
+    private static void RegAgainInternal(TextureHolder holder, int index)
+    {
+        ToRemove.RemoveAt(index);
+
+        lock(TextureDict)
+        {
+            lock(holder)
+            {
+                holder.AddRef();
+                TextureDict.Add(holder.texPath, holder);
             }
         }
     }
@@ -143,7 +204,7 @@ public class TextureHolder
 
             lock(TextureDict)
             {
-                string curr = null;
+                (string path, int ttk) curr = (null, 0);
                 bool hasValue = false;
 
                 RepReg:
@@ -160,7 +221,7 @@ public class TextureHolder
 
                 if(hasValue)
                 {
-                    RegRefInternal(curr);
+                    RegRefInternal(curr.path, curr.ttk);
 
                     goto RepReg;
                 }
@@ -169,18 +230,20 @@ public class TextureHolder
 
                 hasValue = false;
 
+                string dCurr = null;
+
                 lock(DeregQueue)
                 {
                     if(DeregQueue.Count > 0)
                     {
-                        curr = DeregQueue.Dequeue();
+                        dCurr = DeregQueue.Dequeue();
                         hasValue = true;
                     }
                 }
 
                 if (hasValue)
                 {
-                    DeregRefInternal(curr);
+                    DeregRefInternal(dCurr);
 
                     goto RepDereg;
                 }
@@ -193,6 +256,34 @@ public class TextureHolder
         Console.WriteLine("Ended texture holder thread.");
     }
 
+    private static void RemoveThreadCode()
+    {
+        int timeToSleep = 32;
+
+        while(MainClass.Running)
+        {
+            Thread.Sleep(timeToSleep);
+
+            lock(ToRemove)
+            {
+                for(int i = 0; i < ToRemove.Count; ++i)
+                {
+                    var curr = ToRemove[i];
+
+                    lock(curr)
+                    {
+                        if(curr.TickKill(timeToSleep))
+                        {
+                            curr.Dispose();
+                            ToRemove.RemoveAt(i);
+                            --i;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static bool threadStarted = false;
 
     public static void StartThread()
@@ -200,7 +291,9 @@ public class TextureHolder
         if(threadStarted) return;
 
         Thread thread = new Thread(ThreadCode);
+        Thread thread2 = new Thread(RemoveThreadCode);
         thread.Start();
+        thread2.Start();
 
         threadStarted = true;
     }

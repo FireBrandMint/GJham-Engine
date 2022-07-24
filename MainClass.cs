@@ -51,8 +51,7 @@ class MainClass
 
         #region TEST AREA
 
-        // Sin of 3.31982421875
-        Console.WriteLine(DeterministicMath.SinD(FInt.Create(13598, false)).ToString());
+        Console.WriteLine(new FInt(43, 25043));
         
         Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);

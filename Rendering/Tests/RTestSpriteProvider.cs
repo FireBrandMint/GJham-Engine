@@ -29,7 +29,7 @@ public class RTestSpriteProvider : RenderEntity
             
                 if (value != "" && value != null)
                 {
-                    TextureHolder.RegisterTextureRef(ref value);
+                    TextureHolder.RegisterTextureRef(ref value, 5000);
                     HasTexture = true;
                 }
 
@@ -71,7 +71,7 @@ public class RTestSpriteProvider : RenderEntity
 
         if(_TexturePath != null && _TexturePath != "")
         {
-            TextureHolder.RegisterTextureRef(ref _TexturePath);
+            TextureHolder.RegisterTextureRef(ref _TexturePath, 5000);
             HasTexture = true;
         }
 

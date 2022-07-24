@@ -28,6 +28,16 @@ public struct FInt
     public static FInt OneF = FInt.Create( 1, true );
 
     #region Constructors
+
+    public FInt(long integer, long decimals)
+    {
+        long decEnsurer = 1;
+
+        while (decEnsurer <= decimals) decEnsurer*=10;
+
+        RawValue = (integer << SHIFT_AMOUNT) + (decimals << SHIFT_AMOUNT) / decEnsurer;
+    }
+
     public static FInt Create( long StartingRawValue, bool UseMultiple )
     {
         FInt fInt;
