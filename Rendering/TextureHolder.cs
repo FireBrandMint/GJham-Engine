@@ -86,23 +86,7 @@ public class TextureHolder
     ///</summary>
     public static void RegisterTextureRef(ref String path, int timeToKill)
     {
-        string p = path;
-
-        lock(ToRemove)
-        {
-            for(int i = 0; i< ToRemove.Count; ++i)
-            {
-                var curr = ToRemove[i];
-
-                if(curr.texPath == p)
-                {
-                    RegAgainInternal(curr, i);
-                    return;
-                }
-            }
-        }
-
-        lock(RegQueue) RegQueue.Enqueue((p, timeToKill));
+        lock(RegQueue) RegQueue.Enqueue((path, timeToKill));
         lock(lockOperate) operate.Set();
     }
 
@@ -131,6 +115,20 @@ public class TextureHolder
         }
         else
         {
+            lock(ToRemove)
+            {
+                for(int i = 0; i< ToRemove.Count; ++i)
+                {
+                    var curr = ToRemove[i];
+
+                    if(curr.texPath == path)
+                    {
+                        RegAgainInternal(curr, i);
+                        return;
+                    }
+                }
+            }
+
             TextureDict.Add(path, new TextureHolder(ref path, timeToKill));
         }
     }
