@@ -1,6 +1,8 @@
 
-public sealed class ConvexPolygon
+public sealed class ConvexPolygon : Shape
 {
+    public int ShapeType {get => 0;}
+
     bool Updated = false;
 
     bool NormalsUpdated = false;
@@ -455,5 +457,26 @@ public sealed class ConvexPolygon
 
         doesntIntersect:
         result.Intersects = false;
+    }
+
+    public void IntersectsInfo(Shape poly, CollisionResult result)
+    {
+        switch(poly.ShapeType)
+        {
+            case 0: PolyIntersectsInfo((ConvexPolygon)poly, result);
+            break;
+        }
+
+        throw new System.Exception($"Shape not implemented! Shape id: {poly.ShapeType}.");
+    }
+
+    public bool Intersect(Shape poly)
+    {
+        switch(poly.ShapeType)
+        {
+            case 0: return PolyIntersects((ConvexPolygon)poly);
+        }
+
+        throw new System.Exception($"Shape not implemented! Shape id: {poly.ShapeType}.");
     }
 }
