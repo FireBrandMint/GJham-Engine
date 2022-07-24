@@ -1,5 +1,5 @@
 
-public sealed class ConvexPolygon : CollisionShape
+public sealed class ConvexPolygon
 {
     bool Updated = false;
 
@@ -455,25 +455,5 @@ public sealed class ConvexPolygon : CollisionShape
 
         doesntIntersect:
         result.Intersects = false;
-    }
-
-    public void IntersectsInfo(CollisionShape poly, CollisionResult result)
-    {
-        switch(poly)
-        {
-            case ConvexPolygon s: PolyIntersectsInfo(s, result);
-            break;
-            default: result.Intersects = false;
-            break;
-        }
-    }
-
-    public bool Intersects(CollisionShape poly)
-    {
-        switch(poly)
-        {
-            case ConvexPolygon s: return PolyIntersects(s);
-            default: return false;
-        }
     }
 }
