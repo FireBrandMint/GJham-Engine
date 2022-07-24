@@ -75,21 +75,7 @@ public class RTestSpriteProvider : RenderEntity
             HasTexture = true;
         }
 
-        poly = new ConvexPolygon(
-            new Vector2[]
-            {
-                //top left
-                new Vector2(-25, -25),
-                //bottom left
-                new Vector2(-25, 25),
-                //bottom right
-                new Vector2(25, 25),
-                //top right
-                new Vector2(25, -25),
-            },
-            Position,
-            (FInt) 0
-            );
+        poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
         
         PolyList.Add(poly);
 
@@ -166,7 +152,7 @@ public class RTestSpriteProvider : RenderEntity
 
                 var stopwatch = Stopwatch.StartNew();
 
-                poly.PolyIntersectsInfoFast(curr, result);
+                poly.IntersectsInfo(curr, result);
 
                 if(result.Intersects)
                 {

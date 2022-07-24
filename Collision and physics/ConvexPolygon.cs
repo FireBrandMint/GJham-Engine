@@ -1,5 +1,5 @@
 
-public sealed class ConvexPolygon
+public sealed class ConvexPolygon : CollisionShape
 {
     bool Updated = false;
 
@@ -26,6 +26,48 @@ public sealed class ConvexPolygon
 
     public FInt RangeY;
 
+    public static ConvexPolygon CreateRect(Vector2 length, FInt rotation, Vector2 position)
+    {
+        FInt x = length.x/2;
+        FInt y = length.y/2;
+
+        return new ConvexPolygon(
+            new Vector2[]
+            {
+                //top left
+                new Vector2(-x, -y),
+                //bottom left
+                new Vector2(-x, y),
+                //bottom right
+                new Vector2(x, y),
+                //top right
+                new Vector2(x, -y),
+            },
+            position,
+            rotation
+            );
+    }
+
+    public static ConvexPolygon CreateTriangle(Vector2 length, FInt rotation, Vector2 position)
+    {
+        FInt x = length.x/2;
+        FInt y = length.y/2;
+
+        return new ConvexPolygon(
+            new Vector2[]
+            {
+                //top
+                new Vector2(new FInt(), -y),
+                //bottom left
+                new Vector2(-x, y),
+                //bottom right
+                new Vector2(x, y)
+            },
+            position,
+            rotation
+            );
+    }
+
     public ConvexPolygon(Vector2[] model, Vector2 position, FInt rotation)
     {
         OriginalModel = model;
@@ -37,6 +79,9 @@ public sealed class ConvexPolygon
         ResultModel = new Vector2[model.Length];
 
         Normals = new Vector2[model.Length];
+
+        UpdateModel();
+        UpdateNormals();
     }
 
     void UpdateModel()
@@ -204,7 +249,7 @@ public sealed class ConvexPolygon
         return false;
     }
 
-    public void PolyIntersectsInfo(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfoSlow(ConvexPolygon poly, CollisionResult result)
     {
         result.Intersects = true;
 
@@ -303,7 +348,7 @@ public sealed class ConvexPolygon
         result.Intersects = false;
     }
 
-    public void PolyIntersectsInfoFast(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfo(ConvexPolygon poly, CollisionResult result)
     {
         result.Intersects = true;
 
@@ -410,5 +455,25 @@ public sealed class ConvexPolygon
 
         doesntIntersect:
         result.Intersects = false;
+    }
+
+    public void IntersectsInfo(CollisionShape poly, CollisionResult result)
+    {
+        switch(poly)
+        {
+            case ConvexPolygon s: PolyIntersectsInfo(s, result);
+            break;
+            default: result.Intersects = false;
+            break;
+        }
+    }
+
+    public bool Intersects(CollisionShape poly)
+    {
+        switch(poly)
+        {
+            case ConvexPolygon s: return PolyIntersects(s);
+            default: return false;
+        }
     }
 }
