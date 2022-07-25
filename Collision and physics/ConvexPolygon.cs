@@ -30,8 +30,8 @@ public sealed class ConvexPolygon : Shape
 
     public static ConvexPolygon CreateRect(Vector2 length, FInt rotation, Vector2 position)
     {
-        FInt x = length.x/2;
-        FInt y = length.y/2;
+        FInt x = length.x * FInt.Half;
+        FInt y = length.y * FInt.Half;
 
         return new ConvexPolygon(
             new Vector2[]
@@ -52,8 +52,8 @@ public sealed class ConvexPolygon : Shape
 
     public static ConvexPolygon CreateTriangle(Vector2 length, FInt rotation, Vector2 position)
     {
-        FInt x = length.x/2;
-        FInt y = length.y/2;
+        FInt x = length.x * FInt.Half;
+        FInt y = length.y * FInt.Half;
 
         return new ConvexPolygon(
             new Vector2[]

@@ -10,27 +10,9 @@ public readonly struct Vector2
 {
     public static readonly Vector2 ZERO;
 
-    private static readonly Vector2[] FastNormalizeTable2;
-
     static Vector2 ()
     {
         ZERO = new Vector2();
-
-        //initializes values for FastNormalize
-        long cap = FInt.One;
-
-        Vector2[] fNorm = new Vector2[cap + 1];
-
-        for(long i = 0; i < cap; ++i)
-        {
-            Vector2 curr = new Vector2(FInt.Create(i * 2, false), FInt.Create((cap - i) * 2, false));
-
-            Vector2 currNormalized = (curr).Normalized();
-
-            fNorm[i] = currNormalized;
-        }
-
-        FastNormalizeTable2 = fNorm;
     }
 
     public readonly FInt x,y;
@@ -151,44 +133,6 @@ public readonly struct Vector2
         {
             return this / length;
         }
-    }
-
-    ///<summary>
-    ///DO NOT USE
-    ///</summary>
-    public FInt FastLength()
-    {
-        return DeterministicMath.Abs(x) + DeterministicMath.Abs(y);
-    }
-
-    public Vector2 FastNormalized()
-    {
-        FInt length = FastLength();
-
-        Vector2 mult2 = this;
-
-        Vector2 vecFast = mult2/length;
-
-        long index = DeterministicMath.Abs(vecFast.x).RawValue;
-
-        //Console.WriteLine($"{length}, {mult2} / {length} = {mult2/length} = {index}");
-
-        Vector2 currVec;
-
-        lock (FastNormalizeTable2) currVec = FastNormalizeTable2[index];
-
-        var xN = currVec.x;
-
-        var yN = currVec.y;
-
-        if(x < 0) xN *=-1;
-        if(y < 0) yN *=-1;
-
-        currVec = new Vector2(xN, yN);
-
-        Console.WriteLine($"{mult2} = {currVec}");
-
-        return currVec;
     }
 
     public static FInt DotProduct (Vector2 normal, Vector2 pt2)

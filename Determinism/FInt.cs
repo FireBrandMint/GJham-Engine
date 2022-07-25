@@ -14,10 +14,14 @@ public struct FInt
     ///</summary>
     public static readonly FInt MaxValue;
 
+    public static readonly FInt Half;
+
     static FInt()
     {
         MinValue = FInt.Create(long.MinValue, false);
         MaxValue = FInt.Create(long.MaxValue, false);
+
+        Half = new FInt(0, 5);
     }
 
     public long RawValue;
