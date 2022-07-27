@@ -2,10 +2,13 @@ using System;
 using System.Drawing;
 using SFML.Graphics;
 using SFML.System;
+using System.Runtime.InteropServices;
 
 ///<summary>
 ///Deterministic Vector2D.
 ///</summary>
+
+[StructLayout(LayoutKind.Sequential)]
 public readonly struct Vector2
 {
     public static readonly Vector2 ZERO;
@@ -124,15 +127,28 @@ public readonly struct Vector2
 
     public Vector2 Normalized()
     {
+        bool xZero, yZero;
+
+        xZero = x.RawValue == 0;
+        yZero = y.RawValue == 0;
+
+        //If below assures normalize doesn't calculate an answer it already has.
+        if(xZero || yZero)
+        {
+            var o = new FInt(1);
+            if (xZero && yZero) return ZERO;
+            if (xZero) return new Vector2(new FInt(), y < 0? -o:o);
+            return new Vector2(x < 0? -o:o, new FInt());
+        }
+
         FInt length = (this).Length();
-        if (length == 0)
-        {
-            return Vector2.ZERO;
-        }
-        else
-        {
-            return this / length;
-        }
+
+        return this / length;
+    }
+
+    public Vector2 Abs()
+    {
+        return new Vector2(DeterministicMath.Abs(x), DeterministicMath.Abs(y));
     }
 
     public static FInt DotProduct (Vector2 normal, Vector2 pt2)

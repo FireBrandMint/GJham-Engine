@@ -1,4 +1,5 @@
 using System.Drawing;
+using System;
 
 public static class Engine
 {
@@ -32,4 +33,14 @@ public static class Engine
 
     //This is the amount of ticks that are about to be executed very soon to conpensate for a slowdown
     public static int TPSSlowdown = 0;
+
+    ///<summary>
+    ///Functions to be executed when the program closes.
+    ///</summary>
+    public static event Action ExecuteOnClose = null;
+
+    ///<summary>
+    ///NEVER USE THIS FUNCTION!!!
+    ///</summary>
+    public static void EOC() => ExecuteOnClose?.Invoke();
 }

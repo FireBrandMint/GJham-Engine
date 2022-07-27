@@ -1,5 +1,7 @@
 using System;
+using System.Runtime.InteropServices;
 
+[StructLayout(LayoutKind.Sequential)]
 public struct FInt
 {
     // New determininistic point from https://stackoverflow.com/questions/605124/fixed-point-math-in-c
@@ -32,6 +34,11 @@ public struct FInt
     public static FInt OneF = FInt.Create( 1, true );
 
     #region Constructors
+
+    public FInt( long Value )
+    {
+        RawValue = Value << SHIFT_AMOUNT;
+    }
 
     public FInt(long integer, long decimals)
     {

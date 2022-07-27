@@ -59,7 +59,7 @@ public class RTestSpriteProvider : RenderEntity
 
     ConvexPolygon poly;
 
-    static List<ConvexPolygon> PolyList = new List<ConvexPolygon>();
+    static List<Shape> PolyList = new List<Shape>(1000);
 
     static bool p = true;
     bool player;
@@ -88,7 +88,7 @@ public class RTestSpriteProvider : RenderEntity
 
         if(!player)
         {
-            FInt rot = (FInt) 80;
+            FInt rot = (FInt) 0;
 
             poly.Rotation = rot;
 
@@ -142,6 +142,10 @@ public class RTestSpriteProvider : RenderEntity
 
             poly.Position = Position;
 
+            var stopwatch = Stopwatch.StartNew();
+
+            bool collided = false;
+
             for(int i = 0; i < PolyList.Count; ++i)
             {
                 var curr = PolyList[i];
@@ -150,23 +154,29 @@ public class RTestSpriteProvider : RenderEntity
 
                 CollisionResult result = new CollisionResult();
 
-                var stopwatch = Stopwatch.StartNew();
-
-                poly.PolyIntersectsInfo(curr, result);
+                poly.IntersectsInfo(curr, result);
 
                 if(result.Intersects)
                 {
-                    double time = ((double) stopwatch.ElapsedTicks / Stopwatch.Frequency) * 1000;
+                    FInt factor;
 
-                    Console.WriteLine($"PLAYER INTERSECTS {result.Separation}, TOOK {time}MS");
-                    
-                    FInt factor = FInt.Create(1) + FInt.Create(1) / 1000;
+                    factor.RawValue = 4140L;
 
-                    Position = Position - result.Separation * factor;
+                    Position = Position + result.Separation * factor;
+
+                    poly.Position = Position;
+
+                    collided = true;
                 }
-
-                stopwatch.Stop();
             }
+
+            if(collided)
+            {
+                double time = ((double) stopwatch.ElapsedTicks / Stopwatch.Frequency) * 1000;
+
+                Console.WriteLine($"PLAYER INTERSECTS! TOOK {time}MS!");
+            }
+            stopwatch.Stop();
         }
     }
 

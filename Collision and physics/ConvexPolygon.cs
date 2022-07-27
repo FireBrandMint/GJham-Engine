@@ -1,7 +1,10 @@
+using System;
+using System.Threading.Tasks;
+using System.Threading;
 
 public sealed class ConvexPolygon : Shape
 {
-    public int ShapeType {get => 0;}
+    public override int ShapeType () => 0;
 
     bool Updated = false;
 
@@ -11,14 +14,47 @@ public sealed class ConvexPolygon : Shape
 
     Vector2 _pos;
 
-    public Vector2 Position {get{return _pos;} set{Updated = Updated && value == _pos; _pos = value;}}
+    public Vector2 Position
+    {
+        get{return _pos;} 
+        set
+        {
+            Updated = Updated && value == _pos;
+
+            _pos = value;
+
+            /*if(value != _pos)
+            {
+                _pos = value;
+                UpdateModel();
+            }*/
+        }
+    }
 
     FInt _rot;
 
     ///<summary>
     ///Rotation in degrees.
     ///</summary>
-    public FInt Rotation {get{return _rot;} set {Updated = Updated && value == _rot; NormalsUpdated = NormalsUpdated && value == _rot; _rot = value;}}
+    public FInt Rotation
+    {
+        get{return _rot;} 
+        set 
+        {
+            Updated = Updated && value == _rot;
+            NormalsUpdated = NormalsUpdated && value == _rot;
+
+            _rot = value;
+
+            /*if(value != _rot)
+            {
+                _rot = value;
+
+                UpdateModel();
+                UpdateNormals();
+            }*/
+        }
+    }
 
     Vector2[] ResultModel;
 
@@ -74,6 +110,22 @@ public sealed class ConvexPolygon : Shape
     {
         OriginalModel = model;
 
+        _pos = position;
+
+        _rot = rotation;
+
+        ResultModel = new Vector2[model.Length];
+
+        Normals = new Vector2[model.Length];
+
+        //UpdateModel();
+        //UpdateNormals();
+    }
+
+    public ConvexPolygon(Vector2[] model, Vector2 position, FInt rotation, bool calculateNormals)
+    {
+        OriginalModel = model;
+
         Position = position;
 
         Rotation = rotation;
@@ -82,8 +134,11 @@ public sealed class ConvexPolygon : Shape
 
         Normals = new Vector2[model.Length];
 
-        UpdateModel();
-        UpdateNormals();
+        if(calculateNormals)
+        {
+            UpdateModel();
+            UpdateNormals();
+        }
     }
 
     void UpdateModel()
@@ -135,7 +190,7 @@ public sealed class ConvexPolygon : Shape
 
     private void UpdateNormals()
     {
-        if(NormalsUpdated) return;
+        //if(NormalsUpdated) return;
 
         int len = ResultModel.Length - 1;
 
@@ -185,27 +240,18 @@ public sealed class ConvexPolygon : Shape
         Vector2[] a = GetModel();
         Vector2[] b = poly.GetModel();
 
-        Vector2 RangeAMin = new Vector2(Position.x - RangeX, Position.y - RangeY);
-        Vector2 RangeAMax = new Vector2(Position.x + RangeX, Position.y + RangeY);
-
         Vector2 bPosition = poly.Position;
 
-        FInt bRangeX = poly.RangeX;
-        FInt bRangeY = poly.RangeY;
+        FInt bRangeX = poly.RangeX,
+        bRangeY = poly.RangeY;
 
-        Vector2 RangeBMin = new Vector2(bPosition.x - bRangeX, bPosition.y - bRangeY);
-        Vector2 RangeBMax = new Vector2(bPosition.x + bRangeX, bPosition.y + bRangeY);
+        FInt rx = RangeX + bRangeX,
+        ry = RangeY + bRangeY;
 
-        FInt d1x = RangeBMin.x - RangeAMax.x;
-        FInt d1y = RangeBMin.y - RangeAMax.y;
-        FInt d2x = RangeAMin.x - RangeBMax.x;
-        FInt d2y = RangeAMin.y - RangeBMax.y;
+        Vector2 d = Position - bPosition;
+        d = d.Abs();
 
-        FInt zero = new FInt();
-
-        if (d1x > zero || d1y > zero) goto end;
-
-        if (d2x > zero || d2y > zero) goto end;
+        if(d.x > rx || d.y > ry) goto end;
 
         for(int polyi = 0; polyi < 2; ++polyi)
         {
@@ -354,38 +400,37 @@ public sealed class ConvexPolygon : Shape
     {
         result.Intersects = true;
 
-        Vector2[] a = GetModel();
-        Vector2[] b = poly.GetModel();
+        var mA = GetModel();
+        var mB = poly.GetModel();
 
-        Vector2 RangeAMin = new Vector2(Position.x - RangeX, Position.y - RangeY);
-        Vector2 RangeAMax = new Vector2(Position.x + RangeX, Position.y + RangeY);
+        int aLength = mA.Length;
+        int bLength = mB.Length;
 
         Vector2 bPosition = poly.Position;
 
-        FInt bRangeX = poly.RangeX;
-        FInt bRangeY = poly.RangeY;
+        FInt bRangeX = poly.RangeX,
+        bRangeY = poly.RangeY;
 
-        Vector2 RangeBMin = new Vector2(bPosition.x - bRangeX, bPosition.y - bRangeY);
-        Vector2 RangeBMax = new Vector2(bPosition.x + bRangeX, bPosition.y + bRangeY);
+        FInt rx = RangeX + bRangeX,
+        ry = RangeY + bRangeY;
 
-        FInt d1x = RangeBMin.x - RangeAMax.x;
-        FInt d1y = RangeBMin.y - RangeAMax.y;
-        FInt d2x = RangeAMin.x - RangeBMax.x;
-        FInt d2y = RangeAMin.y - RangeBMax.y;
+        Vector2 d = Position - bPosition;
+        d = d.Abs();
 
-        FInt zero = new FInt();
+        if(d.x > rx || d.y > ry) goto doesntIntersect;
 
-        if (d1x > zero || d1y > zero) goto doesntIntersect;
+        Vector2[] a = new Vector2[aLength];
+        Vector2[] b = new Vector2[bLength];
 
-        if (d2x > zero || d2y > zero) goto doesntIntersect;
+        Array.Copy(mA, a, aLength);
+        Array.Copy(mB, b, bLength);
 
         FInt distance = FInt.MaxValue;
-
-        FInt shortestDist = FInt.MaxValue;
 
         Vector2 vector = new Vector2();
 
         FInt minA, maxA, minB, maxB;
+        
         Vector2 normal;
 
         for(int polyi = 0; polyi < 2; ++polyi)
@@ -413,9 +458,9 @@ public sealed class ConvexPolygon : Shape
                 minA = FInt.MaxValue;
                 maxA = FInt.MinValue;
 
-
+                
                 //Projects verts for poly 'a' for min max.
-                for(int ai = 0; ai < a.Length; ++ai)
+                for(int ai = 0; ai < aLength; ++ai)
                 {
                     FInt projected = Vector2.DotProduct(normal, a[ai]);
 
@@ -426,7 +471,7 @@ public sealed class ConvexPolygon : Shape
                 //Projects verts for poly 'b' for min max.
                 minB = FInt.MaxValue;
                 maxB = FInt.MinValue;
-                for(int bi = 0; bi < b.Length; ++bi)
+                for(int bi = 0; bi < bLength; ++bi)
                 {
                     FInt projected = Vector2.DotProduct(normal, b[bi]);
 
@@ -441,9 +486,8 @@ public sealed class ConvexPolygon : Shape
 
                 FInt distMinAbs = DeterministicMath.Abs(distMin);
 
-                if (distMinAbs < shortestDist)
+                if (distMinAbs < distance)
                 {
-                    shortestDist = distMinAbs;
                     distance = distMinAbs;
 
                     vector = normal;
@@ -451,32 +495,11 @@ public sealed class ConvexPolygon : Shape
             }
         }
 
-        result.Separation = vector * distance * -1;
+        result.Separation = vector * distance;
 
         return;
 
         doesntIntersect:
         result.Intersects = false;
-    }
-
-    public void IntersectsInfo(Shape poly, CollisionResult result)
-    {
-        switch(poly.ShapeType)
-        {
-            case 0: PolyIntersectsInfo((ConvexPolygon)poly, result);
-            break;
-        }
-
-        throw new System.Exception($"Shape not implemented! Shape id: {poly.ShapeType}.");
-    }
-
-    public bool Intersect(Shape poly)
-    {
-        switch(poly.ShapeType)
-        {
-            case 0: return PolyIntersects((ConvexPolygon)poly);
-        }
-
-        throw new System.Exception($"Shape not implemented! Shape id: {poly.ShapeType}.");
     }
 }

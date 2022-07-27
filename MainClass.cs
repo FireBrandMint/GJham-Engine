@@ -74,9 +74,9 @@ class MainClass
             TexturePath = @".\assets\Generic.png"
         });*/
 
-        for(int y = 3; y< 4; ++y)
+        for(int y = 3; y< 7; ++y)
         {
-            for(int x = 3; x < 5; ++x)
+            for(int x = 3; x < 1004; ++x)
             {
                 EntityCommand.Instance(new RTestSpriteProvider
                 {
@@ -384,7 +384,10 @@ class MainClass
             RemoveEntity(DrawableEntities[i]);
         }
 
+        Engine.EOC();
+
         //Nice message to finalize :)
+
         Console.WriteLine("Ended main thread.");
     }
 
