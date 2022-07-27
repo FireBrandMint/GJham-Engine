@@ -190,7 +190,7 @@ public sealed class ConvexPolygon : Shape
 
     private void UpdateNormals()
     {
-        //if(NormalsUpdated) return;
+        if(NormalsUpdated) return;
 
         int len = ResultModel.Length - 1;
 
