@@ -153,6 +153,9 @@ public readonly struct Vector2
 
     public static FInt DotProduct (Vector2 normal, Vector2 pt2)
     {
+        //FInt
+        //x = normal.x * pt2.x,
+        //y = normal.y * pt2.y;
         return (normal.x * pt2.x) + (normal.y * pt2.y);
     }
 

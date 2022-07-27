@@ -4,11 +4,16 @@ using System.Threading;
 
 public sealed class ConvexPolygon : Shape
 {
-    public override int ShapeType () => 0;
+
+    public override sealed int ShapeType () => 0;
 
     bool Updated = false;
 
+    Action ModelAction;
+
     bool NormalsUpdated = false;
+
+    Action NormalsAction;
 
     Vector2[] OriginalModel;
 
@@ -20,6 +25,8 @@ public sealed class ConvexPolygon : Shape
         set
         {
             Updated = Updated && value == _pos;
+
+            if(!Updated) ModelAction = UpdateModel;
 
             _pos = value;
 
@@ -44,6 +51,9 @@ public sealed class ConvexPolygon : Shape
             Updated = Updated && value == _rot;
             NormalsUpdated = NormalsUpdated && value == _rot;
 
+            if(!Updated) ModelAction = UpdateModel;
+            if(!NormalsUpdated) NormalsAction = UpdateNormals;
+
             _rot = value;
 
             /*if(value != _rot)
@@ -60,9 +70,7 @@ public sealed class ConvexPolygon : Shape
 
     Vector2[] Normals;
 
-    public FInt RangeX;
-
-    public FInt RangeY;
+    public Vector2 Range;
 
     public static ConvexPolygon CreateRect(Vector2 length, FInt rotation, Vector2 position)
     {
@@ -118,6 +126,10 @@ public sealed class ConvexPolygon : Shape
 
         Normals = new Vector2[model.Length];
 
+        ModelAction = UpdateModel;
+
+        NormalsAction = UpdateNormals;
+
         //UpdateModel();
         //UpdateNormals();
     }
@@ -165,6 +177,8 @@ public sealed class ConvexPolygon : Shape
         }
 
         Updated = true;
+
+        ModelAction = DoNothing;
     }
 
     private void UpdateRange()
@@ -184,8 +198,7 @@ public sealed class ConvexPolygon : Shape
             if(rangY < currY) rangY = currY;
         }
 
-        RangeX = rangX;
-        RangeY = rangY;
+        Range = new Vector2(rangX, rangY);
     }
 
     private void UpdateNormals()
@@ -219,18 +232,24 @@ public sealed class ConvexPolygon : Shape
         Normals[len] = new Vector2(normalx, normaly).Normalized();
 
         NormalsUpdated = true;
+
+        NormalsAction = DoNothing;
     }
 
     public Vector2[] GetModel()
     {
-        UpdateModel();
+        //UpdateModel();
+
+        ModelAction.Invoke();
 
         return ResultModel;
     }
 
     public Vector2[] GetNormals()
     {
-        UpdateNormals();
+        //UpdateNormals();
+
+        NormalsAction.Invoke();
 
         return Normals;
     }
@@ -242,16 +261,16 @@ public sealed class ConvexPolygon : Shape
 
         Vector2 bPosition = poly.Position;
 
-        FInt bRangeX = poly.RangeX,
-        bRangeY = poly.RangeY;
+        Vector2
+        aRange = Range,
+        bRange = poly.Range;
 
-        FInt rx = RangeX + bRangeX,
-        ry = RangeY + bRangeY;
+        Vector2 r = aRange + bRange;
 
         Vector2 d = Position - bPosition;
         d = d.Abs();
 
-        if(d.x > rx || d.y > ry) goto end;
+        if(d.x > r.x || d.y > r.y) goto end;
 
         for(int polyi = 0; polyi < 2; ++polyi)
         {
@@ -304,27 +323,18 @@ public sealed class ConvexPolygon : Shape
         Vector2[] a = GetModel();
         Vector2[] b = poly.GetModel();
 
-        Vector2 RangeAMin = new Vector2(Position.x - RangeX, Position.y - RangeY);
-        Vector2 RangeAMax = new Vector2(Position.x + RangeX, Position.y + RangeY);
-
         Vector2 bPosition = poly.Position;
 
-        FInt bRangeX = poly.RangeX;
-        FInt bRangeY = poly.RangeY;
+        Vector2
+        aRange = Range,
+        bRange = poly.Range;
 
-        Vector2 RangeBMin = new Vector2(bPosition.x - bRangeX, bPosition.y - bRangeY);
-        Vector2 RangeBMax = new Vector2(bPosition.x + bRangeX, bPosition.y + bRangeY);
+        Vector2 r = aRange + bRange;
 
-        FInt d1x = RangeBMin.x - RangeAMax.x;
-        FInt d1y = RangeBMin.y - RangeAMax.y;
-        FInt d2x = RangeAMin.x - RangeBMax.x;
-        FInt d2y = RangeAMin.y - RangeBMax.y;
+        Vector2 d = Position - bPosition;
+        d = d.Abs();
 
-        FInt zero = new FInt();
-
-        if (d1x > zero || d1y > zero) goto doesntIntersect;
-
-        if (d2x > zero || d2y > zero) goto doesntIntersect;
+        if(d.x > r.x || d.y > r.y) goto doesntIntersect;
 
         FInt distance = FInt.MaxValue;
 
@@ -398,26 +408,33 @@ public sealed class ConvexPolygon : Shape
 
     public void PolyIntersectsInfo(ConvexPolygon poly, CollisionResult result)
     {
-        result.Intersects = true;
+        result.Intersects = false;
 
         var mA = GetModel();
         var mB = poly.GetModel();
 
+        Vector2
+        bRange = poly.Range,
+        bPosition = poly.Position;
+
+        Vector2
+        aRange = Range,
+        aPosition = Position;
+
+        Vector2 r = aRange + bRange;
+
+        Vector2 d = aPosition - bPosition;
+        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
+
+        if(d.x > r.x || d.y > r.y)
+        {
+            //goto doesntIntersect;
+
+            return;
+        }
+
         int aLength = mA.Length;
         int bLength = mB.Length;
-
-        Vector2 bPosition = poly.Position;
-
-        FInt bRangeX = poly.RangeX,
-        bRangeY = poly.RangeY;
-
-        FInt rx = RangeX + bRangeX,
-        ry = RangeY + bRangeY;
-
-        Vector2 d = Position - bPosition;
-        d = d.Abs();
-
-        if(d.x > rx || d.y > ry) goto doesntIntersect;
 
         Vector2[] a = new Vector2[aLength];
         Vector2[] b = new Vector2[bLength];
@@ -479,7 +496,7 @@ public sealed class ConvexPolygon : Shape
                     if( projected > maxB ) maxB = projected;
                 }
 
-                if(maxA < minB || maxB < minA) goto doesntIntersect;
+                if(maxA < minB || maxB < minA) return;
 
                 //FInt distMin = DeterministicMath.Min(maxA, maxB) - DeterministicMath.Max(minA, minB);
                 FInt distMin = maxB - minA;
@@ -497,9 +514,12 @@ public sealed class ConvexPolygon : Shape
 
         result.Separation = vector * distance;
 
-        return;
+        result.Intersects = true;
+    }
 
-        doesntIntersect:
-        result.Intersects = false;
+    //This void does nothing.
+    private void DoNothing ()
+    {
+
     }
 }
