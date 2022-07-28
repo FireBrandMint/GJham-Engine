@@ -9,31 +9,69 @@ public class Shape
     ///<summary>
     ///Shape type: 0 is convex polygon.
     ///</summary>
-    public virtual int ShapeType() => -4;
+
+    public virtual Vector2 Position{get;set;}
+
+    public virtual Vector2 GetRange()
+    {
+        throw new NotImplementedException();
+    }
 
     public void IntersectsInfo(Shape poly, CollisionResult result)
     {
-        if(this.ShapeType() == 0)
+        Vector2
+        bRange = poly.GetRange(),
+        bPosition = poly.Position;
+
+        Vector2
+        aRange = GetRange(),
+        aPosition = Position;
+
+        Vector2 r = aRange + bRange;
+
+        Vector2 d = aPosition - bPosition;
+        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
+
+        if(d.x > r.x || d.y > r.y) return;
+
+        if(this is ConvexPolygon)
         {
-            if(poly.ShapeType() == 0)
+            if(poly is ConvexPolygon)
             {
                 ((ConvexPolygon)this).PolyIntersectsInfo((ConvexPolygon)poly, result);
                 return;
             }
         }
-        throw new System.Exception($"Shape not implemented! Shape ids: {this.ShapeType()}, {poly.ShapeType()}.");
+        throw new System.Exception($"Shape not implemented! Shape ids: {this.GetType()}, {poly.GetType()}.");
     }
 
     public bool Intersect(Shape poly)
     {
-        if(this.ShapeType() == 0)
+        Vector2
+        bRange = poly.GetRange(),
+        bPosition = poly.Position;
+
+        Vector2
+        aRange = GetRange(),
+        aPosition = Position;
+
+        Vector2 r = aRange + bRange;
+
+        Vector2 d = aPosition - bPosition;
+        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
+
+        if(d.x > r.x || d.y > r.y) return false;
+
+        switch(this)
         {
-            if(poly.ShapeType() == 0)
+            case ConvexPolygon:
+            switch(poly)
             {
-                return ((ConvexPolygon)this).PolyIntersects((ConvexPolygon) poly);
+                case ConvexPolygon: return ((ConvexPolygon)this).PolyIntersects((ConvexPolygon) poly);
             }
+                throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
         }
 
-        throw new System.Exception($"Shape not implemented! Shape id: {this.ShapeType()}, {poly.ShapeType()}.");
+        throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
     }
 }

@@ -4,29 +4,26 @@ using System.Threading;
 
 public sealed class ConvexPolygon : Shape
 {
-
-    public override sealed int ShapeType () => 0;
-
     bool Updated = false;
 
-    Action ModelAction;
+    //Action ModelAction;
 
     bool NormalsUpdated = false;
 
-    Action NormalsAction;
+    //Action NormalsAction;
 
     Vector2[] OriginalModel;
 
     Vector2 _pos;
 
-    public Vector2 Position
+    public override Vector2 Position
     {
         get{return _pos;} 
         set
         {
             Updated = Updated && value == _pos;
 
-            if(!Updated) ModelAction = UpdateModel;
+            //if(!Updated) ModelAction = UpdateModel;
 
             _pos = value;
 
@@ -51,8 +48,8 @@ public sealed class ConvexPolygon : Shape
             Updated = Updated && value == _rot;
             NormalsUpdated = NormalsUpdated && value == _rot;
 
-            if(!Updated) ModelAction = UpdateModel;
-            if(!NormalsUpdated) NormalsAction = UpdateNormals;
+            //if(!Updated) ModelAction = UpdateModel;
+            //if(!NormalsUpdated) NormalsAction = UpdateNormals;
 
             _rot = value;
 
@@ -126,9 +123,9 @@ public sealed class ConvexPolygon : Shape
 
         Normals = new Vector2[model.Length];
 
-        ModelAction = UpdateModel;
+        //ModelAction = UpdateModel;
 
-        NormalsAction = UpdateNormals;
+        //NormalsAction = UpdateNormals;
 
         //UpdateModel();
         //UpdateNormals();
@@ -178,7 +175,7 @@ public sealed class ConvexPolygon : Shape
 
         Updated = true;
 
-        ModelAction = DoNothing;
+        //ModelAction = DoNothing;
     }
 
     private void UpdateRange()
@@ -233,25 +230,28 @@ public sealed class ConvexPolygon : Shape
 
         NormalsUpdated = true;
 
-        NormalsAction = DoNothing;
+        //NormalsAction = DoNothing;
     }
 
     public Vector2[] GetModel()
     {
-        //UpdateModel();
-
-        ModelAction.Invoke();
+        UpdateModel();
 
         return ResultModel;
     }
 
     public Vector2[] GetNormals()
     {
-        //UpdateNormals();
-
-        NormalsAction.Invoke();
+        UpdateNormals();
 
         return Normals;
+    }
+
+    public override Vector2 GetRange()
+    {
+        UpdateModel();
+
+        return Range;
     }
 
     public bool PolyIntersects(ConvexPolygon poly)
