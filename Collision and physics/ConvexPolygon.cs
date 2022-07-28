@@ -16,7 +16,7 @@ public sealed class ConvexPolygon : Shape
 
     Vector2 _pos;
 
-    public override Vector2 Position
+    public override sealed Vector2 Position
     {
         get{return _pos;} 
         set
@@ -247,7 +247,7 @@ public sealed class ConvexPolygon : Shape
         return Normals;
     }
 
-    public override Vector2 GetRange()
+    public override sealed Vector2 GetRange()
     {
         UpdateModel();
 
