@@ -1,0 +1,31 @@
+//Observation 31 ^ 2 is almost 1000, wich is
+the amount of collisions tests this can detect
+before it's impossible to rollback. Therefore
+only 31 active objects can be on the scene for now,
+there's no way the current physics can stay this way.
+
+I think it would solve colision detection if i had a tree to help detecting collision.
+
+But if i use something that someone already made, well... from the intense googling
+section, all have drallbacks that could destroy performance, 'could' being the keyword.
+
+I need to create my own plan, so here's what i got:
+
+Why am i even writing this? No one is here.
+
+Step 1: for this structure an array would be stupid, if i have to resize it
+all the time god knows what the hell will happen in the actual RAM, that's
+why i had this idea:
+
+An object will lead to an object, a one dimensional array of nodes. Nodes
+with one child and one parent, that is.
+
+Node master -> NodePtr -> NodePtr2 -> NodePtr3
+
+Step 2: to control these nodes i can't realistically just make it a 16/16
+grid, there is too much memory involved it this way, and the absolute
+maximum size of FInt is ginormous, i don't know the size of a game someone
+might want to make in this engine, people will certainly play things made by this
+in literal potatoes, so scratch that.
+
+What do i do...?

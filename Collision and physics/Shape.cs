@@ -58,9 +58,13 @@ public class Shape
         Vector2 r = aRange + bRange;
 
         Vector2 d = aPosition - bPosition;
-        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
 
-        if(d.x > r.x || d.y > r.y) return false;
+        FInt dx = d.x, dy = d.y;
+
+        if(dx < 0) dx = -dx;
+        if(dy < 0) dy = -dy;
+
+        if(dx > r.x || dy > r.y) return false;
 
         switch(this)
         {
