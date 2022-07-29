@@ -316,7 +316,7 @@ public sealed class ConvexPolygon : Shape
         return false;
     }
 
-    public void PolyIntersectsInfoSlow(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfoSlow(ConvexPolygon poly, ref CollisionResult result)
     {
         result.Intersects = true;
 
@@ -406,7 +406,7 @@ public sealed class ConvexPolygon : Shape
         result.Intersects = false;
     }
 
-    public void PolyIntersectsInfo(ConvexPolygon poly, CollisionResult result)
+    public void PolyIntersectsInfo(ConvexPolygon poly, ref CollisionResult result)
     {
         result.Intersects = false;
 

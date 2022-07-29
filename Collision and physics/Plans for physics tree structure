@@ -1,7 +1,7 @@
-//Observation 31 ^ 2 is almost 1000, wich is
+//Observation 54 ^ 2 is almost 3000, wich is
 the amount of collisions tests this can detect
 before it's impossible to rollback. Therefore
-only 31 active objects can be on the scene for now,
+ONLY 54 active objects can be on the scene for now,
 there's no way the current physics can stay this way.
 
 I think it would solve colision detection if i had a tree to help detecting collision.

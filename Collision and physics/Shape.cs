@@ -17,7 +17,7 @@ public class Shape
         throw new NotImplementedException();
     }
 
-    public void IntersectsInfo(Shape poly, CollisionResult result)
+    public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {
         Vector2
         bRange = poly.GetRange(),
@@ -30,15 +30,19 @@ public class Shape
         Vector2 r = aRange + bRange;
 
         Vector2 d = aPosition - bPosition;
-        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
 
-        if(d.x > r.x || d.y > r.y) return;
+        FInt dx = d.x, dy = d.y;
+
+        if(dx < 0) dx = -dx;
+        if(dy < 0) dy = -dy;
+
+        if(dx > r.x || dy > r.y) return;
 
         if(this is ConvexPolygon)
         {
             if(poly is ConvexPolygon)
             {
-                ((ConvexPolygon)this).PolyIntersectsInfo((ConvexPolygon)poly, result);
+                ((ConvexPolygon)this).PolyIntersectsInfo((ConvexPolygon)poly, ref result);
                 return;
             }
         }
@@ -77,5 +81,49 @@ public class Shape
         }
 
         throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
+    }
+
+    public (Shape[] arr, int count) GetIntersectionInfos (List<Shape> shapes)
+    {
+        Shape[] arr = new Shape[10];
+        
+        int arrSize = 0;
+
+        Vector2
+        aRange = GetRange(),
+        aPosition = Position;
+
+        for(int i = 0; i < shapes.Count; ++i)
+        {
+            Shape curr = shapes[i];
+
+            if(curr == this) continue;
+
+            Vector2
+            bRange = curr.GetRange(),
+            bPosition = curr.Position;
+
+            Vector2 r = aRange + bRange;
+
+            Vector2 d = aPosition - bPosition;
+
+            FInt dx = d.x, dy = d.y;
+
+            if(dx < 0) dx = -dx;
+            if(dy < 0) dy = -dy;
+
+            if(dx > r.x || dy > r.y) continue;
+            arr[arrSize] = curr;
+
+            ++arrSize;
+
+            if(arr.Length - 1 == arrSize)
+            {
+                Array.Resize(ref arr, arr.Length + 10);
+            }
+            
+        }
+
+        return (arr, arrSize);
     }
 }

@@ -1,5 +1,5 @@
 
-public class CollisionResult
+public struct CollisionResult
 {
     public bool Intersects = false;
 

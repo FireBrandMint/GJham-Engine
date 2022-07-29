@@ -146,15 +146,17 @@ public class RTestSpriteProvider : RenderEntity
 
             bool collided = false;
 
+            /*CollisionResult result = new CollisionResult();
+
             for(int i = 0; i < PolyList.Count; ++i)
             {
                 var curr = PolyList[i];
                 
                 if(curr == poly) continue;
 
-                CollisionResult result = new CollisionResult();
+                result.Intersects = false;
 
-                poly.IntersectsInfo(curr, result);
+                poly.IntersectsInfo(curr, ref result);
 
                 if(result.Intersects)
                 {
@@ -167,6 +169,39 @@ public class RTestSpriteProvider : RenderEntity
                     poly.Position = Position;
 
                     collided = true;
+                }
+            }*/
+
+            var colInfo = poly.GetIntersectionInfos(PolyList);
+
+            var colResults = colInfo.arr;
+
+            var colCount = colInfo.count;
+
+            if(colCount != 0)
+            {
+                CollisionResult result = new CollisionResult();
+
+                for(int i = 0; i < colCount; ++i)
+                {
+                    var curr = colResults[i];
+
+                    result.Intersects = false;
+
+                    poly.IntersectsInfo(curr, ref result);
+
+                    if(result.Intersects)
+                    {
+                        FInt factor;
+
+                        factor.RawValue = 4140L;
+
+                        Position += result.Separation;
+
+                        poly.Position = Position;
+
+                        collided = true;
+                    }
                 }
             }
 
