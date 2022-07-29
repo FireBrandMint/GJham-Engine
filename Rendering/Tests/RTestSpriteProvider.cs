@@ -192,10 +192,6 @@ public class RTestSpriteProvider : RenderEntity
 
                     if(result.Intersects)
                     {
-                        FInt factor;
-
-                        factor.RawValue = 4140L;
-
                         Position += result.Separation;
 
                         poly.Position = Position;

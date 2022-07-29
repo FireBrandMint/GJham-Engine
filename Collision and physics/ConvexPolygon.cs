@@ -512,7 +512,11 @@ public sealed class ConvexPolygon : Shape
             }
         }
 
-        result.Separation = vector * distance;
+        FInt factor;
+
+        factor.RawValue = 4140L;
+
+        result.Separation = vector * distance * factor;
 
         result.Intersects = true;
     }
