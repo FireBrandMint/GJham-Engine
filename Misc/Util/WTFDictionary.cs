@@ -161,10 +161,6 @@ public class WTFDictionary<K, T>
     {
         //Search algorithm intended to sqrt the amount
         //of searches.....
-        //WAIT WAIT WAIT WTF
-
-        //DISCOVERY for me: sqrt is literally dividing by 2 until you
-        //reach the value '1'
 
         int indexFirst = 0;
 
