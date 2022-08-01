@@ -11,24 +11,182 @@ public class WTFList<T>
     //what the hell is this, and what am i doing
     //isn't this just a dictionary?
 
-    List<WTFValue> MasterList = new List<WTFValue>();
+    int IDNext = 0;
+
+    List<WTFValue<T>> MasterList = new List<WTFValue<T>>();
 
     public WTFList()
     {
-        MasterList = new List<WTFValue>();
+        MasterList = new List<WTFValue<T>>();
     }
 
     public WTFList(int capacity)
     {
-        MasterList = new List<WTFValue>(capacity);
+        MasterList = new List<WTFValue<T>>(capacity);
     }
 
-    public void Add(int key, T value)
+    public WTFIdentifier Add(int key, T value)
     {
-        WTFValue addValu = new WTFValue(value, key);
+        int id = GetID();
 
-        if(MasterList.Count == 0) MasterList.Add(addValu);
+        WTFIdentifier identifier = new WTFIdentifier(key, id);
 
+        WTFValue<T> addValu = new WTFValue<T>(value, key, id);
+
+        if(MasterList.Count == 0)
+        {
+            MasterList.Add(addValu);
+
+            return identifier;
+        }
+
+        var searchResult = Find(key);
+
+        int indexFirst = searchResult[0];
+
+        int indexLast = searchResult[1];
+
+        bool oneIndexScenario = indexFirst == indexLast;
+
+        if (oneIndexScenario)
+        {
+            int indKey = MasterList[indexFirst].key;
+
+            if(indKey > key)
+            {
+                //insert on the left
+                MasterList.Insert(indexFirst, addValu);
+            }
+            else
+            {
+                WTFValue<T> curr = MasterList[indexFirst];
+                //If was found
+                if(curr.key == key)
+                {
+                    while(curr.Down != null)
+                    {
+                        curr = curr.Down;
+                    }
+
+                    curr.Down = addValu;
+                    return identifier;
+                }
+
+                //if is last
+                if(indexFirst == MasterList.Count - 1)
+                {
+                    MasterList.Add(addValu);
+                }
+                else MasterList.Insert(indexFirst + 1, addValu);
+            }
+        }
+        else
+        {
+            //If its the same as the value, add it.
+            WTFValue<T> curr = MasterList[indexFirst];
+            
+            if(curr.key == key)
+            {
+                while(curr.Down != null)
+                {
+                    curr = curr.Down;
+                }
+
+                curr.Down = addValu;
+                return identifier;
+            }
+
+            MasterList.Insert(indexLast, addValu);
+        }
+
+        return identifier;
+    }
+
+    public void Remove (WTFIdentifier indentifier)
+    {
+        var searchResult = Find(indentifier.Key);
+
+        int index = searchResult[0];
+
+        var node = MasterList[index];
+
+        if(node.key != indentifier.Key) throw new Exception($"KEY VALUE '{indentifier.Key}' DOESN'T EXIST");
+
+        int ID = indentifier.ID;
+
+        bool passedOne = false;
+
+        var lastNode = node;
+
+        while(node != null)
+        {
+            if(node.ID == ID)
+            {
+                if(passedOne)
+                {
+                    if(node.Down == null)
+                    {
+                        lastNode.Down = null;
+                    }
+                    else
+                    {
+                        lastNode.Down = node.Down;
+                        node.Down = null;
+                    }
+                }
+                else
+                {
+                    if(node.Down == null)
+                    {
+                        MasterList.RemoveAt(index);
+                    }
+                    else
+                    {
+                        MasterList[index] = node.Down;
+                        node.Down = null;
+                    }
+                }
+
+                return;
+            }
+
+            passedOne = true;
+            lastNode = node;
+            node = node.Down;
+        }
+
+        throw new Exception($"ID VALUE '{ID}' DOESN'T EXIST");
+    }
+
+    public WTFNodeSlot<T> GetValuesOnKey(int key)
+    {
+        var searchResult = Find(key);
+
+        int index = searchResult[0];
+
+        var node = MasterList[index];
+
+        if(node.key != key) return null;
+
+        return new WTFNodeSlot<T>(node);
+    }
+
+    public int[] GetAllKeys()
+    {
+        int mc = MasterList.Count;
+
+        int[] arr = new int[mc];
+
+        for(int i = 0; i < mc; ++i)
+        {
+            arr[i] = MasterList[i].key;
+        }
+
+        return arr;
+    }
+
+    private int[] Find (int key)
+    {
         //Search algorithm intended to sqrt the amount
         //of searches.....
         //WAIT WAIT WAIT WTF
@@ -42,8 +200,6 @@ public class WTFList<T>
 
         int leftIndexLast;
 
-        bool oneIndexScenario = false;
-
         loopStart:
 
         //If index first and index last are the same
@@ -52,8 +208,6 @@ public class WTFList<T>
         //or to the left of the left of the index.
         if(indexFirst == indexLast)
         {
-            oneIndexScenario = true;
-
             goto endLoop;
         }
 
@@ -86,7 +240,7 @@ public class WTFList<T>
 
             goto loopStart;
         }
-        //CASE: left is lower and right is higher
+        //CASE: left is lower or equal and right is higher
         //aka end of operation.
 
         indexFirst = leftIndexLast;
@@ -94,41 +248,70 @@ public class WTFList<T>
 
         endLoop:
 
-        if (oneIndexScenario)
+        return new int[2]
         {
-            int indKey = MasterList[indexFirst].key;
-
-            if(indKey > key)
-            {
-                //insert on the left
-                MasterList.Insert(indexFirst, new WTFValue(value, key));
-            }
-            else
-            {
-                //insert to the right
-                if(indexFirst == MasterList.Count - 1) MasterList.Add(addValu);
-                else MasterList.Insert(indexFirst + 1, addValu);
-            }
-        }
-        else
-        {
-            MasterList.Insert(indexLast, addValu);
-        }
+            indexFirst, indexLast
+        };
     }
 
-    private class WTFValue
+    private int GetID()
     {
-        public WTFValue Down = null;
+        int nowID = IDNext;
 
-        public int key;
+        ++IDNext;
 
-        public T Value;
+        return nowID;
+    }
+}
 
-        public WTFValue (T valu, int k)
-        {
-            Value = valu;
+public class WTFValue<T>
+{
+    public WTFValue<T> Down = null;
 
-            key = k;
-        }
+    public int key;
+
+    public T Value;
+
+    public int ID;
+
+    public WTFValue (T valu, int k, int id)
+    {
+        Value = valu;
+
+        key = k;
+
+        ID = id;
+    }
+}
+
+public struct WTFIdentifier
+{
+    public int Key;
+
+    public int ID;
+
+    public WTFIdentifier(int key, int id)
+    {
+        Key = key;
+
+        ID = id;
+    }
+}
+
+public class WTFNodeSlot<T>
+{
+    WTFValue<T> Node;
+
+    public WTFNodeSlot(WTFValue<T> node)
+    {
+        Node = node;
+    }
+
+    public T GetValue()
+    {
+        var currNode = Node;
+        Node = Node.Down;
+
+        return currNode.Value;
     }
 }
