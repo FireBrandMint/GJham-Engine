@@ -129,7 +129,17 @@ public struct FInt
         return one * (FInt)multi;
     }
 
+    public static FInt operator *( FInt one, long multi )
+    {
+        return one * (FInt)multi;
+    }
+
     public static FInt operator *( int multi, FInt one )
+    {
+        return one * (FInt)multi;
+    }
+
+    public static FInt operator *( long multi, FInt one )
     {
         return one * (FInt)multi;
     }
@@ -229,7 +239,17 @@ public struct FInt
         return one == (FInt)other;
     }
 
+    public static bool operator ==( FInt one, long other )
+    {
+        return one == (FInt)other;
+    }
+
     public static bool operator ==( int other, FInt one )
+    {
+        return (FInt)other == one;
+    }
+
+    public static bool operator ==( long other, FInt one )
     {
         return (FInt)other == one;
     }
@@ -246,7 +266,17 @@ public struct FInt
         return one != (FInt)other;
     }
 
+    public static bool operator !=( FInt one, long other )
+    {
+        return one != (FInt)other;
+    }
+
     public static bool operator !=( int other, FInt one )
+    {
+        return (FInt)other != one;
+    }
+
+    public static bool operator !=( long other, FInt one )
     {
         return (FInt)other != one;
     }
@@ -267,6 +297,16 @@ public struct FInt
     {
         return (FInt)other >= one;
     }
+
+    public static bool operator >=( FInt one, long other )
+    {
+        return one >= (FInt)other;
+    }
+
+    public static bool operator >=( long other, FInt one )
+    {
+        return (FInt)other >= one;
+    }
     #endregion
 
     #region <=
@@ -281,6 +321,16 @@ public struct FInt
     }
 
     public static bool operator <=( int other, FInt one )
+    {
+        return (FInt)other <= one;
+    }
+
+    public static bool operator <=( FInt one, long other )
+    {
+        return one <= (FInt)other;
+    }
+
+    public static bool operator <=( long other, FInt one )
     {
         return (FInt)other <= one;
     }
@@ -301,6 +351,16 @@ public struct FInt
     {
         return (FInt)other > one;
     }
+
+    public static bool operator >( FInt one, long other )
+    {
+        return one > (FInt)other;
+    }
+
+    public static bool operator >( long other, FInt one )
+    {
+        return (FInt)other > one;
+    }
     #endregion
 
     #region <
@@ -315,6 +375,16 @@ public struct FInt
     }
 
     public static bool operator <( int other, FInt one )
+    {
+        return (FInt)other < one;
+    }
+
+    public static bool operator <( FInt one, long other )
+    {
+        return one < (FInt)other;
+    }
+
+    public static bool operator <( long other, FInt one )
     {
         return (FInt)other < one;
     }
@@ -333,6 +403,16 @@ public struct FInt
     public static explicit operator uint( FInt src )
     {
         return (uint)( src.RawValue >> SHIFT_AMOUNT );
+    }
+
+    public static explicit operator long( FInt src )
+    {
+        return src.RawValue >> SHIFT_AMOUNT;
+    }
+
+    public static explicit operator ulong( FInt src )
+    {
+        return (ulong)( src.RawValue >> SHIFT_AMOUNT );
     }
 
     public static explicit operator FInt( uint src )

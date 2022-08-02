@@ -20,6 +20,20 @@ public readonly struct Vector2
 
     public readonly FInt x,y;
 
+    public FInt this[int index]
+    {
+        get
+        {
+            switch(index)
+            {
+                case 0: return x;
+                case 1: return y;
+            }
+
+            throw new IndexOutOfRangeException();
+        }
+    }
+
     public Vector2 ()
     {
         x = (FInt) 0;
