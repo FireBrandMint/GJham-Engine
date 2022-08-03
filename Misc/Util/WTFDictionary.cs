@@ -128,6 +128,128 @@ public class WTFDictionary<K, T>
         }
     }
 
+    public T AddIfNonexist(K key, T value)
+    {
+        int keyTrue = key.GetHashCode();
+
+        var addValu = new KeyValuePair<int, T>(keyTrue, value);
+
+        if(MasterList.Count == 0)
+        {
+            MasterList.Add(addValu);
+
+            return value;
+        }
+
+        var searchResult = Find(keyTrue);
+
+        int indexFirst = searchResult[0];
+
+        int indexLast = searchResult[1];
+
+        int indKey = MasterList[indexFirst].Key;
+
+        if(indKey == keyTrue) return MasterList[indexFirst].Value;
+
+        bool oneIndexScenario = indexFirst == indexLast;
+
+        if (oneIndexScenario)
+        {
+
+            //If is less.
+            if(indKey > keyTrue)
+            {
+                //insert on the left
+                MasterList.Insert(indexFirst, addValu);
+            }
+            else
+            {
+                //Not same therefore is higher.
+
+                //if is last.
+                if(indexFirst == MasterList.Count - 1)
+                {
+                    MasterList.Add(addValu);
+                }
+                else MasterList.Insert(indexFirst + 1, addValu);
+            }
+        }
+        else
+        {
+            //Left is lower or equal.
+
+            //It is lower then, insert it on the front.
+            MasterList.Insert(indexLast, addValu);
+        }
+
+        return value;
+    }
+
+    public T AddIfNonexist(K key, T value, out bool existed)
+    {
+        int keyTrue = key.GetHashCode();
+
+        var addValu = new KeyValuePair<int, T>(keyTrue, value);
+
+        if(MasterList.Count == 0)
+        {
+            MasterList.Add(addValu);
+
+            existed = false;
+
+            return value;
+        }
+
+        var searchResult = Find(keyTrue);
+
+        int indexFirst = searchResult[0];
+
+        int indexLast = searchResult[1];
+
+        int indKey = MasterList[indexFirst].Key;
+
+        if(indKey == keyTrue)
+        {
+            existed = true;
+            return MasterList[indexFirst].Value;
+        }
+
+        bool oneIndexScenario = indexFirst == indexLast;
+
+        if (oneIndexScenario)
+        {
+
+            //If is less.
+            if(indKey > keyTrue)
+            {
+                //insert on the left
+                MasterList.Insert(indexFirst, addValu);
+            }
+            else
+            {
+                //Not same therefore is higher.
+
+                //if is last.
+                if(indexFirst == MasterList.Count - 1)
+                {
+                    MasterList.Add(addValu);
+                }
+                else MasterList.Insert(indexFirst + 1, addValu);
+            }
+        }
+        else
+        {
+            //Left is lower or equal.
+
+            //It is lower then, insert it on the front.
+            MasterList.Insert(indexLast, addValu);
+        }
+
+        existed = false;
+
+        return value;
+    }
+
     public void Remove (K key)
     {
         int keyTrue = key.GetHashCode();

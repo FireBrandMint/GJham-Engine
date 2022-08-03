@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-public class Shape
+public class Shape: XYBoolHolder
 {
-    ///<summary>
-    ///Shape type: 0 is convex polygon.
-    ///</summary>
+    private bool _Selected = false;
+    public bool Selected {get => _Selected; set => _Selected = value;}
 
     public virtual Vector2 Position{get;set;}
 
