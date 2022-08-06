@@ -33,7 +33,7 @@ public class XYList<T> where T:XYBoolHolder
         CapacityY = capacityY;
     }
 
-    public void AddNode(T value, Vector2 topLeft, Vector2 bottomRight)
+    public long[] AddNode(T value, Vector2 topLeft, Vector2 bottomRight)
     {
         var ranges = GetRanges(topLeft, bottomRight);
 
@@ -66,6 +66,178 @@ public class XYList<T> where T:XYBoolHolder
 
             x1 += Multiple;
         }
+
+        return ranges;
+    }
+
+    public T[] GetValues (long[] ranges)
+    {
+        T[] container = new T[10];
+
+        int cInd = 0, cSize = 10;
+
+        long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
+
+        int ikX = InternalDict.GetInternalKey(x1);
+
+        while (x1 <= x2)
+        {
+            var dictY = InternalDict.GetValueOfIK(ikX).Value;
+
+            long y1f = y1;
+
+            int ikY = InternalDict.GetInternalKey(y1f);
+
+            while(y1f <= y2)
+            {
+                var node = dictY.GetValueOfIK(ikY).Value;
+
+                while(node!= null)
+                {
+                    T valu = node.Value;
+
+                    if(!valu.SelectedC)
+                    {
+                        valu.SelectedC = true;
+
+                        if(cInd == cSize)
+                        {
+                            cSize += 10;
+
+                            Array.Resize(ref container, cSize);
+                        }
+
+                        container[cInd] = valu;
+
+                        ++cInd;
+                    }
+
+                    node = node.down;
+                }
+
+                y1f += Multiple;
+
+                ikY += 1;
+            }
+
+            x1 += Multiple;
+
+            ikX+=1;
+        }
+
+        Array.Resize(ref container, cInd + 1);
+
+        for(int i = 0; i< container.Length; ++i)
+        {
+            container[i].SelectedC = false;
+        }
+
+        return container;
+    }
+
+    public void RemoveValue (long[] ranges, T value)
+    {
+        (int keyX, int keyY)[] container = new (int keyX, int keyY)[10];
+
+        int cInd = 0, cSize = 10;
+
+        long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
+
+        int ikX = InternalDict.GetInternalKey(x1);
+
+        while (x1 <= x2)
+        {
+            var v1 = InternalDict.GetValueOfIK(ikX);
+
+            var keyX = v1.Key;
+
+            var dictY = v1.Value;
+
+            long y1f = y1;
+
+            int ikY = InternalDict.GetInternalKey(y1f);
+
+            while(y1f <= y2)
+            {
+                var v2 = dictY.GetValueOfIK(ikY);
+
+                var node = v2.Value;
+
+                var keyY = v2.Key;
+
+                bool first = node.down == null;
+
+                OneWayNode<T> lastNode = null;
+
+                while(node.down != null)
+                {
+                    if(EqComparer.Equals(value, node.Value)) break;
+
+                    lastNode = node;
+                    node = node.down;
+                }
+
+                if(first)
+                {
+                    if(cInd == cSize)
+                    {
+                        cSize += 10;
+
+                        Array.Resize(ref container, cSize);
+                    }
+
+                    container[cInd] = (keyX, keyY);
+
+                    ++cInd;
+                }
+                else
+                {
+                    lastNode.down = node.down;
+
+                    node.down = null;
+                }
+
+                y1f += Multiple;
+
+                ikY += 1;
+            }
+
+            //if(cInd == cSize)
+            //{
+            //    cSize += 10;
+
+            //    Array.Resize(ref container, cSize);
+            //}
+            //container[cInd] = valu;
+            //++cInd;
+
+            x1 += Multiple;
+
+            ikX+=1;
+        }
+
+        for (int i = 0; i < cInd + 1; ++i)
+        {
+            var toRemove = container[i];
+
+            var dictY = InternalDict[toRemove.keyX];
+
+            dictY.Remove(toRemove.keyY);
+
+            if(dictY.Count == 0)
+            {
+                //TODO: something with the empty dictionaries
+                //that doesn't cause the computer pain,
+                //because this does.
+
+                InternalDict.Remove(toRemove.keyX);
+            }
+        }
+    }
+
+    public void HasValueOn(long x, long y)
+    {
+
     }
 
     ///<summary>

@@ -4,5 +4,5 @@ using System.Linq;
 using System.Threading.Tasks;
 public interface XYBoolHolder
 {
-    bool Selected {get;set;}  
+    bool SelectedC {get;set;}  
 }

@@ -265,6 +265,48 @@ public class WTFDictionary<K, T>
         MasterList.RemoveAt(index);
     }
 
+
+    ///<summary>
+    ///Gets internal key.
+    ///WARNING: internal key is extremely volatile.
+    ///</summary>
+    public int GetInternalKey(K key)
+    {
+        int keyTrue = key.GetHashCode();
+
+        var searchResult = Find(keyTrue);
+
+        int index = searchResult[0];
+
+        if(MasterList[index].Key != keyTrue) throw new Exception($"KEY VALUE '{keyTrue}' DOESN'T EXIST");
+
+        return index;
+    }
+
+    ///<summary>
+    ///Gets value of internal key.
+    ///WARNING: internal key is extremely volatile,
+    ///if any operation that affects the list like
+    ///adding or removing was executed after you got
+    ///the key, it WILL result in a bug.
+    ///</summary>
+    public KeyValuePair<int,T> GetValueOfIK(int internalKey)
+    {
+        return MasterList[internalKey];
+    }
+
+    ///<summary>
+    ///Removes element using internal key.
+    ///WARNING: internal key is extremely volatile,
+    ///if any operation that affects the list like
+    ///adding or removing was executed after you got
+    ///the key, it WILL result in a bug.
+    ///</summary>
+    public void RemoveByIK(int internalKey)
+    {
+        MasterList.RemoveAt(internalKey);
+    }
+
     public int[] GetAllKeysHash()
     {
         int mc = MasterList.Count;
@@ -343,4 +385,6 @@ public class WTFDictionary<K, T>
             indexFirst, indexLast
         };
     }
+
+    public int Count => MasterList.Count;
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class Shape: XYBoolHolder
 {
     private bool _Selected = false;
-    public bool Selected {get => _Selected; set => _Selected = value;}
+    public bool SelectedC {get => _Selected; set => _Selected = value;}
 
     public virtual Vector2 Position{get;set;}
 
