@@ -6,11 +6,9 @@ public sealed class ConvexPolygon : Shape
 {
     bool Updated = false;
 
-    //Action ModelAction;
-
     bool NormalsUpdated = false;
 
-    //Action NormalsAction;
+    bool RangeUpdated = false;
 
     Vector2[] OriginalModel;
 
@@ -26,6 +24,8 @@ public sealed class ConvexPolygon : Shape
             //if(!Updated) ModelAction = UpdateModel;
 
             _pos = value;
+
+            UpdateModel();
 
             /*if(value != _pos)
             {
@@ -47,11 +47,15 @@ public sealed class ConvexPolygon : Shape
         {
             Updated = Updated && value == _rot;
             NormalsUpdated = NormalsUpdated && value == _rot;
+            RangeUpdated = RangeUpdated && value == _rot;
 
             //if(!Updated) ModelAction = UpdateModel;
             //if(!NormalsUpdated) NormalsAction = UpdateNormals;
 
             _rot = value;
+
+            UpdateModel();
+            UpdateNormals();
 
             /*if(value != _rot)
             {
@@ -127,27 +131,8 @@ public sealed class ConvexPolygon : Shape
 
         //NormalsAction = UpdateNormals;
 
-        //UpdateModel();
-        //UpdateNormals();
-    }
-
-    public ConvexPolygon(Vector2[] model, Vector2 position, FInt rotation, bool calculateNormals)
-    {
-        OriginalModel = model;
-
-        Position = position;
-
-        Rotation = rotation;
-
-        ResultModel = new Vector2[model.Length];
-
-        Normals = new Vector2[model.Length];
-
-        if(calculateNormals)
-        {
-            UpdateModel();
-            UpdateNormals();
-        }
+        UpdateModel();
+        UpdateNormals();
     }
 
     void UpdateModel()
@@ -180,6 +165,8 @@ public sealed class ConvexPolygon : Shape
 
     private void UpdateRange()
     {
+        if(RangeUpdated) return;
+
         FInt rangX = FInt.MinValue;
         FInt rangY = FInt.MinValue;
 
@@ -188,7 +175,7 @@ public sealed class ConvexPolygon : Shape
             Vector2 curr = ResultModel[i];
 
             FInt currX = DeterministicMath.Abs(curr.x);
-            FInt currY = DeterministicMath.Abs(curr.x);
+            FInt currY = DeterministicMath.Abs(curr.y);
 
             if(rangX < currX) rangX = currX;
 
@@ -196,6 +183,8 @@ public sealed class ConvexPolygon : Shape
         }
 
         Range = new Vector2(rangX, rangY);
+
+        RangeUpdated = true;
     }
 
     private void UpdateNormals()
@@ -235,22 +224,16 @@ public sealed class ConvexPolygon : Shape
 
     public Vector2[] GetModel()
     {
-        UpdateModel();
-
         return ResultModel;
     }
 
     public Vector2[] GetNormals()
     {
-        UpdateNormals();
-
         return Normals;
     }
 
     public override sealed Vector2 GetRange()
     {
-        UpdateModel();
-
         return Range;
     }
 
