@@ -1,5 +1,5 @@
 
-public class RenderEntity : Entity
+public abstract class RenderEntity : Entity
 {
     public static int VisibleEntityCount = 0;
 
@@ -17,7 +17,7 @@ public class RenderEntity : Entity
 
     protected bool Visible = true;
 
-    public bool IsVisible {get => Visible;
+    public bool IsVisible {get => Visible && TrulyVisible();
     set
     {
         if (Visible && !value && Initialized) --VisibleEntityCount;
@@ -26,7 +26,12 @@ public class RenderEntity : Entity
     }
     }
 
-    protected virtual bool Tickable() => false;
+    ///<summary>
+    ///Is the object truly visible if it's visible?
+    ///</summary>
+    protected abstract bool TrulyVisible();
+
+    protected abstract bool Tickable();
 
     protected bool Initialized = false;
 

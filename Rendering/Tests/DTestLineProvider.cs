@@ -51,4 +51,9 @@ public class DTestLineProvider : RenderEntity
     }
 
     protected override bool Tickable() => true;
+
+    protected override bool TrulyVisible()
+    {
+        return true;
+    }
 }

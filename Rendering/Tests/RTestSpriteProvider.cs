@@ -257,4 +257,9 @@ public class RTestSpriteProvider : RenderEntity
     {
         return true;
     }
+
+    protected override bool TrulyVisible()
+    {
+        return true;
+    }
 }

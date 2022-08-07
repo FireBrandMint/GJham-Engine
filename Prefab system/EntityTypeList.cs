@@ -55,7 +55,7 @@ public static class EntityTypeList
 
             string typeName = type.Name;
 
-            if (typeName == entityName) continue;
+            if (typeName == entityName || type.IsAbstract) continue;
 
             FieldInfo[] fields = type.GetFields(
                 BindingFlags.Instance|
@@ -176,12 +176,6 @@ public static class EntityTypeList
 
     //Below line marks where the program rewrites the code, DO NOT modify it even a little bit.
     //Activation methods!
-    private static Entity InstanceRenderEntity (ByteReader reader, int propertyCount)
-    {
-        RenderEntity entity = new RenderEntity();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
-        return entity;
-    }
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
@@ -197,7 +191,6 @@ public static class EntityTypeList
 
     private static GDictionary<String, ETypeCreate> EntityInstancers = new GDictionary<string, ETypeCreate>()
     {
-        {"RenderEntity", InstanceRenderEntity},
         {"DTestLineProvider", InstanceDTestLineProvider},
         {"RTestSpriteProvider", InstanceRTestSpriteProvider},
     };
