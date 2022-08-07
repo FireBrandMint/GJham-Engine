@@ -2,19 +2,92 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GJham.Physics.Util;
 
 
-public class Shape: XYBoolHolder
+public abstract class Shape: XYBoolHolder
 {
+    #region static grid
+
+    private static XYList<Shape> ShapeGrid = new XYList<Shape>(64, 1000, 10);
+
+
+    public static long [] GridAddShape (Shape s)
+    {
+        Vector2 pos = s.Position;
+
+        Vector2 range = s.GetRange();
+
+        Vector2 topLeft = pos - range;
+
+        Vector2 bottomRight = pos + range;
+
+        return ShapeGrid.AddNode(s, topLeft, bottomRight);
+    }
+
+    public static long[] GridMoveShape (Shape s, long[] pastIdentifier)
+    {
+        Vector2 pos = s.Position;
+
+        Vector2 range = s.GetRange();
+
+        Vector2 topLeft = pos - range;
+
+        Vector2 bottomRight = pos + range;
+
+        long[] currIdentifier = ShapeGrid.GetRanges(topLeft, bottomRight);
+
+        bool different = false;
+
+        for(int i = 0; i<4; ++i)
+        {
+            if(pastIdentifier[i] != currIdentifier[i])
+            {
+                different = true;
+                break;
+            }
+        }
+
+        if(different)
+        {
+            ShapeGrid.RemoveValue(pastIdentifier, s);
+
+            return ShapeGrid.AddNode(s, currIdentifier);
+        }
+
+        return pastIdentifier;
+    }
+
+    public static void GridRemoveShape (Shape s, long[] identifier)
+    {
+        ShapeGrid.RemoveValue(identifier, s);
+    }
+
+    public static Shape[] GetShapesInGrid (long[] identifier)
+    {
+        return ShapeGrid.GetValues(identifier);
+    }
+
+    public static Shape[] GetShapesInGrid (Shape s)
+    {
+        return ShapeGrid.GetValues(s.GetGridIdentifier());
+    }
+
+    #endregion
+
     private bool _Selected = false;
     public bool SelectedC {get => _Selected; set => _Selected = value;}
 
     public virtual Vector2 Position{get;set;}
 
-    public virtual Vector2 GetRange()
-    {
-        throw new NotImplementedException();
-    }
+    ///<summary>
+    ///Range is a vector
+    ///X is the highest absolute x coord of the points list in position Vector.ZERO
+    ///Y is the highest absolute y coord of the points list in position Vector.ZERO
+    ///</summary>
+    public abstract Vector2 GetRange();
+
+    public abstract long[] GetGridIdentifier();
 
     public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {
@@ -124,5 +197,10 @@ public class Shape: XYBoolHolder
         }
 
         return (arr, arrSize);
+    }
+
+    public virtual void Dispose()
+    {
+
     }
 }

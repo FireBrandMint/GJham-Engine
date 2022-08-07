@@ -29,7 +29,18 @@ public class WTFDictionary<K, T>
             var valu = MasterList[search[0]];
 
             #if DEBUG
-            if(valu.Key != trueKey) throw new IndexOutOfRangeException();
+            if(valu.Key != trueKey)
+            {
+                foreach(var kv in MasterList)
+                {
+                    if(kv.Key == trueKey)
+                    {
+                        throw new IndexOutOfRangeException($"Index {trueKey} exists but the dictionary can't find it!");
+                    }
+                }
+
+                throw new IndexOutOfRangeException($"Index {trueKey} doesn't exist!");
+            }
             #endif
 
             return valu.Value;
@@ -292,7 +303,21 @@ public class WTFDictionary<K, T>
     ///</summary>
     public KeyValuePair<int,T> GetValueOfIK(int internalKey)
     {
+        if(internalKey >= MasterList.Count)
+        {
+            throw new Exception($"Value out of range, internal key {internalKey} is too big for the internal list count {MasterList.Count}!");
+        }
+        if (internalKey < 0)
+        {
+            throw new Exception($"Value out of range, internal key {internalKey} is below 0!");
+        }
+
         return MasterList[internalKey];
+    }
+
+    public void SetValueOfIK(int internalKey, T value)
+    {
+        MasterList[internalKey] = new KeyValuePair<int, T>(MasterList[internalKey].Key, value);
     }
 
     ///<summary>

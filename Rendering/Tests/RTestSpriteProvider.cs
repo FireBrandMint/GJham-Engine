@@ -140,9 +140,9 @@ public class RTestSpriteProvider : RenderEntity
                 }
             }
 
-            poly.Position = Position;
-
             var stopwatch = Stopwatch.StartNew();
+
+            poly.Position = Position;
 
             bool collided = false;
 
@@ -172,11 +172,9 @@ public class RTestSpriteProvider : RenderEntity
                 }
             }*/
 
-            var colInfo = poly.GetIntersectionInfos(PolyList);
+            var colResults = Shape.GetShapesInGrid(poly);
 
-            var colResults = colInfo.arr;
-
-            var colCount = colInfo.count;
+            var colCount = colResults.Length;
 
             if(colCount != 0)
             {
@@ -185,6 +183,8 @@ public class RTestSpriteProvider : RenderEntity
                 for(int i = 0; i < colCount; ++i)
                 {
                     var curr = colResults[i];
+
+                    if(curr == poly) continue;
 
                     result.Intersects = false;
 

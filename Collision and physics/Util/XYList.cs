@@ -15,7 +15,7 @@ public class XYList<T> where T:XYBoolHolder
 
     EqualityComparer<T> EqComparer = EqualityComparer<T>.Default;
 
-    WTFDictionary<long, WTFDictionary<long, OneWayNode<T>>> InternalDict;
+    WTFDictionary<long, WTFDictionary<long, OneWayNode<T>>> DictX;
 
     WTFDictionary<long, OneWayNode<T>> ReserveDictionary;
 
@@ -26,7 +26,7 @@ public class XYList<T> where T:XYBoolHolder
     {
         Multiple = gridSeparation;
 
-        InternalDict = new WTFDictionary<long, WTFDictionary<long, OneWayNode<T>>>(capacityX);
+        DictX = new WTFDictionary<long, WTFDictionary<long, OneWayNode<T>>>(capacityX);
 
         ReserveDictionary = new WTFDictionary<long, OneWayNode<T>>(CapacityY);
 
@@ -42,7 +42,7 @@ public class XYList<T> where T:XYBoolHolder
         while (x1 <= x2)
         {
             bool dictExisted;
-            var dictY = InternalDict.AddIfNonexist(x1, ReserveDictionary, out dictExisted);
+            var dictY = DictX.AddIfNonexist(x1, ReserveDictionary, out dictExisted);
 
             if(!dictExisted) ReserveDictionary = new WTFDictionary<long, OneWayNode<T>>(CapacityY);
 
@@ -70,6 +70,41 @@ public class XYList<T> where T:XYBoolHolder
         return ranges;
     }
 
+    public long[] AddNode(T value, long[] ranges)
+    {
+        long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
+
+        //while (x1 <= x2)
+        for(; x1 <= x2; x1 += Multiple)
+        {
+            bool dictExisted;
+            var dictY = DictX.AddIfNonexist(x1, ReserveDictionary, out dictExisted);
+
+            if(!dictExisted) ReserveDictionary = new WTFDictionary<long, OneWayNode<T>>(CapacityY);
+
+
+            for(long y1f = y1; y1f <= y2; y1f += Multiple)
+            {
+                bool nodeExisted;
+
+                var valueNode = new OneWayNode<T>(value);
+
+                var node = dictY.AddIfNonexist(y1f, valueNode, out nodeExisted);
+
+                if(nodeExisted)
+                {
+                    node.Add(valueNode);
+                }
+            }
+        }
+
+        if(x1 != x2 + Multiple) throw new Exception("Lol???");
+
+        //Console.WriteLine($"Added x: {x1}-{x2}, y: {y1}-{y2}");
+
+        return ranges;
+    }
+
     public T[] GetValues (long[] ranges)
     {
         T[] container = new T[10];
@@ -78,19 +113,16 @@ public class XYList<T> where T:XYBoolHolder
 
         long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
 
-        int ikX = InternalDict.GetInternalKey(x1);
-
-        while (x1 <= x2)
+        for(; x1 <= x2; x1 += Multiple)
         {
-            var dictY = InternalDict.GetValueOfIK(ikX).Value;
+
+            var dictY = DictX[x1];
 
             long y1f = y1;
 
-            int ikY = InternalDict.GetInternalKey(y1f);
-
             while(y1f <= y2)
             {
-                var node = dictY.GetValueOfIK(ikY).Value;
+                var node = dictY[y1f];
 
                 while(node!= null)
                 {
@@ -116,18 +148,12 @@ public class XYList<T> where T:XYBoolHolder
                 }
 
                 y1f += Multiple;
-
-                ikY += 1;
             }
-
-            x1 += Multiple;
-
-            ikX+=1;
         }
 
-        Array.Resize(ref container, cInd + 1);
+        Array.Resize(ref container, cInd);
 
-        for(int i = 0; i< container.Length; ++i)
+        for(int i = 0; i< cInd; ++i)
         {
             container[i].SelectedC = false;
         }
@@ -143,27 +169,23 @@ public class XYList<T> where T:XYBoolHolder
 
         long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
 
-        int ikX = InternalDict.GetInternalKey(x1);
+        //int ikX = DictX.GetInternalKey(x1);
 
-        while (x1 <= x2)
+        for(; x1 <= x2; x1 += Multiple)
         {
-            var v1 = InternalDict.GetValueOfIK(ikX);
+            //var v1 = DictX.GetValueOfIK(ikX);
 
-            var keyX = v1.Key;
+            var keyX = (int)x1;
 
-            var dictY = v1.Value;
+            var dictY = DictX[x1];
 
-            long y1f = y1;
+            //int ikY = dictY.GetInternalKey(y1);
 
-            int ikY = InternalDict.GetInternalKey(y1f);
-
-            while(y1f <= y2)
+            for(long y1f = y1; y1f <= y2; y1f += Multiple)
             {
-                var v2 = dictY.GetValueOfIK(ikY);
+                var node = dictY[y1f];
 
-                var node = v2.Value;
-
-                var keyY = v2.Key;
+                var keyY = (int)y1f;
 
                 bool first = node.down == null;
 
@@ -192,35 +214,31 @@ public class XYList<T> where T:XYBoolHolder
                 }
                 else
                 {
-                    lastNode.down = node.down;
+                    if(lastNode == null)
+                    {
+                        //dictY.SetValueOfIK(ikY, node.down);
+                        dictY[y1f] = node.down;
+                        node.down = null;
+                    }
+                    else
+                    {
+                        lastNode.down = node.down;
 
-                    node.down = null;
+                        node.down = null;
+                    }
                 }
 
-                y1f += Multiple;
-
-                ikY += 1;
+                //ikY += 1;
             }
 
-            //if(cInd == cSize)
-            //{
-            //    cSize += 10;
-
-            //    Array.Resize(ref container, cSize);
-            //}
-            //container[cInd] = valu;
-            //++cInd;
-
-            x1 += Multiple;
-
-            ikX+=1;
+            //ikX+=1;
         }
 
-        for (int i = 0; i < cInd + 1; ++i)
+        if(cInd > 0)for (int i = 0; i < cInd; ++i)
         {
             var toRemove = container[i];
 
-            var dictY = InternalDict[toRemove.keyX];
+            var dictY = DictX[toRemove.keyX];
 
             dictY.Remove(toRemove.keyY);
 
@@ -230,20 +248,15 @@ public class XYList<T> where T:XYBoolHolder
                 //that doesn't cause the computer pain,
                 //because this does.
 
-                InternalDict.Remove(toRemove.keyX);
+                DictX.Remove(toRemove.keyX);
             }
         }
-    }
-
-    public void HasValueOn(long x, long y)
-    {
-
     }
 
     ///<summary>
     ///Gets x1,x2,y1,y2;
     ///</summary>
-    private long[] GetRanges(Vector2 topLeft, Vector2 bottomRight)
+    public long[] GetRanges(Vector2 topLeft, Vector2 bottomRight)
     {
         long[] XYR = new long[4]
         {

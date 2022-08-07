@@ -12,7 +12,8 @@
             "program": "${workspaceFolder}/bin/Debug/net5.0/My Engine.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
+            //"console": "externalTerminal",
+            "console": "internalConsole",
             "stopAtEntry": false
         },
         {

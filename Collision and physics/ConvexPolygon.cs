@@ -4,11 +4,15 @@ using System.Threading;
 
 public sealed class ConvexPolygon : Shape
 {
+    bool Initialized = false;
+
     bool Updated = false;
 
     bool NormalsUpdated = false;
 
     bool RangeUpdated = false;
+
+    long[] GridIdentifier;
 
     Vector2[] OriginalModel;
 
@@ -132,7 +136,12 @@ public sealed class ConvexPolygon : Shape
         //NormalsAction = UpdateNormals;
 
         UpdateModel();
+
         UpdateNormals();
+
+        GridIdentifier = Shape.GridAddShape(this);
+
+        Initialized = true;
     }
 
     void UpdateModel()
@@ -157,6 +166,8 @@ public sealed class ConvexPolygon : Shape
         {
             ResultModel[i] = ResultModel[i] + Position;
         }
+
+        if(Initialized) GridIdentifier = Shape.GridMoveShape(this, GridIdentifier);
 
         Updated = true;
 
@@ -237,23 +248,15 @@ public sealed class ConvexPolygon : Shape
         return Range;
     }
 
+    public override long[] GetGridIdentifier()
+    {
+        return GridIdentifier;
+    }
+
     public bool PolyIntersects(ConvexPolygon poly)
     {
         Vector2[] a = GetModel();
         Vector2[] b = poly.GetModel();
-
-        Vector2 bPosition = poly.Position;
-
-        Vector2
-        aRange = Range,
-        bRange = poly.Range;
-
-        Vector2 r = aRange + bRange;
-
-        Vector2 d = Position - bPosition;
-        d = d.Abs();
-
-        if(d.x > r.x || d.y > r.y) goto end;
 
         for(int polyi = 0; polyi < 2; ++polyi)
         {
@@ -305,19 +308,6 @@ public sealed class ConvexPolygon : Shape
 
         Vector2[] a = GetModel();
         Vector2[] b = poly.GetModel();
-
-        Vector2 bPosition = poly.Position;
-
-        Vector2
-        aRange = Range,
-        bRange = poly.Range;
-
-        Vector2 r = aRange + bRange;
-
-        Vector2 d = Position - bPosition;
-        d = d.Abs();
-
-        if(d.x > r.x || d.y > r.y) goto doesntIntersect;
 
         FInt distance = FInt.MaxValue;
 
@@ -502,6 +492,11 @@ public sealed class ConvexPolygon : Shape
         result.Separation = vector * distance * factor;
 
         result.Intersects = true;
+    }
+
+    public override void Dispose()
+    {
+        Shape.GridRemoveShape(this, GridIdentifier);
     }
 
     //This void does nothing.
