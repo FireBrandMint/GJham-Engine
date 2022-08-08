@@ -41,6 +41,9 @@ public class Canvas
 
     double Lerp = 1.0;
 
+    Vector2 CameraPos;
+
+    Vector2u LAST_SIZE;
     Vector2u SIZE;
     string NAME;
 
@@ -55,7 +58,10 @@ public class Canvas
         //Text = name;
 
         SIZE = new Vector2u(width, height);
+        LAST_SIZE = SIZE;
         NAME = name;
+
+        Engine.WindowSize = new Vector2((int)SIZE.X, (int)SIZE.Y);
 
         /*Window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), NAME);
 
@@ -83,6 +89,8 @@ public class Canvas
         window.KeyPressed += _KeyDown;
         window.KeyReleased += _KeyUp;
         window.LostFocus += _LostFocus;
+
+        window.Resized += _Resized;
 
         
 
@@ -145,7 +153,8 @@ public class Canvas
         {
             w = Window,
             lerp = fLerp,
-            windowSize = wSize
+            windowSize = wSize,
+            cameraPos = CameraPos,
         };
 
         for (uint i = 0; i< tdLenght; ++i)
@@ -274,21 +283,29 @@ public class Canvas
                     ToDraw[i] = objs[i];
                 }
 
-                //if(count > ToDraw.Length)
-                //{
-                //    for (int i = count; i < ToDraw.Length; ++i)
-                //    {
-                //        ToDraw[i] = null;
-                //    }
-                //}
+                if(count > ToDraw.Length)
+                {
+                    for (int i = count; i < ToDraw.Length; ++i)
+                    {
+                        ToDraw[i] = null;
+                    }
+                }
             }
             else ToDraw = objs;
+
+            
             ToDrawCount = count;
         }
     }
 
     public void SetLerp (double lerp)
     {
+        if(Engine.MaxTPS > 59)
+        {
+            Lerp = 1.0;
+            return;
+        }
+
         Lerp = lerp;
     }
 
@@ -313,8 +330,25 @@ public class Canvas
         lock (KeysPressed) KeysPressed.Clear();
     }
 
+    void _Resized(object sender, SizeEventArgs e)
+    {
+        var wSize = new Vector2((int)e.Width, (int) e.Height);
+
+        Engine.WindowSize = wSize;
+
+        SIZE = new Vector2u((uint)wSize.x, (uint)wSize.y);
+    }
+
+    public void ChangeWindowSize (Vector2 size)
+    {
+        SIZE = new Vector2u((uint)size.x, (uint)size.y);
+
+
+    }
+
     public void Refresh ()
     {
+        CameraPos = Engine.ViewPos;
         AllowRendering.Set();
     }
 
@@ -327,6 +361,15 @@ public class Canvas
 
             AllowRendering.WaitOne();
             AllowRendering.Reset();
+
+            if(LAST_SIZE.X != SIZE.X || LAST_SIZE.Y != SIZE.Y)
+            {
+                Window.SetView(new View(new FloatRect(0f, 0f, SIZE.X, SIZE.Y)));
+
+                if (Window.Size != SIZE) Window.Size = SIZE;
+
+                LAST_SIZE = SIZE;
+            }
 
             if (Window.IsOpen) _Render();
             else break;
@@ -353,6 +396,8 @@ public class RenderArgs
     public float lerp;
 
     public Vector2f windowSize;
+
+    public Vector2 cameraPos;
 }
 
 //Old useless code for a windows forms problem.

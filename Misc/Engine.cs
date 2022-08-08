@@ -39,8 +39,17 @@ public static class Engine
     ///</summary>
     public static event Action ExecuteOnClose = null;
 
+    public static void ExecuteOnCloseProgram (Action func)
+    {
+        ExecuteOnClose += func;
+    }
+
     ///<summary>
     ///NEVER USE THIS FUNCTION!!!
     ///</summary>
     public static void EOC() => ExecuteOnClose?.Invoke();
+
+    public static Vector2 WindowSize;
+
+    public static Vector2 ViewPos;
 }

@@ -65,7 +65,7 @@ public sealed class DrawableSprite2D : DrawableObject
             return;
         }
 
-        TryRecalculateVertex(states.Texture.Size, args.lerp);
+        TryRecalculateVertex(states.Texture.Size, args.lerp, args.cameraPos);
 
         args.w.Draw(Result, states);
     }
@@ -99,7 +99,7 @@ public sealed class DrawableSprite2D : DrawableObject
         {
             DrawableSprite2D curr = (DrawableSprite2D)dObjects[i];
 
-            curr.FillBatch(arr, vertIndex, texSize, lerp);
+            curr.FillBatch(arr, vertIndex, texSize, lerp, args.cameraPos);
 
             vertIndex+=4;
         }
@@ -109,9 +109,9 @@ public sealed class DrawableSprite2D : DrawableObject
         arr.Dispose();
     }
 
-    public void FillBatch(VertexArray arr, uint index, Vector2u texSize, float lerp)
+    public void FillBatch(VertexArray arr, uint index, Vector2u texSize, float lerp, Vector2 cameraPos)
     {
-        TryRecalculateVertex(texSize, lerp);
+        TryRecalculateVertex(texSize, lerp, cameraPos);
 
         var res0 = Result[0];
         var res1 = Result[1];
@@ -142,7 +142,7 @@ public sealed class DrawableSprite2D : DrawableObject
         }
     }
 
-    public void TryRecalculateVertex(Vector2u texSize, float lerp)
+    public void TryRecalculateVertex(Vector2u texSize, float lerp, Vector2 camPosition)
     {
         if(Same) return;
 
@@ -156,8 +156,8 @@ public sealed class DrawableSprite2D : DrawableObject
 
         Vector2 pos;
 
-        if(SprStatic) pos = CurrPos;
-        else pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp);
+        if(SprStatic) pos = CurrPos + camPosition;
+        else pos = Vector2.Lerp(LastPos + camPosition, CurrPos + camPosition, (FInt) lerp);
 
         Vector2f texTopLef = (Vector2f)Bounderies[0];
         Vector2f texBotRig = (Vector2f)Bounderies[1];

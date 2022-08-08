@@ -2,6 +2,7 @@ using System;
 using SFML.System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GJham.Rendering.Optimization;
 
 public class RTestSpriteProvider : RenderEntity
 {
@@ -64,10 +65,14 @@ public class RTestSpriteProvider : RenderEntity
     static bool p = true;
     bool player;
 
+    CullingAABB RenderOpt = new CullingAABB(new AABB(new Vector2(0, 0), new Vector2(50, 50)));
+
     public override void Init()
     {
         base.Init();
         LastPosition = Position;
+
+        RenderOpt.ChangePosition(Position - new Vector2(25, 25));
 
         if(_TexturePath != null && _TexturePath != "")
         {
@@ -208,6 +213,12 @@ public class RTestSpriteProvider : RenderEntity
                 Console.WriteLine($"PLAYER INTERSECTS! TOOK {time}MS!");
             }
             stopwatch.Stop();
+
+            RenderOpt.ChangePosition(Position - new Vector2(25, 25));
+
+            string posMsg = $"In position {Position.ToString()}";
+
+            AntiConsoleSpam.antiConsoleSpam.WriteLine(ref posMsg, 1032, 30);
         }
     }
 
@@ -258,8 +269,5 @@ public class RTestSpriteProvider : RenderEntity
         return true;
     }
 
-    protected override bool TrulyVisible()
-    {
-        return true;
-    }
+    protected override bool TrulyVisible() => RenderOpt.CanRender();
 }

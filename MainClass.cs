@@ -294,9 +294,6 @@ class MainClass
         //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
 
-        //If the window is still rendering something else, WAIT!
-        //if(Window.Updating) Window.WaitRendering.WaitOne();
-
         //This 'if' prevents the program from updating the array of things to render
         //multiple times between ticks, wich isn't necessary and would be too
         //costly.
@@ -324,6 +321,8 @@ class MainClass
                     }
                 }
             }
+
+            Array.Resize(ref dObjects, count);
             
             //Sends the things that must be rendered to the screen
             Window.SetDraw(dObjects, count);
