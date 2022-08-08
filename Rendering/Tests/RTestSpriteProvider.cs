@@ -231,8 +231,9 @@ public class RTestSpriteProvider : RenderEntity
 
         if(!dInitialized)
         {
-            drawable = new DrawableSprite2D( ZValue,
-                TexturePath, LastPosition, Position, 
+            drawable = new DrawableSprite2D(
+                ZValue, TexturePath,
+                LastPosition, Position, new Vector2(1, 1),
                 new Vector2u[]{TextureAreaTopLeft, TextureAreaBottomRight},
                 BoundriesSet, Rotation, IsStatic);
             
@@ -262,6 +263,8 @@ public class RTestSpriteProvider : RenderEntity
             drawable.DisposeResources();
             drawable = null;
         }
+
+        RenderOpt.Dispose();
     }
 
     protected override bool Tickable()

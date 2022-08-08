@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
+///<summary>
+///Simple AABB rectangle only used
+///for culling in rendering at the time of writing!
+///</summary>
 public struct AABB
 {
     public Vector2 Origin;

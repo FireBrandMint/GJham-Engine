@@ -4,6 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace GJham.Rendering.Optimization;
+
+///<summary>
+///Class used for culling in rendering.
+///The AABB is tested against the screen AABB
+///space to see if it's necessary to render
+///the object.
+///Starts active, to retrieve wether the
+///thing you're using can render or not
+///use the CanRender() function.
+///NOTE TO SELF: please update the AABB
+///position and range if a object moves or changes size.
+///</summary>
 public class CullingAABB
 {
     CulValue CAABB;

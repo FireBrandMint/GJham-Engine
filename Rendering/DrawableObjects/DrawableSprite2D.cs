@@ -17,6 +17,8 @@ public sealed class DrawableSprite2D : DrawableObject
 
     Vector2 LastPos, CurrPos;
 
+    Vector2 Scale;
+
     Vector2u[] Bounderies;
 
     bool BSet;
@@ -29,7 +31,7 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public int z {get;set;}
 
-    public DrawableSprite2D (int _z, string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
+    public DrawableSprite2D (int _z, string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2 scale, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
     {
         z = _z;
 
@@ -38,6 +40,8 @@ public sealed class DrawableSprite2D : DrawableObject
         
         LastPos = lastPos;
         CurrPos = currPos;
+
+        Scale = scale;
 
         Bounderies = bounderies;
         
@@ -152,7 +156,7 @@ public sealed class DrawableSprite2D : DrawableObject
 
         if(SprStatic) lerp = 1f;
 
-        Vector2 halves = new Vector2((FInt) (Bounderies[1].X - Bounderies[0].X) / 2, (FInt) (Bounderies[1].Y - Bounderies[0].Y) / 2);
+        Vector2 halves = new Vector2((FInt) (Bounderies[1].X - Bounderies[0].X) / 2 * Scale.x, (FInt) (Bounderies[1].Y - Bounderies[0].Y) / 2 * Scale.y);
 
         Vector2 pos;
 

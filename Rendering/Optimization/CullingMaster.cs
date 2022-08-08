@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 
 namespace GJham.Rendering.Optimization;
+
+///<summary>
+///Class that asynchronously processes
+///CullingAABB objects, you don't need
+///to understand what it does, it's
+///useless knowlege.
+///</summary>
 public static class CullingMaster
 {
     static CullingMaster ()

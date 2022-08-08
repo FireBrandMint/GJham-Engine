@@ -300,12 +300,6 @@ public class Canvas
 
     public void SetLerp (double lerp)
     {
-        if(Engine.MaxTPS > 59)
-        {
-            Lerp = 1.0;
-            return;
-        }
-
         Lerp = lerp;
     }
 

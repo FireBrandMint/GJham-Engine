@@ -91,7 +91,6 @@ class MainClass
 
         #endregion TEST AREA
 
-
         //This starts the Tick, Render and OnSecond loop.
         //How often they are executed depends on certain
         //values found on the Engine class...
