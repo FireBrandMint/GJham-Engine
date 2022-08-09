@@ -42,6 +42,8 @@ public class Canvas
     double Lerp = 1.0;
 
     Vector2 CameraPos;
+    Vector2 LastCameraPos;
+    bool FirstCamPos = true;
 
     Vector2u LAST_SIZE;
     Vector2u SIZE;
@@ -154,6 +156,7 @@ public class Canvas
             w = Window,
             lerp = fLerp,
             windowSize = wSize,
+            //cameraPos = Vector2.Lerp(LastCameraPos, CameraPos, (FInt)fLerp),
             cameraPos = CameraPos,
         };
 
@@ -295,6 +298,15 @@ public class Canvas
 
             
             ToDrawCount = count;
+
+
+            LastCameraPos = CameraPos;
+            CameraPos = Engine.ViewPos;
+            if(FirstCamPos)
+            {
+                LastCameraPos = CameraPos;
+                FirstCamPos = false;
+            }
         }
     }
 
@@ -342,7 +354,6 @@ public class Canvas
 
     public void Refresh ()
     {
-        CameraPos = Engine.ViewPos;
         AllowRendering.Set();
     }
 

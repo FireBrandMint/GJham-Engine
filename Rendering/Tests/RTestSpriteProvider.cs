@@ -99,6 +99,10 @@ public class RTestSpriteProvider : RenderEntity
 
             Rotation = rot;
         }
+        else
+        {
+            IsStatic = false;
+        }
 
         inTree = true;
     }
@@ -215,6 +219,11 @@ public class RTestSpriteProvider : RenderEntity
             stopwatch.Stop();
 
             RenderOpt.ChangePosition(Position - new Vector2(25, 25));
+
+            if(Camera.MainCamera != null)
+            {
+                Camera.MainCamera.Position = Position;
+            }
 
             string posMsg = $"In position {Position.ToString()}";
 

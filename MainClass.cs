@@ -51,7 +51,9 @@ class MainClass
 
         #region TEST AREA
 
-        Console.WriteLine(new FInt(43, 25043));
+        EntityCommand.Instance(new Camera(){
+            IsMain = true,
+        });
         
         Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);

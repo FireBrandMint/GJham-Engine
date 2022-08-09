@@ -150,7 +150,7 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void TryRecalculateVertex(Vector2u texSize, float lerp, Vector2 camPosition)
     {
-        if(Same) return;
+        //if(Same) return;
 
         Same = true;
 
@@ -162,8 +162,8 @@ public sealed class DrawableSprite2D : DrawableObject
 
         Vector2 pos;
 
-        if(SprStatic) pos = CurrPos + camPosition;
-        else pos = Vector2.Lerp(LastPos + camPosition, CurrPos + camPosition, (FInt) lerp);
+        if(SprStatic) pos = CurrPos - camPosition;
+        else pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp) - camPosition;
 
         Vector2f texTopLef = (Vector2f)Bounderies[0];
         Vector2f texBotRig = (Vector2f)Bounderies[1];

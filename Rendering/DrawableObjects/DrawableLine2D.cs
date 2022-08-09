@@ -74,7 +74,7 @@ public sealed class DrawableLine2D : DrawableObject
         //Vertex a = av.ToVertex();
         //Vertex b = B.ToVertex();
 
-        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)args.lerp);
+        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)args.lerp) - args.cameraPos;
 
         Vertex a = new Vertex((Vector2f)(A + p));
         Vertex b = new Vertex((Vector2f)(B + p));
@@ -96,7 +96,7 @@ public sealed class DrawableLine2D : DrawableObject
 
         for(uint i = index; i< index + count; ++i)
         {
-            ((DrawableLine2D)dObjects[i]).FillVA(array, arrInd, args.lerp);
+            ((DrawableLine2D)dObjects[i]).FillVA(array, arrInd, args.lerp, args.cameraPos);
 
             arrInd+=2;
         }
@@ -104,9 +104,9 @@ public sealed class DrawableLine2D : DrawableObject
         array.Dispose();
     }
 
-    public void FillVA(VertexArray arr, uint index, float lerp)
+    public void FillVA(VertexArray arr, uint index, float lerp, Vector2 camPos)
     {
-        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)lerp);
+        Vector2 p = Vector2.Lerp(LastPos, CurrPos, (FInt)lerp) - camPos;
 
         Vertex a = new Vertex((A + p).ToVectorF());
         Vertex b = new Vertex((B + p).ToVectorF());

@@ -383,8 +383,8 @@ public sealed class ConvexPolygon : Shape
     {
         result.Intersects = false;
 
-        var mA = GetModel();
-        var mB = poly.GetModel();
+        var a = GetModel();
+        var b = poly.GetModel();
 
         Vector2
         bRange = poly.Range,
@@ -406,14 +406,14 @@ public sealed class ConvexPolygon : Shape
             return;
         }
 
-        int aLength = mA.Length;
-        int bLength = mB.Length;
+        int aLength = a.Length;
+        int bLength = b.Length;
 
-        Vector2[] a = new Vector2[aLength];
-        Vector2[] b = new Vector2[bLength];
+        //Vector2[] a = new Vector2[aLength];
+        //Vector2[] b = new Vector2[bLength];
 
-        Array.Copy(mA, a, aLength);
-        Array.Copy(mB, b, bLength);
+        //Array.Copy(mA, a, aLength);
+        //Array.Copy(mB, b, bLength);
 
         FInt distance = FInt.MaxValue;
 
