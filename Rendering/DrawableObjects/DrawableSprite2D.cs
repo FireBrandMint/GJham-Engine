@@ -29,6 +29,8 @@ public sealed class DrawableSprite2D : DrawableObject
 
     VertexArray Result = null;
 
+    Color Modulate = Color.White;
+
     public int z {get;set;}
 
     public DrawableSprite2D (int _z, string pathToTexture, Vector2 lastPos, Vector2 currPos, Vector2 scale, Vector2u[] bounderies, bool bounderiesSet, FInt rotationDegrees, bool isStatic)
@@ -169,13 +171,13 @@ public sealed class DrawableSprite2D : DrawableObject
         FInt angle = (FInt)Rotation;
 
         //Top left
-        Result[0] = new Vertex(Vector2.RotateVec(pos - halves, pos, angle).ToVectorF(), texTopLef);
+        Result[0] = new Vertex(Vector2.RotateVec(pos - halves, pos, angle).ToVectorF(), Modulate, texTopLef);
         //Bottom left
-        Result[1] = new Vertex(Vector2.RotateVec(new Vector2(pos.x - halves.x, pos.y + halves.y), pos, angle).ToVectorF(), new Vector2f(texTopLef.X, texBotRig.Y));
+        Result[1] = new Vertex(Vector2.RotateVec(new Vector2(pos.x - halves.x, pos.y + halves.y), pos, angle).ToVectorF(), Modulate, new Vector2f(texTopLef.X, texBotRig.Y));
         //Bottom right
-        Result[2] = new Vertex(Vector2.RotateVec(pos + halves, pos, angle).ToVectorF(), texBotRig);
+        Result[2] = new Vertex(Vector2.RotateVec(pos + halves, pos, angle).ToVectorF(), Modulate, texBotRig);
         //Top right
-        Result[3] = new Vertex(Vector2.RotateVec(new Vector2(pos.x + halves.x, pos.y - halves.y), pos, angle).ToVectorF(), new Vector2f(texBotRig.X, texTopLef.Y));
+        Result[3] = new Vertex(Vector2.RotateVec(new Vector2(pos.x + halves.x, pos.y - halves.y), pos, angle).ToVectorF(), Modulate, new Vector2f(texBotRig.X, texTopLef.Y));
     }
 
     public Texture TryCashTexture()
@@ -219,5 +221,12 @@ public sealed class DrawableSprite2D : DrawableObject
 
         Bounderies[0] = texTopLef;
         Bounderies[1] = texBotRig;
+    }
+
+    public void ChangeModulate(Color color)
+    {
+        Same = Same && color == Modulate;
+
+        Modulate = color;
     }
 }
