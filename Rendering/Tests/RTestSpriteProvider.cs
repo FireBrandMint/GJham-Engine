@@ -98,6 +98,8 @@ public class RTestSpriteProvider : RenderEntity
             poly.Rotation = rot;
 
             Rotation = rot;
+
+            Processable = false;
         }
         else
         {
@@ -149,8 +151,6 @@ public class RTestSpriteProvider : RenderEntity
                 }
             }
 
-            var stopwatch = Stopwatch.StartNew();
-
             poly.Position = Position;
 
             bool collided = false;
@@ -180,6 +180,8 @@ public class RTestSpriteProvider : RenderEntity
                     collided = true;
                 }
             }*/
+
+            var stopwatch = Stopwatch.StartNew();
 
             var colResults = Shape.GetShapesInGrid(poly);
 

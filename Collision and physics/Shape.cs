@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GJham.Physics.Util;
 
 
-public abstract class Shape: XYBoolHolder
+public class Shape: XYBoolHolder
 {
     #region static grid
 
@@ -85,9 +85,9 @@ public abstract class Shape: XYBoolHolder
     ///X is the highest absolute x coord of the points list in position Vector.ZERO
     ///Y is the highest absolute y coord of the points list in position Vector.ZERO
     ///</summary>
-    public abstract Vector2 GetRange();
+    public virtual Vector2 GetRange() => throw new NotImplementedException();
 
-    public abstract long[] GetGridIdentifier();
+    public virtual long[] GetGridIdentifier() => throw new NotImplementedException();
 
     public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {

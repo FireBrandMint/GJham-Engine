@@ -17,14 +17,30 @@ using System.Threading.Tasks;
 ///</summary>
 public class WTFDictionary<K, T>
 {
-    int LastGot = 0;
+    //int LastGotHash = 0;
+    //int LastGot = 0;
     public T this[K key]
     {
         get
         {
-
-
             int trueKey = key.GetHashCode();
+
+            /*if(trueKey > LastGotHash)
+            {
+                int subjectNum = LastGot + 1;
+                if(subjectNum < Length)
+                {
+                    var subject = MasterList[subjectNum];
+
+                    if(subject.Key == trueKey)
+                    {
+                        LastGot = subjectNum;
+                        LastGotHash = trueKey;
+
+                        return subject.Value;
+                    }
+                }
+            }*/
 
             var search = Find(trueKey);
 
@@ -44,6 +60,9 @@ public class WTFDictionary<K, T>
                 throw new IndexOutOfRangeException($"Index {trueKey} doesn't exist!");
             }
             #endif
+
+            //LastGotHash = trueKey;
+            //LastGot = search[0];
 
             return valu.Value;
         }
