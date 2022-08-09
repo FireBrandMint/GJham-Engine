@@ -17,11 +17,13 @@ using System.Threading.Tasks;
 ///</summary>
 public class WTFDictionary<K, T>
 {
-
+    int LastGot = 0;
     public T this[K key]
     {
         get
         {
+
+
             int trueKey = key.GetHashCode();
 
             var search = Find(trueKey);
@@ -61,6 +63,8 @@ public class WTFDictionary<K, T>
     }
 
     List<KeyValuePair<int, T>> MasterList = new List<KeyValuePair<int, T>>();
+
+    int Length = 0;
 
     public WTFDictionary()
     {
@@ -137,6 +141,8 @@ public class WTFDictionary<K, T>
             //It is lower then, insert it on the front.
             MasterList.Insert(indexLast, addValu);
         }
+
+        ++Length;
     }
 
     public T AddIfNonexist(K key, T value)
@@ -208,6 +214,8 @@ public class WTFDictionary<K, T>
 
             existed = false;
 
+            ++Length;
+
             return value;
         }
 
@@ -258,6 +266,8 @@ public class WTFDictionary<K, T>
 
         existed = false;
 
+        ++Length;
+
         return value;
     }
 
@@ -274,6 +284,8 @@ public class WTFDictionary<K, T>
         if(node.Key != keyTrue) throw new Exception($"KEY VALUE '{keyTrue}' DOESN'T EXIST");
 
         MasterList.RemoveAt(index);
+
+        --Length;
     }
 
 
@@ -330,6 +342,8 @@ public class WTFDictionary<K, T>
     public void RemoveByIK(int internalKey)
     {
         MasterList.RemoveAt(internalKey);
+
+        --Length;
     }
 
     public int[] GetAllKeysHash()
@@ -411,5 +425,5 @@ public class WTFDictionary<K, T>
         };
     }
 
-    public int Count => MasterList.Count;
+    public int Count => Length;
 }

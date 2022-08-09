@@ -176,6 +176,12 @@ public static class EntityTypeList
 
     //Below line marks where the program rewrites the code, DO NOT modify it even a little bit.
     //Activation methods!
+    private static Entity InstanceCamera (ByteReader reader, int propertyCount)
+    {
+        Camera entity = new Camera();
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -811270619: entity.IsMain = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; }}
+        return entity;
+    }
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
@@ -191,6 +197,7 @@ public static class EntityTypeList
 
     private static GDictionary<String, ETypeCreate> EntityInstancers = new GDictionary<string, ETypeCreate>()
     {
+        {"Camera", InstanceCamera},
         {"DTestLineProvider", InstanceDTestLineProvider},
         {"RTestSpriteProvider", InstanceRTestSpriteProvider},
     };
