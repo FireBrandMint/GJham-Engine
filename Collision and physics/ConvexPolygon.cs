@@ -252,7 +252,7 @@ public sealed class ConvexPolygon : Shape
     {
         return GridIdentifier;
     }
-
+    
     public bool PolyIntersects(ConvexPolygon poly)
     {
         Vector2[] a = GetModel();
@@ -378,7 +378,6 @@ public sealed class ConvexPolygon : Shape
         doesntIntersect:
         result.Intersects = false;
     }
-
     public void PolyIntersectsInfo(ConvexPolygon poly, ref CollisionResult result)
     {
         result.Intersects = false;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GJham.Physics.Util;
+using System.Runtime.CompilerServices;
 
 
 public class Shape: XYBoolHolder
@@ -88,7 +89,6 @@ public class Shape: XYBoolHolder
     public virtual Vector2 GetRange() => throw new NotImplementedException();
 
     public virtual long[] GetGridIdentifier() => throw new NotImplementedException();
-
     public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {
         Vector2

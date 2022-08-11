@@ -94,7 +94,7 @@ public sealed class DrawableSprite2D : DrawableObject
         {
             Texture = texture,
             Transform = Transform.Identity,
-            BlendMode = BlendMode.None,
+            BlendMode = BlendMode.None
         };
 
         VertexArray arr = new VertexArray(PrimitiveType.Quads, count * 4);
