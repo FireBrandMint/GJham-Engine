@@ -17,17 +17,36 @@ public class UISprite2D : DrawableObject
 
     Vector2f [] SprSectionData = null;
 
-    public UISprite2D (string texturePath, Vector2 center, Vector2 sprLengthsPercent)
+    AdjustmentMode Mode;
+    /// <summary>
+    /// centerPercent is the coords of the center of the sprite position in the screen
+    /// where X and Y have a 0 to 1 range.
+    /// sprLengthsPercent is the height and lenght of the sprite display in the screen
+    /// where X and Y have a 0 to 1 range.
+    /// mode is the way the UI sprite will be displayed on screen.
+    /// </summary>
+    public UISprite2D (string texturePath, Vector2 centerPercent, Vector2 sprLengthsPercent, AdjustmentMode mode)
     {
         ChangeTexture(ref texturePath);
 
         SprDrawData = new Vector2[]
         {
-            center, sprLengthsPercent
+            centerPercent, sprLengthsPercent
         };
-    }
 
-    public UISprite2D (string texturePath, Vector2 center, Vector2 sprLengthsPercent, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
+        Mode = mode;
+    }
+    /// <summary>
+    /// centerPercent is the coords of the center of the sprite position in the screen
+    /// where X and Y have a 0 to 1 range.
+    /// sprLengthsPercent is the height and lenght of the sprite display in the screen
+    /// where X and Y have a 0 to 1 range.
+    /// mode is the way the UI sprite will be displayed on screen.
+    /// sprSectionTopLeft and sprSectionBottomRight are the section in the texture
+    /// this sprite is meant to render.
+    /// </summary>
+    public UISprite2D (string texturePath, Vector2 center,
+    Vector2 sprLengthsPercent, AdjustmentMode mode, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
     {
         ChangeTexture(ref texturePath, sprSectionTopLeft, sprSectionBottomRight);
 
@@ -36,7 +55,7 @@ public class UISprite2D : DrawableObject
             center, sprLengthsPercent
         };
 
-
+        Mode = mode;
     }
 
     public void Draw(RenderArgs args)
@@ -49,15 +68,25 @@ public class UISprite2D : DrawableObject
 
         SolveNoSprSection();
 
-        var vSize = args.windowView;
-
         var center = SprDrawData[0].ToVectorF();
 
         var slp = (SprDrawData[1]).ToVectorF()/2;
 
+        var vSize = args.windowView;
+
         center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
 
-        slp = new Vector2f(vSize.X * slp.X, vSize.Y * slp.Y);
+        if(Mode == AdjustmentMode.Extended)
+        {
+            slp = new Vector2f(vSize.X * slp.X, vSize.Y * slp.Y);
+        }
+        else if (Mode == AdjustmentMode.Compact)
+        {
+            float factor = vSize.X;
+            if(factor > vSize.Y) factor = vSize.Y;
+
+            slp = new Vector2f(factor * slp.X, factor * slp.Y);
+        }
 
         //Top left
         verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), SprSectionData[0]);
@@ -173,5 +202,15 @@ public class UISprite2D : DrawableObject
         };
 
         WholeSprite = false;
+    }
+
+    public enum AdjustmentMode
+    {
+        ///<summary>
+        ///Scales the UI against the smallest axis of the screen border.
+        ///</summary>
+        Compact = 0,
+        ///Scales the UI against both axis of the screen border.
+        Extended = 1
     }
 }
