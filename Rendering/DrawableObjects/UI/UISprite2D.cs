@@ -73,7 +73,7 @@ public class UISprite2D : DrawableObject
 
         center *= 0.001f;
 
-        var slp = (SprDrawData[1]).ToVectorF()/2;
+        var slp = (SprDrawData[1]).ToVectorF();
 
         slp *= 0.001f;
 
