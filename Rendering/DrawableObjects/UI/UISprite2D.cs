@@ -27,6 +27,18 @@ public class UISprite2D : DrawableObject
         };
     }
 
+    public UISprite2D (string texturePath, Vector2 center, Vector2 sprLengthsPercent, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
+    {
+        ChangeTexture(ref texturePath, sprSectionTopLeft, sprSectionBottomRight);
+
+        SprDrawData = new Vector2[]
+        {
+            center, sprLengthsPercent
+        };
+
+
+    }
+
     public void Draw(RenderArgs args)
     {
         VertexArray verts = new VertexArray(PrimitiveType.Quads, 4u);
@@ -122,5 +134,44 @@ public class UISprite2D : DrawableObject
         WholeSprite = actualTexture;
 
         if(!actualTexture) CurrTexture = null;
-    } 
+    }
+
+    public void ChangeTexture(ref string newTexture, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
+    {
+        TexturePath = newTexture;
+
+        var actualTexture = TexturePath != "" && TexturePath != null;
+
+        SprChanged = actualTexture;
+
+        WholeSprite = actualTexture;
+
+        if(!actualTexture)
+        {
+            CurrTexture = null;
+            return;
+        }
+        
+        TreatSprSections(sprSectionTopLeft, sprSectionBottomRight);
+    }
+
+    private void TreatSprSections(Vector2 topLeft, Vector2 bottomRight)
+    {
+        var TLF = topLeft.ToVectorF();
+        var BRF = bottomRight.ToVectorF();
+
+        SprSectionData = new Vector2f[]
+        {
+            //Top left
+            new Vector2f(TLF.X,TLF.Y),
+            //Bottom left
+            new Vector2f(TLF.X,BRF.Y),
+            //Bottom right
+            BRF,
+            //Top right
+            new Vector2f(BRF.X,TLF.Y),
+        };
+
+        WholeSprite = false;
+    }
 }
