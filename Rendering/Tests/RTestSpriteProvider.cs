@@ -265,6 +265,7 @@ public class RTestSpriteProvider : RenderEntity
 
     public override void LeaveTree()
     {
+        //Unregisters texture reference.
         TexturePath = null;
         
         inTree = false;

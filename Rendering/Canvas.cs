@@ -10,8 +10,9 @@ using SFML.System;
 
 ///<summary>
 ///VERY complex rendering class.
-///Will take a while to document everything,
-///
+///Will take a while to document everything.
+///CORRECTION 12/08/2022: this mess is spaguetti
+///DON'T READ IT! Unless you're me.
 ///</summary>
 public class Canvas
 {
@@ -47,6 +48,14 @@ public class Canvas
 
     Vector2u LAST_SIZE;
     Vector2u SIZE;
+    Vector2u VIEWSIZE;
+    Vector2u LAST_VIEWSIZE;
+    /// <summary>
+    /// Did it request a change in window size change?
+    /// True = yes!
+    /// False = no, the user resized the window with the cursor.
+    /// </summary>
+    bool RequestedWSChange = false;
     string NAME;
 
     //Rendering time it took.
@@ -61,6 +70,10 @@ public class Canvas
 
         SIZE = new Vector2u(width, height);
         LAST_SIZE = SIZE;
+
+        VIEWSIZE = SIZE;
+        LAST_VIEWSIZE = SIZE;
+
         NAME = name;
 
         Engine.WindowSize = new Vector2((int)SIZE.X, (int)SIZE.Y);
@@ -137,8 +150,6 @@ public class Canvas
         long drawTime = 0;
         drawTime = performanceData.ElapsedTicks;
 
-        Vector2f wSize = (Vector2f)SIZE;
-
         float fLerp = (float) Lerp;
 
         bool optimizing = false;
@@ -155,8 +166,8 @@ public class Canvas
         {
             w = Window,
             lerp = fLerp,
-            windowSize = wSize,
-            //cameraPos = Vector2.Lerp(LastCameraPos, CameraPos, (FInt)fLerp),
+            windowSize = (Vector2f)SIZE,
+            windowView = (Vector2f)VIEWSIZE,
             cameraPos = CameraPos,
         };
 
@@ -345,11 +356,16 @@ public class Canvas
         SIZE = new Vector2u((uint)wSize.x, (uint)wSize.y);
     }
 
-    public void ChangeWindowSize (Vector2 size)
+    /// <summary>
+    /// Changes window size and view size.
+    /// </summary>
+    public void ChangeWSizeVSize (Vector2 size)
     {
         SIZE = new Vector2u((uint)size.x, (uint)size.y);
 
+        VIEWSIZE = new Vector2u((uint)size.x, (uint)size.y);
 
+        RequestedWSChange = true;
     }
 
     public void Refresh ()
@@ -371,9 +387,17 @@ public class Canvas
             {
                 Window.SetView(new View(new FloatRect(0f, 0f, SIZE.X, SIZE.Y)));
 
+                VIEWSIZE = SIZE;
+                LAST_VIEWSIZE = SIZE;
+
                 if (Window.Size != SIZE) Window.Size = SIZE;
 
                 LAST_SIZE = SIZE;
+            }
+
+            if(LAST_VIEWSIZE.X != VIEWSIZE.X || LAST_VIEWSIZE.Y != VIEWSIZE.Y)
+            {
+                Window.SetView(new View(new FloatRect(0f, 0f, SIZE.X, SIZE.Y)));
             }
 
             if (Window.IsOpen) _Render();
@@ -401,6 +425,8 @@ public class RenderArgs
     public float lerp;
 
     public Vector2f windowSize;
+
+    public Vector2f windowView;
 
     public Vector2 cameraPos;
 }
