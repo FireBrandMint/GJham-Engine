@@ -91,6 +91,11 @@ class MainClass
             }
         }
 
+        EntityCommand.Instance(new UITest
+        {
+            TexturePath = @".\assets\Generic.png"
+        });
+
         #endregion TEST AREA
 
         //This starts the Tick, Render and OnSecond loop.

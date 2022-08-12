@@ -1,3 +1,4 @@
+using System;
 using SFML.System;
 using SFML.Graphics;
 
@@ -20,9 +21,9 @@ public class UISprite2D : DrawableObject
     AdjustmentMode Mode;
     /// <summary>
     /// centerPercent is the coords of the center of the sprite position in the screen
-    /// where X and Y have a 0 to 1 range.
+    /// where X and Y have a 0 to 1000 range.
     /// sprLengthsPercent is the height and lenght of the sprite display in the screen
-    /// where X and Y have a 0 to 1 range.
+    /// where X and Y have a 0 to 1000 range.
     /// mode is the way the UI sprite will be displayed on screen.
     /// </summary>
     public UISprite2D (string texturePath, Vector2 centerPercent, Vector2 sprLengthsPercent, AdjustmentMode mode)
@@ -38,9 +39,9 @@ public class UISprite2D : DrawableObject
     }
     /// <summary>
     /// centerPercent is the coords of the center of the sprite position in the screen
-    /// where X and Y have a 0 to 1 range.
+    /// where X and Y have a 0 to 1000 range.
     /// sprLengthsPercent is the height and lenght of the sprite display in the screen
-    /// where X and Y have a 0 to 1 range.
+    /// where X and Y have a 0 to 1000 range.
     /// mode is the way the UI sprite will be displayed on screen.
     /// sprSectionTopLeft and sprSectionBottomRight are the section in the texture
     /// this sprite is meant to render.
@@ -70,9 +71,13 @@ public class UISprite2D : DrawableObject
 
         var center = SprDrawData[0].ToVectorF();
 
+        center *= 0.001f;
+
         var slp = (SprDrawData[1]).ToVectorF()/2;
 
-        var vSize = args.windowView;
+        slp *= 0.001f;
+
+        var vSize = args.windowSize;
 
         center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
 
@@ -88,20 +93,24 @@ public class UISprite2D : DrawableObject
             slp = new Vector2f(factor * slp.X, factor * slp.Y);
         }
 
+        //Console.WriteLine(slp);
+
         //Top left
-        verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), SprSectionData[0]);
+        verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Color.White, SprSectionData[0]);
         //Bottom left
-        verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), SprSectionData[1]);
+        verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Color.White, SprSectionData[1]);
         //Bottom right
-        verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), SprSectionData[2]);
+        verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Color.White, SprSectionData[2]);
         //Top right
-        verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), SprSectionData[3]);
+        verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Color.White, SprSectionData[3]);
 
         RenderStates state = new RenderStates();
 
         state.Texture = texture;
 
         state.BlendMode = BlendMode.None;
+
+        state.Transform = Transform.Identity;
 
         args.w.Draw(verts, state);
 
@@ -139,6 +148,8 @@ public class UISprite2D : DrawableObject
             };
 
             WholeSprite = false;
+
+            Console.WriteLine("WHOLE");
         }
     }
 
@@ -156,13 +167,16 @@ public class UISprite2D : DrawableObject
     {
         TexturePath = newTexture;
 
-        var actualTexture = TexturePath != "" && TexturePath != null;
+        bool actualTexture = TexturePath != "" && TexturePath != null;
 
         SprChanged = actualTexture;
 
         WholeSprite = actualTexture;
 
-        if(!actualTexture) CurrTexture = null;
+        if(!actualTexture)
+        {
+            CurrTexture = null;
+        }
     }
 
     public void ChangeTexture(ref string newTexture, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
@@ -182,6 +196,16 @@ public class UISprite2D : DrawableObject
         }
         
         TreatSprSections(sprSectionTopLeft, sprSectionBottomRight);
+    }
+
+    public void ChangePosition (Vector2 newPos)
+    {
+        SprDrawData[0] = newPos;
+    }
+
+    public void ChangeSize (Vector2 newSize)
+    {
+        SprDrawData[1] = newSize;
     }
 
     private void TreatSprSections(Vector2 topLeft, Vector2 bottomRight)
