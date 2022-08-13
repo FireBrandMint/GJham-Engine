@@ -2,7 +2,7 @@
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
 
-Still in development, any help is appreciated.
+Still in development, any help is appreciated, if you wanna help please message me.
 
 # Goals from BIG-BIG-BIG to less important
 
