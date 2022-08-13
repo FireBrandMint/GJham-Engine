@@ -181,10 +181,16 @@ public class Canvas
 
                 if(optimizing)
                 {
-                    if(optObject.Optimizable(tdr)) ++optCount;
-                    else tdr.Draw(args);
-
-                    optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+                    if(optObject.Optimizable(tdr))
+                    {
+                        ++optCount;
+                        optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+                    }
+                    else
+                    {
+                        optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+                        tdr.Draw(args);
+                    }
                 }
                 else tdr.Draw(args);
 
@@ -199,9 +205,9 @@ public class Canvas
                 }
                 else
                 {
-                    tdr.Draw(args);
-
                     optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+
+                    tdr.Draw(args);
 
                     optimizing = false;
                 }
@@ -269,8 +275,8 @@ public class Canvas
     //Method that takes part in organizing the list of render objects
     private DrawableObject[] Organize(DrawableObject[] drawable, int size)
     {
-        DrawableObject[] td = new DrawableObject[ToDrawCount];
-        Array.Copy(ToDraw, td, size);
+        DrawableObject[] td = new DrawableObject[size];
+        Array.Copy(drawable, td, size);
 
         return (from p in td
         orderby p.z

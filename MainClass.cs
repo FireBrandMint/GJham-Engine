@@ -64,6 +64,8 @@ class MainClass
 
             lp.line = new Vector2[] {a, b};
 
+            lp.ZValue = 1;
+
             EntityCommand.Instance(lp);
 
             b = new Vector2(b.x + 1, b.y);
@@ -87,13 +89,15 @@ class MainClass
                     TexturePath = @".\assets\Generic.png",
                     //Rotation = (FInt)(x *12),
                     Rotate = true,
+                    ZValue = 1
                 });
             }
         }
 
         EntityCommand.Instance(new UITest
         {
-            TexturePath = @".\assets\Generic.png"
+            TexturePath = @".\assets\Generic2.png",
+            ZValue = 5000,
         });
 
         #endregion TEST AREA

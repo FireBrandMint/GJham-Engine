@@ -4,7 +4,8 @@ using SFML.Graphics;
 
 public class UISprite2D : DrawableObject
 {
-    public int z { get; set; }
+    int _z = 0;
+    public int z { get => _z; set => _z = value; }
 
     Texture CurrTexture = null;
 
