@@ -415,6 +415,11 @@ public struct FInt
         return (ulong)( src.RawValue >> SHIFT_AMOUNT );
     }
 
+    public static explicit operator float( FInt src )
+    {
+        return (float)((double) src.RawValue / One); 
+    }
+
     public static explicit operator FInt( uint src )
     {
         return FInt.Create( (int)src ) ;

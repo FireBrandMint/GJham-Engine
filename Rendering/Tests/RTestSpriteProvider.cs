@@ -41,7 +41,7 @@ public class RTestSpriteProvider : RenderEntity
         }
     }
 
-    public bool IsStatic = true;
+    public bool IsStatic = false;
 
     Vector2 LastPosition;
 
@@ -121,6 +121,8 @@ public class RTestSpriteProvider : RenderEntity
 
         if(player)
         {
+            LastPosition = Position;
+
             var inputs = new int[]
             {
                 (int)SFML.Window.Keyboard.Key.W,
@@ -252,7 +254,7 @@ public class RTestSpriteProvider : RenderEntity
         }
         else
         {
-            drawable.SetPosValues(Position, Position);
+            drawable.SetPosValues(Position, LastPosition);
             drawable.z = ZValue;
 
             if(TextureChanged) drawable.ChangeTexturePath(_TexturePath);

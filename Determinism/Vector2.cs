@@ -257,6 +257,11 @@ public readonly struct Vector2
         return v1.ToVectorF();
     }
 
+    public static explicit operator Vector2 (Vector2f v1)
+    {
+        return new Vector2((FInt)v1.X, (FInt)v1.Y);
+    }
+
     public override bool Equals (object o)
     {
         return (Vector2) o == this;

@@ -89,7 +89,7 @@ public class CulValue
 {
     public AABB ColShape;
 
-    public bool CanRender = true;
+    public bool CanRender = false;
 
     bool Processing = false; 
 

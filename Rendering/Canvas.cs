@@ -171,31 +171,9 @@ public class Canvas
             cameraPos = CameraPos,
         };
 
-        for (uint i = 0; i< tdLenght; ++i)
+        for (uint i = 0; i< tdLenght - 1; ++i)
         {
             DrawableObject tdr = toDraw[i];
-
-            if (i + 1 == tdLenght)
-            {
-                tdr.Draw(args);
-
-                if(optimizing)
-                {
-                    if(optObject.Optimizable(tdr))
-                    {
-                        ++optCount;
-                        optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
-                    }
-                    else
-                    {
-                        optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
-                        tdr.Draw(args);
-                    }
-                }
-                else tdr.Draw(args);
-
-                continue;
-            }
 
             if (optimizing)
             {
@@ -226,12 +204,32 @@ public class Canvas
 
             tdr.Draw(args);
         }
+
+        if(tdLenght!= 0)
+        {
+            DrawableObject tdr = toDraw[tdLenght - 1];
+
+            if(optimizing)
+            {
+                if(optObject.Optimizable(tdr))
+                {
+                    ++optCount;
+                    optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+                }
+                else
+                {
+                    optObject.DrawOptimizables(args, toDraw,  optIndex, optCount);
+                    tdr.Draw(args);
+                }
+            }
+            else tdr.Draw(args);
+        }
+
+        drawTime = performanceData.ElapsedTicks - drawTime;
         
 
         Window.DispatchEvents();
         Window.Display();
-
-        drawTime = performanceData.ElapsedTicks - drawTime;
 
         //if(!ToDrawOrganized)
         //{

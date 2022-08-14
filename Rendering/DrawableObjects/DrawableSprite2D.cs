@@ -162,8 +162,17 @@ public sealed class DrawableSprite2D : DrawableObject
 
         Vector2 pos;
 
-        if(SprStatic) pos = CurrPos - camPosition;
-        else pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp) - camPosition;
+        Vector2f tempPos = (CurrPos - camPosition).ToVectorF();
+
+        if(SprStatic) pos = (Vector2) tempPos;
+        else
+        {
+            Vector2f tempPosPast = (LastPos - camPosition).ToVectorF();
+
+            pos = (Vector2) RenderMath.Lerp(tempPosPast, tempPos, lerp);
+
+            //pos = Vector2.Lerp(LastPos, CurrPos, (FInt) lerp) - camPosition;
+        }
 
         Vector2f texTopLef = (Vector2f)Bounderies[0];
         Vector2f texBotRig = (Vector2f)Bounderies[1];

@@ -78,7 +78,7 @@ public class UISprite2D : DrawableObject
 
         slp *= 0.001f;
 
-        var vSize = args.windowSize;
+        var vSize = args.windowView;
 
         center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
 
