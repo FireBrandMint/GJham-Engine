@@ -4,6 +4,14 @@ Actually a library because the UI will probably look 15 years old, executable by
 
 Still in development, any help is appreciated, if you wanna help please message me.
 
+# Current tasks to be done (skip to goals if you're new)
+
+-> Fix what this project already has. (boring)
+
+-> Add the missing stuff like other physics shapes etc.
+
+-> Start fase 3, aka making the the actual entities that will be used for production in the future and the editor.
+
 # Goals from BIG-BIG-BIG to less important
 
 0. All is free. (probably will have donation page if people actually become interested in this project)
