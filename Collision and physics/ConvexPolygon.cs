@@ -255,8 +255,30 @@ public sealed class ConvexPolygon : Shape
     
     public bool PolyIntersects(ConvexPolygon poly)
     {
-        Vector2[] a = GetModel();
-        Vector2[] b = poly.GetModel();
+        #region Bring vertices close to Vector2.ZERO to prevent overflow.
+
+        Vector2 aPosition = Position;
+
+        Vector2[] mA = GetModel();
+        Vector2[] mB = poly.GetModel();
+
+        int aLength = mA.Length;
+        int bLength = mB.Length;
+
+        Vector2[] a = new Vector2[aLength];
+        Vector2[] b = new Vector2[bLength];
+
+        for(int i = 0; i< aLength; ++i)
+        {
+            a[i] = mA[i] - aPosition;
+        }
+
+        for(int i = 0; i< bLength; ++i)
+        {
+            b[i] = mB[i] - aPosition;
+        }
+
+        #endregion
 
         for(int polyi = 0; polyi < 2; ++polyi)
         {
@@ -385,34 +407,27 @@ public sealed class ConvexPolygon : Shape
         var mA = GetModel();
         var mB = poly.GetModel();
 
-        Vector2
-        bRange = poly.Range,
-        bPosition = poly.Position;
-
-        Vector2
-        aRange = Range,
-        aPosition = Position;
-
-        Vector2 r = aRange + bRange;
-
-        Vector2 d = aPosition - bPosition;
-        d = new Vector2(DeterministicMath.Abs(d.x), DeterministicMath.Abs(d.y));
-
-        if(d.x > r.x || d.y > r.y)
-        {
-            //goto doesntIntersect;
-
-            return;
-        }
+        Vector2 aPosition = Position;
 
         int aLength = mA.Length;
         int bLength = mB.Length;
 
+        #region Bring vertices close to Vector2.ZERO to prevent overflow. 
+
+        #endregion
+
         Vector2[] a = new Vector2[aLength];
         Vector2[] b = new Vector2[bLength];
 
-        Array.Copy(mA, a, aLength);
-        Array.Copy(mB, b, bLength);
+        for(int i = 0; i< aLength; ++i)
+        {
+            a[i] = mA[i] - aPosition;
+        }
+
+        for(int i = 0; i< bLength; ++i)
+        {
+            b[i] = mB[i] - aPosition;
+        }
 
         FInt distance = FInt.MaxValue;
 

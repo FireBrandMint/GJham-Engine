@@ -133,6 +133,8 @@ public class RTestSpriteProvider : RenderEntity
 
             FInt speed = FInt.Create(10);
 
+            if(Engine.MaxTPS < 60) speed *= 2;
+
             foreach(int inp in MainClass.CurrentKeys)
             {
                 if(inp == inputs[0])
@@ -228,10 +230,6 @@ public class RTestSpriteProvider : RenderEntity
             {
                 Camera.MainCamera.Position = Position;
             }
-
-            string posMsg = $"In position {Position.ToString()}";
-
-            AntiConsoleSpam.antiConsoleSpam.WriteLine(ref posMsg, 1032, 30);
         }
     }
 

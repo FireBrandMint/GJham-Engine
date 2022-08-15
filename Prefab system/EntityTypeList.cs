@@ -194,11 +194,18 @@ public static class EntityTypeList
         for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -63831078: entity.TexturePath = reader.ReadString(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
+    private static Entity InstanceUITest (ByteReader reader, int propertyCount)
+    {
+        UITest entity = new UITest();
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
+        return entity;
+    }
 
     private static GDictionary<String, ETypeCreate> EntityInstancers = new GDictionary<string, ETypeCreate>()
     {
         {"Camera", InstanceCamera},
         {"DTestLineProvider", InstanceDTestLineProvider},
         {"RTestSpriteProvider", InstanceRTestSpriteProvider},
+        {"UITest", InstanceUITest},
     };
 }

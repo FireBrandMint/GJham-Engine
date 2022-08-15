@@ -50,12 +50,6 @@ public class Canvas
     Vector2u SIZE;
     Vector2u VIEWSIZE;
     Vector2u LAST_VIEWSIZE;
-    /// <summary>
-    /// Did it request a change in window size change?
-    /// True = yes!
-    /// False = no, the user resized the window with the cursor.
-    /// </summary>
-    bool RequestedWSChange = false;
     string NAME;
 
     //Rendering time it took.
@@ -109,7 +103,7 @@ public class Canvas
 
         
 
-        window.SetVerticalSyncEnabled(true);
+        window.SetVerticalSyncEnabled(false);
 
         window.RequestFocus();
 
@@ -168,7 +162,8 @@ public class Canvas
             lerp = fLerp,
             windowSize = (Vector2f)SIZE,
             windowView = (Vector2f)VIEWSIZE,
-            cameraPos = CameraPos,
+            cameraPos = Vector2.Lerp(LastCameraPos, CameraPos, (FInt) Lerp),
+            //cameraPos = CameraPos,
         };
 
         for (uint i = 0; i< tdLenght - 1; ++i)
@@ -368,12 +363,11 @@ public class Canvas
         SIZE = new Vector2u((uint)size.x, (uint)size.y);
 
         VIEWSIZE = new Vector2u((uint)size.x, (uint)size.y);
-
-        RequestedWSChange = true;
     }
 
     public void Refresh ()
     {
+        
         AllowRendering.Set();
     }
 

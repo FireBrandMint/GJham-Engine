@@ -30,11 +30,19 @@ public class Camera : Entity
     }
 
     private Vector2 _Position;
-    public Vector2 Position{get => _Position + Engine.WindowSize/2; set => _Position = value - Engine.WindowSize/2;}
+    public Vector2 Position{get => _Position + Engine.WindowSize/2;
+        set
+        {
+            _Position = value - Engine.WindowSize/2;
+            Engine.ViewPos = _Position;
+        }
+    }
+
+    //Engine.ViewPos = _Position
 
     public bool IsDrawable => false;
 
-    public bool IsTickable => true;
+    public bool IsTickable => false;
 
     public bool CanProcess { get => _IsMain; set => IsMain = value; }
 
@@ -45,7 +53,7 @@ public class Camera : Entity
 
     public void EnterTree()
     {
-
+        if(_IsMain) Engine.ViewPos = _Position;
     }
 
     public DrawableObject GetDrawable()
@@ -60,7 +68,7 @@ public class Camera : Entity
 
     public void Tick()
     {
-        Engine.ViewPos = _Position;
+        
     }
 
     public void LeaveTree()

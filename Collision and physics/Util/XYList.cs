@@ -61,10 +61,10 @@ public class XYList<T> where T:XYBoolHolder
                     node.Add(valueNode);
                 }
 
-                y1f += Multiple;
+                y1f += 1;
             }
 
-            x1 += Multiple;
+            x1 += 1;
         }
 
         return ranges;
@@ -75,7 +75,7 @@ public class XYList<T> where T:XYBoolHolder
         long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
 
         //while (x1 <= x2)
-        for(; x1 <= x2; x1 += Multiple)
+        for(; x1 <= x2; ++x1)
         {
             bool dictExisted;
             var dictY = DictX.AddIfNonexist(x1, ReserveDictionary, out dictExisted);
@@ -83,7 +83,7 @@ public class XYList<T> where T:XYBoolHolder
             if(!dictExisted) ReserveDictionary = new WTFDictionary<long, OneWayNode<T>>(CapacityY);
 
 
-            for(long y1f = y1; y1f <= y2; y1f += Multiple)
+            for(long y1f = y1; y1f <= y2; ++y1f)
             {
                 bool nodeExisted;
 
@@ -98,7 +98,7 @@ public class XYList<T> where T:XYBoolHolder
             }
         }
 
-        if(x1 != x2 + Multiple) throw new Exception("Lol???");
+        if(x1 != x2 + 1) throw new Exception("Lol???");
 
         //Console.WriteLine($"Added x: {x1}-{x2}, y: {y1}-{y2}");
 
@@ -113,7 +113,7 @@ public class XYList<T> where T:XYBoolHolder
 
         long x1 = ranges[0], x2 = ranges[1], y1 = ranges[2], y2 = ranges[3];
 
-        for(; x1 <= x2; x1 += Multiple)
+        for(; x1 <= x2; ++x1)
         {
 
             var dictY = DictX[x1];
@@ -147,7 +147,7 @@ public class XYList<T> where T:XYBoolHolder
                     node = node.down;
                 }
 
-                y1f += Multiple;
+                y1f += 1;
             }
         }
 
@@ -171,7 +171,7 @@ public class XYList<T> where T:XYBoolHolder
 
         //int ikX = DictX.GetInternalKey(x1);
 
-        for(; x1 <= x2; x1 += Multiple)
+        for(; x1 <= x2; x1 += 1)
         {
             //var v1 = DictX.GetValueOfIK(ikX);
 
@@ -181,7 +181,7 @@ public class XYList<T> where T:XYBoolHolder
 
             //int ikY = dictY.GetInternalKey(y1);
 
-            for(long y1f = y1; y1f <= y2; y1f += Multiple)
+            for(long y1f = y1; y1f <= y2; y1f += 1)
             {
                 var node = dictY[y1f];
 
@@ -268,9 +268,7 @@ public class XYList<T> where T:XYBoolHolder
 
         for(int i = 0; i < 4; ++i)
         {
-            long mod = XYR[i] % Multiple;
-
-            XYR[i] -= mod;
+            XYR[i] /= Multiple;
         }
 
         return XYR;

@@ -13,9 +13,7 @@ public abstract class RenderEntity : Entity
 
     public bool CanProcess{get => Processable;set => Processable = value;}
 
-    int Z = 0;
-
-    public int ZValue {get => Z; set => Z = value;}
+    public int ZValue {get; set;}
 
     protected bool Visible = true;
 

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential)]
+
 public struct FInt
 {
     // New determininistic point from https://stackoverflow.com/questions/605124/fixed-point-math-in-c

@@ -5,9 +5,8 @@ public class EntityCommand
     ///</summary>
     public static void Instance (Entity entity)
     {
-        MainClass.AddEntity(entity);
         entity.Init();
-        entity.EnterTree();
+        MainClass.AddEntity(entity);
     }
 
     ///<summary>
