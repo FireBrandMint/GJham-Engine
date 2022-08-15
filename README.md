@@ -1,4 +1,4 @@
-# GEngine
+# GJhamEngine
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
 
