@@ -104,7 +104,7 @@ public readonly struct Vector2
         FInt dx = v1.x - v2.x;
         FInt dy = v1.y - v2.y;
 
-        return dx*dx + dy*dy <=  range;
+        return dx*dx + dy*dy <=  range * range;
     }
 
 
@@ -114,6 +114,14 @@ public readonly struct Vector2
         FInt dy = v1.y - v2.y;
 
         return dx*dx + dy*dy;
+    }
+
+    public static FInt Distance(Vector2 v1, Vector2 v2)
+    {
+        FInt dx = v1.x - v2.x;
+        FInt dy = v1.y - v2.y;
+
+        return DeterministicMath.Sqrt(dx*dx + dy*dy);
     }
 
     public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt degrees)

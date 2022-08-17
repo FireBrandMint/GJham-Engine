@@ -1,7 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using System.Threading;
-
 public sealed class ConvexPolygon : Shape
 {
     bool Initialized = false;

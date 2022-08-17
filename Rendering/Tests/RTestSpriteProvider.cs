@@ -185,7 +185,7 @@ public class RTestSpriteProvider : RenderEntity
                 }
             }*/
 
-            var stopwatch = Stopwatch.StartNew();
+            var lastTime = STime.GetMicroseconds();
 
             var colResults = Shape.GetShapesInGrid(poly);
 
@@ -216,13 +216,14 @@ public class RTestSpriteProvider : RenderEntity
                 }
             }
 
+            var currTime = STime.GetMicroseconds();
+
             if(collided)
             {
-                double time = ((double) stopwatch.ElapsedTicks / Stopwatch.Frequency) * 1000;
+                long time = currTime - lastTime;
 
-                Console.WriteLine($"PLAYER INTERSECTS! TOOK {time}MS!");
+                Console.WriteLine($"PLAYER INTERSECTS! TOOK {time} micro seconds!");
             }
-            stopwatch.Stop();
 
             RenderOpt.ChangePosition(Position - new Vector2(25, 25));
 
