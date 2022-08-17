@@ -203,4 +203,46 @@ public class Shape: XYBoolHolder
     {
 
     }
+
+    public static bool PointInConvexPolygon(Vector2 testPoint, Vector2[] polygon)
+    {
+        //From: https://stackoverflow.com/questions/1119627/how-to-test-if-a-point-is-inside-of-a-convex-polygon-in-2d-integer-coordinates
+
+        //n>2 Keep track of cross product sign changes
+        var pos = 0;
+        var neg = 0;
+
+        for (var i = 0; i < polygon.Length; i++)
+        {
+            //If point is in the polygon
+            if (polygon[i] == testPoint)
+            return true;
+
+            //Form a segment between the i'th point
+            var x1 = polygon[i].x;
+            var y1 = polygon[i].y;
+
+            //And the i+1'th, or if i is the last, with the first point
+            var i2 = (i+1)%polygon.Length;
+
+            var x2 = polygon[i2].x;
+            var y2 = polygon[i2].y;
+
+            var x = testPoint.x;
+            var y = testPoint.y;
+
+            //Compute the cross product
+            var d = (x - x1)*(y2 - y1) - (y - y1)*(x2 - x1);
+
+            if (d > 0) pos++;
+            if (d < 0) neg++;
+
+            //If the sign changes, then point is outside
+            if (pos > 0 && neg > 0)
+                return false;
+        }
+
+        //If no change in direction, then on same side of all segments, and thus inside
+        return true;
+    }
 }

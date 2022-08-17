@@ -123,6 +123,41 @@ public readonly struct Vector2
 
         return DeterministicMath.Sqrt(dx*dx + dy*dy);
     }
+    /// <summary>
+    /// Distance of line against a 'point'.
+    /// </summary>
+    public static FInt LinePointDistSqr(Vector2 linePt1, Vector2 linePt2, Vector2 point)
+    {
+        //From: https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
+
+        var AC = point - linePt1;
+        var AB = linePt2 - linePt1;
+
+        // Get point D by taking the projection of AC onto AB then adding the offset of A
+        var D = proj(AC, AB) + linePt1;
+
+        var AD = D - linePt1;
+        // D might not be on AB so calculate k of D down AB (aka solve AD = k * AB)
+        // We can use either component, but choose larger value to reduce the chance of dividing by zero
+        FInt k = DeterministicMath.Abs(AB.x) > DeterministicMath.Abs(AB.y) ? AD.x / AB.x : AD.y / AB.y;
+
+        // Check if D is off either end of the line segment
+
+        if (k <= 0) {
+            return DeterministicMath.Hypot2(point, linePt1);
+        } else if (k >= 1) {
+            return DeterministicMath.Hypot2(point, linePt2);
+        }
+
+        return DeterministicMath.Hypot2(point, D);
+
+        Vector2 proj(Vector2 a, Vector2 b)
+        {
+            var k = Vector2.DotProduct(a, b) / Vector2.DotProduct(b, b);
+
+            return b * k;
+        }
+    }
 
     public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt degrees)
     {

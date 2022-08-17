@@ -84,7 +84,7 @@ class MainClass
             {
                 EntityCommand.Instance(new RTestSpriteProvider
                 {
-                    Position = new Vector2(70 * x, y*51),
+                    Position = new Vector2(140 * x, y*80),
                     BoundriesSet = false,
                     TexturePath = @".\assets\Generic.png",
                     //Rotation = (FInt)(x *12),
