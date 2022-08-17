@@ -1,4 +1,4 @@
-# GEngine
+# GJhamEngine
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
 
@@ -24,7 +24,7 @@ Still in development, any help is appreciated, if you wanna help please message 
 
 4. Prefab-like system.
 
-5. No goddam encapsulation. (it's bad for memory usage and C# GC is bad with big memory)
+5. No goddam boxing. (it's bad for memory usage and C# GC is bad with big memory)
 
 6. Bearable performance.
 
