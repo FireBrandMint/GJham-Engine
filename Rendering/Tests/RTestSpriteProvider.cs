@@ -58,10 +58,11 @@ public class RTestSpriteProvider : RenderEntity
 
     public bool BoundriesSet = false;
 
-    ConvexPolygon poly;
+    Shape poly;
 
     static List<Shape> PolyList = new List<Shape>(1000);
 
+    static bool shift = false;
     static bool p = true;
     bool player;
 
@@ -70,6 +71,8 @@ public class RTestSpriteProvider : RenderEntity
     public override void Init()
     {
         base.Init();
+        shift = !shift;
+
         LastPosition = Position;
 
         RenderOpt.ChangePosition(Position - new Vector2(25, 25));
@@ -80,31 +83,42 @@ public class RTestSpriteProvider : RenderEntity
             HasTexture = true;
         }
 
-        poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
-        
-        PolyList.Add(poly);
-
         if(p)
         {
             p = false;
             player = true;
         } else player = false;
 
-
-        if(!player)
+        if(player)
         {
-            FInt rot = (FInt) 0;
+            //poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
 
-            poly.Rotation = rot;
-
-            Rotation = rot;
-
-            Processable = false;
+            poly = new CircleShape(Position, (FInt)25);
+            IsStatic = false;
         }
         else
         {
-            IsStatic = false;
+            if(shift)
+            {
+                var rect = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
+                FInt rot = (FInt) 0;
+
+                rect.Rotation = rot;
+
+                Rotation = rot;
+
+                poly = rect;
+            }
+            else
+            {
+                Modulate = SFML.Graphics.Color.Blue;
+                poly = new CircleShape(Position, (FInt)25);
+            }
+            
+            Processable = false;
         }
+        
+        PolyList.Add(poly);
 
         inTree = true;
     }
@@ -237,6 +251,8 @@ public class RTestSpriteProvider : RenderEntity
     DrawableSprite2D drawable = null;
     bool dInitialized = false;
 
+    SFML.Graphics.Color Modulate = SFML.Graphics.Color.White;
+
     public override DrawableObject GetDrawable ()
     {
         if(!HasTexture) return null;
@@ -259,6 +275,8 @@ public class RTestSpriteProvider : RenderEntity
             if(TextureChanged) drawable.ChangeTexturePath(_TexturePath);
 
             drawable.SetRotation(Rotation);
+
+            drawable.ChangeModulate(Modulate);
         }
 
         return drawable;

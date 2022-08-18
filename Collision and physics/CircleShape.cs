@@ -85,7 +85,7 @@ public sealed class CircleShape: Shape
 
             result.Intersects =  true;
 
-            result.Separation = -normalized * (DeterministicMath.Sqrt(distanceSqr) - areaTotal);
+            result.Separation = normalized * (DeterministicMath.Sqrt(distanceSqr) - areaTotal);
 
             return;
         }
@@ -200,10 +200,10 @@ public sealed class CircleShape: Shape
         }
         else
         {
-            //The direction from the circle to the line.
+            //The direction from the line to the circle middle.
             var direction =  circlePos - lineColPoint;
 
-            result.Separation = direction.Normalized() * (DeterministicMath.Sqrt(lowestDistanceSqr) - circleArea);
+            result.Separation = direction.Normalized() * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr));
         }
 
         result.Intersects = true;

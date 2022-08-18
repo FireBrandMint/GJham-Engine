@@ -504,14 +504,125 @@ public sealed class ConvexPolygon : Shape
         result.Intersects = true;
     }
 
+    public bool CircleIntersects(CircleShape circle)
+    {
+        //The only way a circle is intersecting a polygon is
+        //if it colides with any of the poly's lines
+        //OR if the circle itself is inside the polygon
+
+        Vector2 polyPos = Position;
+
+        Vector2[] vertsRaw = GetModel();
+
+        int vertsAmount = vertsRaw.Length;
+
+        Vector2[] verts = new Vector2[vertsAmount];
+
+        for(int i = 0; i<vertsAmount; ++i)
+        {
+            verts[i] = vertsRaw[i] - polyPos;
+        }
+
+        Vector2 circlePos = circle.Position - polyPos;
+
+        FInt circleArea = circle.Area;
+
+        FInt circleAreaSquared = circleArea * circleArea;
+
+        bool result = false;
+
+        for(int i1 = 0; i1 < vertsAmount; ++i1)
+        {
+            int i2 = (i1 + 1) % vertsAmount;
+
+            FInt distSquared = Vector2.LinePointDistSqr(verts[i1], verts[i2], circlePos);
+
+            result = result || distSquared <= circleAreaSquared;
+        }
+
+        //If circle is not touching one of the shape's lines,
+        //then the only way they intersect is if the circle is inside.
+        if(result!)
+        {
+            return Shape.PointInConvexPolygon(circlePos, verts);
+        }
+
+        return result;
+    }
+
+    public void CircleIntersectsInfo(CircleShape circle, ref CollisionResult result)
+    {
+        //The only way a circle is intersecting a polygon is
+        //if it colides with any of the poly's lines
+        //OR if the circle itself is inside the polygon
+
+        Vector2 polyPos = Position;
+
+        Vector2[] vertsRaw = GetModel();
+
+        int vertsAmount = vertsRaw.Length;
+
+        Vector2[] verts = new Vector2[vertsAmount];
+
+        for(int i = 0; i<vertsAmount; ++i)
+        {
+            verts[i] = vertsRaw[i] - polyPos;
+        }
+
+        Vector2 circlePos = circle.Position - polyPos;
+
+        FInt circleArea = circle.Area;
+
+        FInt circleAreaSquared = circleArea * circleArea;
+
+        FInt lowestDistanceSqr = FInt.MaxValue;
+
+        Vector2 lineColPoint = new Vector2();
+
+        for(int i1 = 0; i1 < vertsAmount; ++i1)
+        {
+            int i2 = (i1 + 1) % vertsAmount;
+
+            Vector2 colPoint;
+
+            FInt distSquared = Vector2.LinePointDistSqr(verts[i1], verts[i2], circlePos, out colPoint);
+
+            if(distSquared < lowestDistanceSqr)
+            {
+                lineColPoint = colPoint;
+                lowestDistanceSqr = distSquared;
+            }
+        }
+
+        bool IsInside = PointInConvexPolygon(circlePos, verts);
+
+        if(lowestDistanceSqr > circleAreaSquared && !IsInside)
+        {
+            result.Intersects = false;
+            return;
+        }
+
+        if(IsInside)
+        {
+            //The direction from the line to the circle middle.
+            var direction = circlePos - lineColPoint;
+
+            result.Separation = direction.Normalized() * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr));
+        }
+        else
+        {
+
+            //The direction from the circle middle to the line.
+            var direction = lineColPoint - circlePos;
+
+            result.Separation = direction.Normalized() * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr));
+        }
+
+        result.Intersects = true;
+    }
+
     public override void Dispose()
     {
         Shape.GridRemoveShape(this);
-    }
-
-    //This void does nothing.
-    private void DoNothing ()
-    {
-
     }
 }

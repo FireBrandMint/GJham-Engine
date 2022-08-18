@@ -108,14 +108,33 @@ public class Shape: XYBoolHolder
 
         if(dx > r.x || dy > r.y) return;
 
-        if(this is ConvexPolygon)
+        if(this is ConvexPolygon thisShape)
         {
-            if(poly is ConvexPolygon)
+            if(poly is ConvexPolygon convPoly)
             {
-                ((ConvexPolygon)this).PolyIntersectsInfo((ConvexPolygon)poly, ref result);
+                thisShape.PolyIntersectsInfo(convPoly, ref result);
+                return;
+            }
+            else if(poly is CircleShape circle)
+            {
+                thisShape.CircleIntersectsInfo(circle, ref result);
                 return;
             }
         }
+        else if(this is CircleShape thisShape2)
+        {
+            if(poly is ConvexPolygon convPoly)
+            {
+                thisShape2.PolyIntersectsInfo(convPoly, ref result);
+                return;
+            }
+            else if(poly is CircleShape circle)
+            {
+                thisShape2.CircleIntersectsInfo(circle, ref result);
+                return;
+            }
+        }
+        
         throw new System.Exception($"Shape not implemented! Shape ids: {this.GetType()}, {poly.GetType()}.");
     }
 
@@ -145,9 +164,24 @@ public class Shape: XYBoolHolder
             case ConvexPolygon:
             switch(poly)
             {
-                case ConvexPolygon: return ((ConvexPolygon)this).PolyIntersects((ConvexPolygon) poly);
+                case ConvexPolygon:
+                return ((ConvexPolygon)this).PolyIntersects((ConvexPolygon) poly);
+                
+                case CircleShape:
+                return ((ConvexPolygon)this).CircleIntersects((CircleShape) poly);
             }
-                throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
+            break;
+
+            case CircleShape:
+            switch(poly)
+            {
+                case ConvexPolygon:
+                return ((CircleShape)this).PolyIntersects((ConvexPolygon) poly);
+                
+                case CircleShape:
+                return ((CircleShape)this).CircleIntersects((CircleShape) poly);
+            }
+            break;
         }
 
         throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
@@ -213,8 +247,7 @@ public class Shape: XYBoolHolder
         for (var i = 0; i < polygon.Length; i++)
         {
             //If point is in the polygon
-            if (polygon[i] == testPoint)
-            return true;
+            if (polygon[i] == testPoint) break;
 
             //Form a segment between the i'th point
             var x1 = polygon[i].x;
