@@ -209,23 +209,26 @@ public class RTestSpriteProvider : RenderEntity
             {
                 CollisionResult result = new CollisionResult();
 
-                for(int i = 0; i < colCount; ++i)
+                for(int o = 0; o<2; ++o)
                 {
-                    var curr = colResults[i];
-
-                    if(curr == poly) continue;
-
-                    result.Intersects = false;
-
-                    poly.IntersectsInfo(curr, ref result);
-
-                    if(result.Intersects)
+                    for(int i = 0; i < colCount; ++i)
                     {
-                        Position += result.Separation;
+                        var curr = colResults[i];
 
-                        poly.Position = Position;
+                        if(curr == poly) continue;
 
-                        collided = true;
+                        result.Intersects = false;
+
+                        poly.IntersectsInfo(curr, ref result);
+
+                        if(result.Intersects)
+                        {
+                            Position += result.Separation;
+
+                            poly.Position = Position;
+
+                            collided = true;
+                        }
                     }
                 }
             }
