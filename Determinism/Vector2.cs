@@ -91,6 +91,14 @@ public readonly struct Vector2
         return (v2 - v1).Normalized();
     }
 
+    public static FInt DotProduct (Vector2 normal, Vector2 pt2)
+    {
+        //FInt
+        //x = normal.x * pt2.x,
+        //y = normal.y * pt2.y;
+        return normal.x * pt2.x + normal.y * pt2.y;
+    }
+
     public static bool InRange(Vector2 v1, Vector2 v2, FInt range)
     {
         FInt dx = v1.x - v2.x;
@@ -107,7 +115,9 @@ public readonly struct Vector2
         return dx*dx + dy*dy <=  range * range;
     }
 
-
+    /// <summary>
+    /// Same thing as Hypot2.
+    /// </summary>
     public static FInt DistanceSquared(Vector2 v1, Vector2 v2)
     {
         FInt dx = v1.x - v2.x;
@@ -131,32 +141,95 @@ public readonly struct Vector2
         //From: https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
 
         var AC = point - linePt1;
+        //Only way AB is 0 is if both line points are in the same place, AKA it's a point
         var AB = linePt2 - linePt1;
 
-        // Get point D by taking the projection of AC onto AB then adding the offset of A
-        var D = proj(AC, AB) + linePt1;
+        var ZERO_ZERO = new FInt(0);
+
+        //Is 0?
+        bool ABx0 = AB.x == ZERO_ZERO;
+        bool ABy0 = AB.y == ZERO_ZERO;
+
+        //If it's a point them just return its distance
+        if(ABx0 && ABy0) return DistanceSquared(linePt1, point);
+
+        // Get point D by taking the projection of AC onto AB then adding the offset of linePt1
+        //There's no chance that dotAB is 0
+        var dotAB = Vector2.DotProduct(AB, AB);
+        var dotACAB = Vector2.DotProduct(AC, AB);
+
+        FInt kp = dotACAB / dotAB;
+
+        var D = AB * kp + linePt1;
 
         var AD = D - linePt1;
         // D might not be on AB so calculate k of D down AB (aka solve AD = k * AB)
-        // We can use either component, but choose larger value to reduce the chance of dividing by zero
+        // We can use either component, but choose larger value to eliminate the chance of dividing by zero
+        // since the 'ABx0 && ABy0' if statement made sure one of the values of AB is not 0.
         FInt k = DeterministicMath.Abs(AB.x) > DeterministicMath.Abs(AB.y) ? AD.x / AB.x : AD.y / AB.y;
 
         // Check if D is off either end of the line segment
 
         if (k <= 0) {
-            return DeterministicMath.Hypot2(point, linePt1);
+            return DistanceSquared(point, linePt1);
         } else if (k >= 1) {
-            return DeterministicMath.Hypot2(point, linePt2);
+            return DistanceSquared(point, linePt2);
         }
 
-        return DeterministicMath.Hypot2(point, D);
+        return DistanceSquared(point, D);
+    }
 
-        Vector2 proj(Vector2 a, Vector2 b)
+    public static FInt LinePointDistSqr(Vector2 linePt1, Vector2 linePt2, Vector2 point, out Vector2 mesurementPoint)
+    {
+        //From: https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
+
+        var AC = point - linePt1;
+        //Only way AB is 0 is if both line points are in the same place, AKA it's a point
+        var AB = linePt2 - linePt1;
+
+        var ZERO_ZERO = new FInt(0);
+
+        //Is 0?
+        bool ABx0 = AB.x == ZERO_ZERO;
+        bool ABy0 = AB.y == ZERO_ZERO;
+
+        //If it's a point them just return its distance
+        if(ABx0 && ABy0)
         {
-            var k = Vector2.DotProduct(a, b) / Vector2.DotProduct(b, b);
-
-            return b * k;
+            mesurementPoint = linePt1;
+            return DistanceSquared(linePt1, point);
         }
+
+        // Get point D by taking the projection of AC onto AB then adding the offset of linePt1
+        //There's no chance that dotAB is 0
+        var dotAB = Vector2.DotProduct(AB, AB);
+        var dotACAB = Vector2.DotProduct(AC, AB);
+
+        FInt kp = dotACAB / dotAB;
+
+        var D = AB * kp + linePt1;
+
+        var AD = D - linePt1;
+        // D might not be on AB so calculate k of D down AB (aka solve AD = k * AB)
+        // We can use either component, but choose larger value to eliminate the chance of dividing by zero
+        // since the 'ABx0 && ABy0' if statement made sure one of the values of AB is not 0.
+        FInt k = DeterministicMath.Abs(AB.x) > DeterministicMath.Abs(AB.y) ? AD.x / AB.x : AD.y / AB.y;
+
+        // Check if D is off either end of the line segment
+
+        if (k <= 0)
+        {
+            mesurementPoint = linePt1;
+            return DistanceSquared(point, linePt1);
+        }
+        else if (k >= 1)
+        {
+            mesurementPoint = linePt2;
+            return DistanceSquared(point, linePt2);
+        }
+
+        mesurementPoint = D;
+        return DistanceSquared(point, D);
     }
 
     public static Vector2 RotateVec(Vector2 toRotate, Vector2 center, FInt degrees)
@@ -206,14 +279,6 @@ public readonly struct Vector2
     public Vector2 Abs()
     {
         return new Vector2(DeterministicMath.Abs(x), DeterministicMath.Abs(y));
-    }
-
-    public static FInt DotProduct (Vector2 normal, Vector2 pt2)
-    {
-        //FInt
-        //x = normal.x * pt2.x,
-        //y = normal.y * pt2.y;
-        return (normal.x * pt2.x) + (normal.y * pt2.y);
     }
 
     public override string ToString()

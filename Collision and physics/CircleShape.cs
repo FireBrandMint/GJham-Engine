@@ -2,18 +2,56 @@ using System;
 
 public sealed class CircleShape: Shape
 {
-    public FInt Area;
+    private Vector2 _Position;
+
+    public override Vector2 Position {
+        get
+        {
+            return _Position;
+        }
+        set
+        {
+            _Position = value;
+
+            GridIdentifier = Shape.GridMoveShape(this);
+        }
+    }
+
+    private FInt _Area;
+
+    public FInt Area
+    {
+        get
+        {
+            return _Area;
+        }
+        set
+        {
+            _Area = value;
+
+            GridIdentifier = Shape.GridMoveShape(this);
+        }
+    }
+
+    long[] GridIdentifier;
 
     public CircleShape (Vector2 position, FInt area)
     {
-        Area = area;
+        _Area = area;
 
-        Position = position;
+        _Position = position;
+
+        GridIdentifier = Shape.GridAddShape(this);
     }
 
     public override sealed Vector2 GetRange()
     {
         return new Vector2(Area, Area);
+    }
+
+    public override long[] GetGridIdentifier()
+    {
+        return GridIdentifier;
     }
 
     public bool CircleIntersects (CircleShape circle)
@@ -101,5 +139,78 @@ public sealed class CircleShape: Shape
         return result;
     }
 
-    
+    public void PolyIntersectsInfo (ConvexPolygon poly, ref CollisionResult result)
+    {
+        //The only way a circle is intersecting a polygon is
+        //if it colides with any of the poly's lines
+        //OR if the circle itself is inside the polygon
+
+        Vector2 polyPos = poly.Position;
+
+        Vector2[] vertsRaw = poly.GetModel();
+
+        int vertsAmount = vertsRaw.Length;
+
+        Vector2[] verts = new Vector2[vertsAmount];
+
+        for(int i = 0; i<vertsAmount; ++i)
+        {
+            verts[i] = vertsRaw[i] - polyPos;
+        }
+
+        Vector2 circlePos = Position - polyPos;
+
+        FInt circleArea = Area;
+
+        FInt circleAreaSquared = circleArea * circleArea;
+
+        FInt lowestDistanceSqr = FInt.MaxValue;
+
+        Vector2 lineColPoint = new Vector2();
+
+        for(int i1 = 0; i1 < vertsAmount; ++i1)
+        {
+            int i2 = (i1 + 1) % vertsAmount;
+
+            Vector2 colPoint;
+
+            FInt distSquared = Vector2.LinePointDistSqr(verts[i1], verts[i2], circlePos, out colPoint);
+
+            if(distSquared < lowestDistanceSqr)
+            {
+                lineColPoint = colPoint;
+                lowestDistanceSqr = distSquared;
+            }
+        }
+
+        bool IsInside = PointInConvexPolygon(circlePos, verts);
+
+        if(lowestDistanceSqr > circleAreaSquared && !IsInside)
+        {
+            result.Intersects = false;
+            return;
+        }
+
+        if(IsInside)
+        {
+            //The direction from the circle to the line.
+            var direction = lineColPoint - circlePos;
+
+            result.Separation = direction.Normalized() * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr));
+        }
+        else
+        {
+            //The direction from the circle to the line.
+            var direction =  circlePos - lineColPoint;
+
+            result.Separation = direction.Normalized() * (DeterministicMath.Sqrt(lowestDistanceSqr) - circleArea);
+        }
+
+        result.Intersects = true;
+    }
+
+    public override void Dispose()
+    {
+        Shape.GridRemoveShape(this);
+    }
 }

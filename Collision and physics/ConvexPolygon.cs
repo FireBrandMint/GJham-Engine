@@ -163,7 +163,7 @@ public sealed class ConvexPolygon : Shape
             ResultModel[i] = ResultModel[i] + Position;
         }
 
-        if(Initialized) GridIdentifier = Shape.GridMoveShape(this, GridIdentifier);
+        if(Initialized) GridIdentifier = Shape.GridMoveShape(this);
 
         Updated = true;
 
@@ -506,7 +506,7 @@ public sealed class ConvexPolygon : Shape
 
     public override void Dispose()
     {
-        Shape.GridRemoveShape(this, GridIdentifier);
+        Shape.GridRemoveShape(this);
     }
 
     //This void does nothing.

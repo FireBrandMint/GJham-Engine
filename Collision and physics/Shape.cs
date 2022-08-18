@@ -26,8 +26,10 @@ public class Shape: XYBoolHolder
         return ShapeGrid.AddNode(s, topLeft, bottomRight);
     }
 
-    public static long[] GridMoveShape (Shape s, long[] pastIdentifier)
+    public static long[] GridMoveShape (Shape s)
     {
+        long[] pastIdentifier = s.GetGridIdentifier();
+
         Vector2 pos = s.Position;
 
         Vector2 range = s.GetRange();
@@ -42,11 +44,7 @@ public class Shape: XYBoolHolder
 
         for(int i = 0; i<4; ++i)
         {
-            if(pastIdentifier[i] != currIdentifier[i])
-            {
-                different = true;
-                break;
-            }
+            different = different || pastIdentifier[i] != currIdentifier[i];
         }
 
         if(different)
@@ -59,9 +57,9 @@ public class Shape: XYBoolHolder
         return pastIdentifier;
     }
 
-    public static void GridRemoveShape (Shape s, long[] identifier)
+    public static void GridRemoveShape (Shape s)
     {
-        ShapeGrid.RemoveValue(identifier, s);
+        ShapeGrid.RemoveValue(s.GetGridIdentifier(), s);
     }
 
     public static Shape[] GetShapesInGrid (long[] identifier)
@@ -201,7 +199,7 @@ public class Shape: XYBoolHolder
 
     public virtual void Dispose()
     {
-
+        throw new NotImplementedException();
     }
 
     public static bool PointInConvexPolygon(Vector2 testPoint, Vector2[] polygon)

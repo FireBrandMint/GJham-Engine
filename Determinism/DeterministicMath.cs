@@ -66,15 +66,6 @@ public class DeterministicMath
     }
     #endregion
 
-    #region Hypot2
-
-    public static FInt Hypot2 (Vector2 a, Vector2 b)
-    {
-        var p = a-b;
-        return Vector2.DotProduct(p,p);
-    }
-    #endregion
-
     #region Sin
     public static FInt Sin( FInt i )
     {
