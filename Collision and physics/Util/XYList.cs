@@ -52,13 +52,18 @@ public class XYList<T> where T:XYBoolHolder
             {
                 bool nodeExisted;
 
-                var valueNode = new OneWayNode<T>(value);
+                var valueNode = new OneWayNode<T>(value, value.ID);
 
                 var node = dictY.AddIfNonexist(y1f, valueNode, out nodeExisted);
 
                 if(nodeExisted)
                 {
-                    node.Add(valueNode);
+                    if(valueNode.Priority < node.Priority)
+                    {
+                        valueNode.Append(node);
+                        dictY[y1f] = valueNode;
+                    }
+                    else node.Add(valueNode);
                 }
 
                 y1f += 1;
@@ -87,13 +92,18 @@ public class XYList<T> where T:XYBoolHolder
             {
                 bool nodeExisted;
 
-                var valueNode = new OneWayNode<T>(value);
+                var valueNode = new OneWayNode<T>(value, value.ID);
 
                 var node = dictY.AddIfNonexist(y1f, valueNode, out nodeExisted);
 
                 if(nodeExisted)
                 {
-                    node.Add(valueNode);
+                    if(valueNode.Priority < node.Priority)
+                    {
+                        valueNode.Append(node);
+                        dictY[y1f] = valueNode;
+                    }
+                    else node.Add(valueNode);
                 }
             }
         }
@@ -279,36 +289,41 @@ class OneWayNode<T>
 {
     public T Value;
 
+    public int Priority;
+
     public OneWayNode<T> down;
 
-    public OneWayNode(T value)
+    public OneWayNode(T value, int priority)
     {
         Value = value;
+
+        Priority = priority;
 
         down = null;
     }
 
-    public void Add(T value)
-    {
-        var oneNode = this;
-
-        while(oneNode.down != null)
-        {
-            oneNode = oneNode.down;
-        }
-
-        oneNode.down = new OneWayNode<T>(value);
-    }
-
     public void Add(OneWayNode<T> value)
     {
-        var oneNode = this;
+        OneWayNode<T> lastNode = null;
+
+        OneWayNode<T> oneNode = this;
 
         while(oneNode.down != null)
         {
+            if(value.Priority < oneNode.Priority)
+            {
+                value.down = oneNode;
+                lastNode.down = value;
+            }
+            lastNode = oneNode;
             oneNode = oneNode.down;
         }
 
         oneNode.down = value;
+    }
+
+    public void Append(OneWayNode<T> value)
+    {
+        down = value;
     }
 }

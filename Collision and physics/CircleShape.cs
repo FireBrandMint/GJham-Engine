@@ -13,7 +13,7 @@ public sealed class CircleShape: Shape
         {
             _Position = value;
 
-            GridIdentifier = Shape.GridMoveShape(this);
+            MoveActive();
         }
     }
 
@@ -29,7 +29,7 @@ public sealed class CircleShape: Shape
         {
             _Area = value;
 
-            GridIdentifier = Shape.GridMoveShape(this);
+            MoveActive();
         }
     }
 
@@ -40,8 +40,6 @@ public sealed class CircleShape: Shape
         _Area = area;
 
         _Position = position;
-
-        GridIdentifier = Shape.GridAddShape(this);
     }
 
     public override sealed Vector2 GetRange()
@@ -52,6 +50,11 @@ public sealed class CircleShape: Shape
     public override long[] GetGridIdentifier()
     {
         return GridIdentifier;
+    }
+
+    public override void SetGridIdentifier(long[] newValue)
+    {
+        GridIdentifier = newValue;
     }
 
     public bool CircleIntersects (CircleShape circle)

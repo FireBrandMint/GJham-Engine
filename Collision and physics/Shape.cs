@@ -5,13 +5,25 @@ using System.Threading.Tasks;
 using GJham.Physics.Util;
 using System.Runtime.CompilerServices;
 
-
+/// <summary>
+/// Shape class, collision detection with GetShapesInGrid
+/// can be deterministic as long as the shapes keep their IDS.
+/// </summary>
 public class Shape: XYBoolHolder
 {
+    static int IDNEXT = 0;
+
+    public bool IDSet = false;
+    
+    int _ID;
+
+    public int ID {get => _ID; set {_ID = value; IDSet = true;}}
+
     #region static grid
 
-    private static XYList<Shape> ShapeGrid = new XYList<Shape>(64, 1000, 10);
+    public bool Active = false;
 
+    private static XYList<Shape> ShapeGrid = new XYList<Shape>(64, 1000, 10);
 
     public static long [] GridAddShape (Shape s)
     {
@@ -87,6 +99,37 @@ public class Shape: XYBoolHolder
     public virtual Vector2 GetRange() => throw new NotImplementedException();
 
     public virtual long[] GetGridIdentifier() => throw new NotImplementedException();
+
+    public virtual void SetGridIdentifier(long[] newValue) => throw new NotImplementedException();
+
+    public void Activate()
+    {
+        if(!Active)
+        {
+            if(!IDSet)
+            {
+                ID = IDNEXT;
+                ++IDNEXT;
+            }
+
+            SetGridIdentifier(GridAddShape(this));
+        }
+
+        Active = true;
+    }
+
+    public void Deactivate()
+    {
+        if(Active) GridRemoveShape(this);
+        
+        Active = false;
+    }
+
+    public void MoveActive()
+    {
+        if(Active) SetGridIdentifier(GridMoveShape(this));
+    }
+
     public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {
         Vector2
@@ -187,7 +230,7 @@ public class Shape: XYBoolHolder
         throw new System.Exception($"Shape not implemented! Shape id: {this.GetType()}, {poly.GetType()}.");
     }
 
-    public (Shape[] arr, int count) GetIntersectionInfos (List<Shape> shapes)
+    /*public (Shape[] arr, int count) GetIntersectionInfos (List<Shape> shapes)
     {
         Shape[] arr = new Shape[10];
         
@@ -229,7 +272,7 @@ public class Shape: XYBoolHolder
         }
 
         return (arr, arrSize);
-    }
+    }*/
 
     public virtual void Dispose()
     {

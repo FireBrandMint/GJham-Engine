@@ -135,8 +135,6 @@ public sealed class ConvexPolygon : Shape
 
         UpdateNormals();
 
-        GridIdentifier = Shape.GridAddShape(this);
-
         Initialized = true;
     }
 
@@ -163,7 +161,7 @@ public sealed class ConvexPolygon : Shape
             ResultModel[i] = ResultModel[i] + Position;
         }
 
-        if(Initialized) GridIdentifier = Shape.GridMoveShape(this);
+        MoveActive();
 
         Updated = true;
 
@@ -247,6 +245,11 @@ public sealed class ConvexPolygon : Shape
     public override long[] GetGridIdentifier()
     {
         return GridIdentifier;
+    }
+
+    public override void SetGridIdentifier(long[] newValue)
+    {
+        GridIdentifier = newValue;
     }
     
     public bool PolyIntersects(ConvexPolygon poly)

@@ -117,6 +117,8 @@ public class RTestSpriteProvider : RenderEntity
             
             Processable = false;
         }
+
+        poly.Activate();
         
         PolyList.Add(poly);
 
