@@ -17,7 +17,27 @@ public class Shape: XYBoolHolder
     
     int _ID;
 
-    public int ID {get => _ID; set {_ID = value; IDSet = true;}}
+    public int ID 
+    {
+        get => _ID;
+
+        set 
+        {
+
+            if(IDSet && Active)
+            {
+                if(_ID == value) return;
+                _ID = value;
+                Deactivate();
+                Activate();
+                return;
+            }
+
+            _ID = value;
+
+            IDSet = true;
+        }
+    }
 
     #region static grid
 
