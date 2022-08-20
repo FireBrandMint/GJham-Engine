@@ -6,11 +6,15 @@ Still in development, any help is appreciated, if you wanna help please message 
 
 # Current tasks to be done (skip to goals if you're new)
 
--> Fix what this project already has. (boring)
+-> Fix what this project already has. (boring and COMPLETED)
 
--> Add the missing stuff like other physics shapes etc.
+-> Add the missing stuff like other physics shapes etc. (PARTIALLY COMPLETED, the UI collision shapes remains)
 
--> Start fase 3, aka making the the actual entities that will be used for production in the future and the editor.
+-> Start fase 3, aka making the the actual entities that will be used for production in the future.
+
+-> Make prefab system. (NOTE TO SELF: to serialize store each entity in a array and then add children according to their index in the array)
+
+-> Make editor.
 
 # Goals from BIG-BIG-BIG to less important
 
