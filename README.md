@@ -10,9 +10,9 @@ Still in development, any help is appreciated, if you wanna help please message 
 
 -> Add the missing stuff like other physics shapes etc. (PARTIALLY COMPLETED, the UI collision shapes remains)
 
--> Start fase 3, aka making the the actual entities that will be used for production in the future.
+-> Start fase 3, aka making the actual entities that will be used for production in the future.
 
--> Make prefab system. (NOTE TO SELF: to serialize store each entity in a array and then add children according to their index in the array)
+-> Make prefab system. (NOTE TO SELF: to deserialize store each entity in a array and then add children according to their index in the array)
 
 -> Make editor.
 
