@@ -1,6 +1,25 @@
 
 public abstract class RenderEntity : Entity
 {
+    bool _IDSet = false;
+
+    public bool IDSet
+    {
+        get => _IDSet;
+        set => _IDSet = value;
+    }
+
+    int _ID;
+    public int ID
+    {
+        get => _ID;
+        set
+        {
+            _IDSet = true;
+            _ID = value;
+        }
+    }
+
     public static int VisibleEntityCount = 0;
 
     public bool IsDrawable{get => true;}

@@ -19,6 +19,11 @@ public class WTFDictionary<K, T>
 {
     //int LastGotHash = 0;
     //int LastGot = 0;
+
+    List<KeyValuePair<int, T>> MasterList;
+
+    int Length = 0;
+
     public T this[K key]
     {
         get
@@ -81,10 +86,6 @@ public class WTFDictionary<K, T>
         }
     }
 
-    List<KeyValuePair<int, T>> MasterList = new List<KeyValuePair<int, T>>();
-
-    int Length = 0;
-
     public WTFDictionary()
     {
         MasterList = new List<KeyValuePair<int, T>>();
@@ -101,9 +102,11 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0)
+        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
+
+            ++Length;
 
             return;
         }
@@ -170,9 +173,11 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0)
+        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
+
+            ++Length;
 
             return value;
         }
@@ -218,6 +223,8 @@ public class WTFDictionary<K, T>
             MasterList.Insert(indexLast, addValu);
         }
 
+        ++Length;
+
         return value;
     }
 
@@ -227,7 +234,7 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0)
+        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
 
@@ -365,7 +372,7 @@ public class WTFDictionary<K, T>
         --Length;
     }
 
-    public int[] GetAllKeysHash()
+    public int[] GetKeysHash()
     {
         int mc = MasterList.Count;
 
@@ -374,6 +381,20 @@ public class WTFDictionary<K, T>
         for(int i = 0; i < mc; ++i)
         {
             arr[i] = MasterList[i].Key;
+        }
+
+        return arr;
+    }
+
+    public T[] GetValues()
+    {
+        int count = Count;
+
+        T[] arr = new T[count];
+
+        for(int i = 0; i < count; ++i)
+        {
+            arr[i] = MasterList[i].Value;
         }
 
         return arr;

@@ -1,6 +1,18 @@
 public interface Entity
 {
     ///<summary>
+    ///Is the ID already set?
+    ///</summary>
+    bool IDSet{get; set;}
+
+    ///<summary>
+    ///The ID of the object in the main entity list,
+    ///as long as the entity is added with the same ID on the
+    ///main entity list, the execution will be deterministic.
+    ///</summary>
+    int ID {get; set;}
+
+    ///<summary>
     ///Wether or not this entity is possibly drawable.
     ///Cannot be changed once set.
     ///</summary>

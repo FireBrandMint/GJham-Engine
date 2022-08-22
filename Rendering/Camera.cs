@@ -6,6 +6,25 @@ using System.Threading.Tasks;
 
 public class Camera : Entity
 {
+    bool _IDSet = false;
+
+    public bool IDSet
+    {
+        get => _IDSet;
+        set => _IDSet = value;
+    }
+
+    int _ID;
+    public int ID
+    {
+        get => _ID;
+        set
+        {
+            _IDSet = true;
+            _ID = value;
+        }
+    }
+
     public static Camera MainCamera = null;
 
     bool _IsMain = false;

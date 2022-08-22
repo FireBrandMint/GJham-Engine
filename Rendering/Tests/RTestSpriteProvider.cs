@@ -94,6 +94,7 @@ public class RTestSpriteProvider : RenderEntity
             //poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
 
             poly = new CircleShape(Position, (FInt)25);
+
             IsStatic = false;
         }
         else
@@ -106,6 +107,8 @@ public class RTestSpriteProvider : RenderEntity
                 rect.Rotation = rot;
 
                 Rotation = rot;
+
+                IsStatic = true;
 
                 poly = rect;
             }

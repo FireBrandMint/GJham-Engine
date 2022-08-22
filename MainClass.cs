@@ -24,9 +24,11 @@ class MainClass
 
     public static List<int> CurrentKeys;
 
-    //entity list below!
+    //entity things below!
 
-    public static List<Entity> Entities;
+    static int EntityIDNEXT = 0;
+
+    public static WTFDictionary<int, Entity> Entities;
 
     private static List<RenderEntity> DrawableEntities;
 
@@ -46,7 +48,7 @@ class MainClass
 
         Window = new Canvas(512, 512, "default");
 
-        Entities = new List<Entity>();
+        Entities = new WTFDictionary<int, Entity>(1000);
         DrawableEntities = new List<RenderEntity>();
 
         #region TEST AREA
@@ -288,8 +290,12 @@ class MainClass
     ///</summary>
     public static void ProcessEntities ()
     {
-        foreach (Entity e in Entities)
+        Entity[] ents = Entities.GetValues();
+
+        for(int i = 0; i < ents.Length; ++i)
         {
+            Entity e = ents[i];
+
             if (e.CanProcess) e.Tick();
         }
     }
@@ -407,7 +413,17 @@ class MainClass
     ///</summary>
     public static void AddEntity (Entity entity)
     {
-        if (entity.IsTickable) Entities.Add(entity);
+        if (entity.IsTickable)
+        {
+            if(!entity.IDSet)
+            {
+                entity.ID = EntityIDNEXT;
+
+                ++EntityIDNEXT;
+            }
+
+            Entities.Add(entity.ID, entity);
+        }
         if (entity.IsDrawable) DrawableEntities.Add((RenderEntity)entity);
 
         entity.EnterTree();
@@ -424,7 +440,7 @@ class MainClass
 
         entity.LeaveTree();
 
-        if (entity.IsTickable) Entities.Remove(entity);
+        if (entity.IsTickable) Entities.Remove(entity.ID);
 
         if(entity.IsDrawable) DrawableEntities.Remove((RenderEntity)entity);
 

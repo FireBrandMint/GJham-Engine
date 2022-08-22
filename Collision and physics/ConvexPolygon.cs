@@ -1,7 +1,5 @@
 public sealed class ConvexPolygon : Shape
 {
-    bool Initialized = false;
-
     bool Updated = false;
 
     bool NormalsUpdated = false;
@@ -134,8 +132,6 @@ public sealed class ConvexPolygon : Shape
         UpdateModel();
 
         UpdateNormals();
-
-        Initialized = true;
     }
 
     void UpdateModel()
