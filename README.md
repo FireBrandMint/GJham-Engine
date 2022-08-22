@@ -6,9 +6,7 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 # Current tasks to be done (skip to goals if you're new)
 
--> Fix what this project already has. (boring and COMPLETED)
-
--> Add the missing stuff like other physics shapes etc. (PARTIALLY COMPLETED, the sound system remains)
+-> Add the missing stuff. (PARTIALLY COMPLETED, the sound system remains)
 
 -> Start fase 3, aka making the actual entities that will be used for production in the future.
 
