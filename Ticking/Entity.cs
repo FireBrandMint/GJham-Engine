@@ -9,6 +9,8 @@ public interface Entity
     ///The ID of the object in the main entity list,
     ///as long as the entity is added with the same ID on the
     ///main entity list, the execution will be deterministic.
+    ///IMPORTANT: Changing the ID while the entity is still
+    ///instanced WILL lead to a crash.
     ///</summary>
     int ID {get; set;}
 
