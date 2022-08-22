@@ -65,7 +65,7 @@ public sealed class CircleShape: Shape
         Vector2 pos2 = circle.Position - Position;
         FInt area2 = circle.Area;
 
-        return Vector2.InRangeSquared(pos1, pos2, area1 + area2);
+        return Vector2.InRange(pos1, pos2, area1 + area2);
     }
 
     public void CircleIntersectsInfo(CircleShape circle, ref CollisionResult result)
@@ -214,6 +214,6 @@ public sealed class CircleShape: Shape
 
     public override void Dispose()
     {
-        Shape.GridRemoveShape(this);
+        Deactivate();
     }
 }

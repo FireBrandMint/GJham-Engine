@@ -107,14 +107,6 @@ public readonly struct Vector2
         return dx*dx + dy*dy <=  range * range;
     }
 
-    public static bool InRangeSquared(Vector2 v1, Vector2 v2, FInt range)
-    {
-        FInt dx = v1.x - v2.x;
-        FInt dy = v1.y - v2.y;
-
-        return dx*dx + dy*dy <=  range * range;
-    }
-
     /// <summary>
     /// Same thing as Hypot2.
     /// </summary>

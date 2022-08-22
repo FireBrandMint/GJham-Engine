@@ -622,6 +622,6 @@ public sealed class ConvexPolygon : Shape
 
     public override void Dispose()
     {
-        Shape.GridRemoveShape(this);
+        Deactivate();
     }
 }

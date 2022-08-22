@@ -39,11 +39,16 @@ public class Shape: XYBoolHolder
         }
     }
 
+    private static XYList<Shape> ShapeGrid = new XYList<Shape>(64, 1000, 10);
+
     #region static grid
 
     public bool Active = false;
 
-    private static XYList<Shape> ShapeGrid = new XYList<Shape>(64, 1000, 10);
+    /// <summary>
+    /// The object that is using this shape for collision.
+    /// </summary>
+    public CollisionAntenna ObjectUsingIt = null;
 
     public static long [] GridAddShape (Shape s)
     {

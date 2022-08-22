@@ -19,7 +19,7 @@ public class UISprite2D : DrawableObject
 
     Vector2f [] SprSectionData = null;
 
-    AdjustmentMode Mode;
+    UIAdjustmentMode Mode;
     /// <summary>
     /// centerPercent is the coords of the center of the sprite position in the screen
     /// where X and Y have a 0 to 1000 range.
@@ -27,7 +27,7 @@ public class UISprite2D : DrawableObject
     /// where X and Y have a 0 to 1000 range.
     /// mode is the way the UI sprite will be displayed on screen.
     /// </summary>
-    public UISprite2D (string texturePath, Vector2 centerPercent, Vector2 sprLengthsPercent, AdjustmentMode mode)
+    public UISprite2D (string texturePath, Vector2 centerPercent, Vector2 sprLengthsPercent, UIAdjustmentMode mode)
     {
         ChangeTexture(ref texturePath);
 
@@ -40,15 +40,15 @@ public class UISprite2D : DrawableObject
     }
     /// <summary>
     /// centerPercent is the coords of the center of the sprite position in the screen
-    /// where X and Y have a 0 to 1000 range.
+    /// where X and Y have a 0 to 100 range.
     /// sprLengthsPercent is the height and lenght of the sprite display in the screen
-    /// where X and Y have a 0 to 1000 range.
+    /// where X and Y have a 0 to 100 range.
     /// mode is the way the UI sprite will be displayed on screen.
     /// sprSectionTopLeft and sprSectionBottomRight are the section in the texture
     /// this sprite is meant to render.
     /// </summary>
     public UISprite2D (string texturePath, Vector2 center,
-    Vector2 sprLengthsPercent, AdjustmentMode mode, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
+    Vector2 sprLengthsPercent, UIAdjustmentMode mode, Vector2 sprSectionTopLeft, Vector2 sprSectionBottomRight)
     {
         ChangeTexture(ref texturePath, sprSectionTopLeft, sprSectionBottomRight);
 
@@ -72,21 +72,21 @@ public class UISprite2D : DrawableObject
 
         var center = SprDrawData[0].ToVectorF();
 
-        center *= 0.001f;
+        center *= 0.01f;
 
         var slp = (SprDrawData[1]).ToVectorF();
 
-        slp *= 0.001f;
+        slp *= 0.01f;
 
         var vSize = args.windowView;
 
         center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
 
-        if(Mode == AdjustmentMode.Extended)
+        if(Mode == UIAdjustmentMode.Extended)
         {
             slp = new Vector2f(vSize.X * slp.X, vSize.Y * slp.Y);
         }
-        else if (Mode == AdjustmentMode.Compact)
+        else if (Mode == UIAdjustmentMode.Compact)
         {
             float factor = vSize.X;
             if(factor > vSize.Y) factor = vSize.Y;
@@ -228,14 +228,16 @@ public class UISprite2D : DrawableObject
 
         WholeSprite = false;
     }
+}
 
-    public enum AdjustmentMode
-    {
-        ///<summary>
-        ///Scales the UI against the smallest axis of the screen border.
-        ///</summary>
-        Compact = 0,
-        ///Scales the UI against both axis of the screen border.
-        Extended = 1
-    }
+public enum UIAdjustmentMode
+{
+    ///<summary>
+    ///Scales the UI against the smallest axis of the screen border.
+    ///</summary>
+    Compact = 0,
+    ///<summary>
+    ///Scales the UI against both axis of the screen border.
+    ///</summary>
+    Extended = 1
 }

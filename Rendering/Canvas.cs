@@ -352,6 +352,8 @@ public class Canvas
 
         Engine.WindowSize = wSize;
 
+        Engine.ViewSize = wSize;
+
         SIZE = new Vector2u((uint)wSize.x, (uint)wSize.y);
     }
 

@@ -51,5 +51,7 @@ public static class Engine
 
     public static Vector2 WindowSize;
 
+    public static Vector2 ViewSize;
+
     public static Vector2 ViewPos = new Vector2();
 }
