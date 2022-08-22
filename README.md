@@ -2,7 +2,7 @@
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
 
-Still in development, any help is appreciated, if you wanna help please message me.
+Still in development, any help is appreciated, if you wanna help please enter my dev discord server and talk to me. https://discord.gg/NPfbwZTd
 
 # Current tasks to be done (skip to goals if you're new)
 
