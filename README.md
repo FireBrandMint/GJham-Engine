@@ -8,7 +8,7 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 -> Fix what this project already has. (boring and COMPLETED)
 
--> Add the missing stuff like other physics shapes etc. (PARTIALLY COMPLETED, the UI collision shapes remains)
+-> Add the missing stuff like other physics shapes etc. (PARTIALLY COMPLETED, the sound system remains)
 
 -> Start fase 3, aka making the actual entities that will be used for production in the future.
 
