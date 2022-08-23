@@ -19,8 +19,13 @@ public class UIShape
         throw new NotImplementedException();
     }
 
+    bool Disposed = false;
+
     public void Dispose()
     {
+        if(Disposed) return;
+        Disposed = true;
+
         Shapes.Remove(this);
     }
 }
