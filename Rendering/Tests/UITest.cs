@@ -14,7 +14,7 @@ public class UITest : RenderEntity
     {
         if(drawable == null)
         {
-            drawable = new UISprite2D(TexturePath, new Vector2(5, 5), new Vector2(50, 50), UIAdjustmentMode.Compact);
+            drawable = new UISprite2D(TexturePath, new Vector2(5, 5), new Vector2(5, 5), UIAdjustmentMode.Compact);
             drawable.z = ZValue;
         }
 
