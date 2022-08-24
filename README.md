@@ -4,11 +4,13 @@ Actually a library because the UI will probably look 15 years old, executable by
 
 Still in development, any help is appreciated, if you wanna help please enter my dev discord server and talk to me. https://discord.gg/NPfbwZTd
 
+# STATUS
+
+-> Can finally be effectively used as some sort of deterministic framework library, but it may cause a lot of PAIN to do so.
+
 # Current tasks to be done (skip to goals if you're new)
 
--> Add the missing stuff. (PARTIALLY COMPLETED, the sound system remains)
-
--> Start fase 3, aka making the actual entities that will be used for production in the future.
+-> Start fase 3, aka making the actual entities that will be used for production in the future. (NOTE TO SELF: use main class for main 'collision hub')
 
 -> Make prefab system. (NOTE TO SELF: to deserialize store each entity in a array and then add children according to their index in the array)
 
