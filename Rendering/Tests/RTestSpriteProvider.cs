@@ -68,7 +68,7 @@ public class RTestSpriteProvider : RenderEntity
 
     CullingAABB RenderOpt = new CullingAABB(new AABB(new Vector2(0, 0), new Vector2(50, 50)));
 
-    AudioPlay AudioNoise;
+    AudioPlayer AudioNoise;
 
     public override void Init()
     {
@@ -99,7 +99,7 @@ public class RTestSpriteProvider : RenderEntity
 
             IsStatic = false;
 
-            AudioNoise = new AudioPlay(@".\Assets\Generic.ogg", AudioPlay.AudioType.Sound);
+            AudioNoise = new AudioPlayer(@".\Assets\Generic.ogg", AudioPlayer.AudioType.Sound);
         }
         else
         {
@@ -213,6 +213,13 @@ public class RTestSpriteProvider : RenderEntity
             var colResults = Shape.GetShapesInGrid(poly);
 
             var colCount = colResults.Length;
+
+            int t = 0;
+
+            if(AudioNoise.Loaded)
+            {
+                t = AudioNoise.TimeMS;
+            }
 
             if(colCount != 0)
             {
