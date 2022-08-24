@@ -68,9 +68,7 @@ public class RTestSpriteProvider : RenderEntity
 
     CullingAABB RenderOpt = new CullingAABB(new AABB(new Vector2(0, 0), new Vector2(50, 50)));
 
-    SFML.Audio.SoundBuffer SndBuff;
-
-    SFML.Audio.Sound Snd;
+    AudioPlay AudioNoise;
 
     public override void Init()
     {
@@ -101,9 +99,7 @@ public class RTestSpriteProvider : RenderEntity
 
             IsStatic = false;
 
-            SndBuff = new SFML.Audio.SoundBuffer(@".\Assets\Generic.ogg");
-
-            Snd = new SFML.Audio.Sound(SndBuff);
+            AudioNoise = new AudioPlay(@".\Assets\Generic.ogg", AudioPlay.AudioType.Sound);
         }
         else
         {
@@ -236,7 +232,7 @@ public class RTestSpriteProvider : RenderEntity
 
                         if(result.Intersects)
                         {
-                            Snd.Play();
+                            AudioNoise.Play();
 
                             Position += result.Separation;
 

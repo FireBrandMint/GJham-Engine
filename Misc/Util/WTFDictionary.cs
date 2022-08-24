@@ -22,7 +22,7 @@ public class WTFDictionary<K, T>
 
     List<KeyValuePair<int, T>> MasterList;
 
-    int Length = 0;
+    int Lenght = 0;
 
     public T this[K key]
     {
@@ -102,11 +102,11 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
+        if(MasterList.Count == 0 || MasterList[Lenght - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
 
-            ++Length;
+            ++Lenght;
 
             return;
         }
@@ -164,7 +164,7 @@ public class WTFDictionary<K, T>
             MasterList.Insert(indexLast, addValu);
         }
 
-        ++Length;
+        ++Lenght;
     }
 
     public T AddIfNonexist(K key, T value)
@@ -173,11 +173,11 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
+        if(MasterList.Count == 0 || MasterList[Lenght - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
 
-            ++Length;
+            ++Lenght;
 
             return value;
         }
@@ -223,7 +223,7 @@ public class WTFDictionary<K, T>
             MasterList.Insert(indexLast, addValu);
         }
 
-        ++Length;
+        ++Lenght;
 
         return value;
     }
@@ -234,13 +234,13 @@ public class WTFDictionary<K, T>
 
         var addValu = new KeyValuePair<int, T>(keyTrue, value);
 
-        if(MasterList.Count == 0 || MasterList[Length - 1].Key < keyTrue)
+        if(MasterList.Count == 0 || MasterList[Lenght - 1].Key < keyTrue)
         {
             MasterList.Add(addValu);
 
             existed = false;
 
-            ++Length;
+            ++Lenght;
 
             return value;
         }
@@ -292,7 +292,7 @@ public class WTFDictionary<K, T>
 
         existed = false;
 
-        ++Length;
+        ++Lenght;
 
         return value;
     }
@@ -311,7 +311,51 @@ public class WTFDictionary<K, T>
 
         MasterList.RemoveAt(index);
 
-        --Length;
+        --Lenght;
+    }
+
+    public bool ContainsKey(K key)
+    {
+        if(Lenght == 0) return false;
+
+        int keyTrue = key.GetHashCode();
+
+        var searchResult = Find(keyTrue);
+
+        int indexFirst = searchResult[0];
+
+        return keyTrue == MasterList[indexFirst].Key;
+    }
+
+    public bool TryGetValue(K key, out T value)
+    {
+        int keyTrue = key.GetHashCode();
+
+        if(MasterList.Count == 0)
+        {
+            value = default(T);
+
+            return false;
+        }
+
+        var searchResult = Find(keyTrue);
+
+        int indexFirst = searchResult[0];
+
+        int indexLast = searchResult[1];
+
+        int indKey = MasterList[indexFirst].Key;
+
+        if(indKey == keyTrue)
+        {
+            value = MasterList[indexFirst].Value;
+
+            return true;
+        }
+
+        value = default(T);
+
+        return false;
     }
 
 
@@ -369,7 +413,7 @@ public class WTFDictionary<K, T>
     {
         MasterList.RemoveAt(internalKey);
 
-        --Length;
+        --Lenght;
     }
 
     public int[] GetKeysHash()
@@ -465,5 +509,11 @@ public class WTFDictionary<K, T>
         };
     }
 
-    public int Count => Length;
+    public void Clear()
+    {
+        MasterList.Clear();
+        Lenght = 0;
+    }
+
+    public int Count => Lenght;
 }
