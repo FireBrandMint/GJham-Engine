@@ -62,6 +62,8 @@ public static class FontHolder
 
     #endregion
 
+    #region Actual thread stuff
+
     static GDictionaryOrdered<string, FontRef> FontCashe = new GDictionaryOrdered<string, FontRef>();    
 
     static Queue<KeyValuePair<FontRequest, FontReqValue>> ThreadRequests = new Queue<KeyValuePair<FontRequest, FontReqValue>>(50);
@@ -136,6 +138,8 @@ public static class FontHolder
             }
         }
     }
+
+    #endregion
 
     static void CreateRequest(FontRequest request, FontReqValue value)
     {
