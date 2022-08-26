@@ -16,6 +16,10 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 -> Make editor.
 
+# Phylosophy
+
+Ticks (the part where the program processes inputs and movement) must be executed as perfectly and without performance issues as possible; everything else is background loading, even rendering.
+
 # Goals from BIG-BIG-BIG to less important
 
 0. All is free. (probably will have donation page if people actually become interested in this project)
@@ -36,4 +40,4 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory and probably ends up in gen 2. EDIT june 04 y22: now it's better)
 
-9. Probably 3d after i finish 2d.
+9. ~~Probably 3d after i finish 2d.~~ (forget that, that won't be possible, i'm just one guy)
