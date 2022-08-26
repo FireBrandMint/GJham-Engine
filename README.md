@@ -40,4 +40,4 @@ Ticks (the part where the program processes inputs and movement) must be execute
 
 8. Fix my own mistakes. (i know, it's hard, but this rendering system is making me question myself as a programmer, it allocates way too much memory and probably ends up in gen 2. EDIT june 04 y22: now it's better)
 
-9. Probably 3d after i finish 2d.
+9. ~~Probably 3d after i finish 2d.~~ (forget that, that won't be possible)
