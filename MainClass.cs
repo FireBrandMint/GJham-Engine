@@ -298,6 +298,8 @@ class MainClass
 
             if (e.CanProcess) e.Tick();
         }
+
+        GlobalCollision.Tick();
     }
 
     //Small value for a necessary processing.

@@ -93,9 +93,9 @@ public class RTestSpriteProvider : RenderEntity
 
         if(player)
         {
-            //poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
+            poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
 
-            poly = new CircleShape(Position, (FInt)25);
+            //poly = new CircleShape(Position, (FInt)25);
 
             IsStatic = false;
 
@@ -232,7 +232,7 @@ public class RTestSpriteProvider : RenderEntity
 
                         if(result.Intersects)
                         {
-                            AudioNoise.Play();
+                            //AudioNoise.Play();
 
                             Position += result.Separation;
 

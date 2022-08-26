@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 /// </summary>
 public class Shape: XYBoolHolder
 {
+
     static int IDNEXT = 0;
 
     public bool IDSet = false;
@@ -116,6 +117,12 @@ public class Shape: XYBoolHolder
 
     public virtual Vector2 Position{get;set;}
 
+    public int CollisionRepetition = 1;
+
+    public bool Solid = false;
+
+    public bool Static = false;
+
     ///<summary>
     ///Range is a vector
     ///X is the highest absolute x coord of the points list in position Vector.ZERO
@@ -154,6 +161,8 @@ public class Shape: XYBoolHolder
     {
         if(Active) SetGridIdentifier(GridMoveShape(this));
     }
+
+    public bool IsActive() => Active;
 
     public void IntersectsInfo(Shape poly, ref CollisionResult result)
     {

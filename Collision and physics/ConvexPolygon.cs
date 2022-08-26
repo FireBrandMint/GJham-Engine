@@ -500,6 +500,8 @@ public sealed class ConvexPolygon : Shape
 
         result.Separation = vector * distance * factor;
 
+        result.SeparationDirection = vector;
+
         result.Intersects = true;
     }
 
@@ -606,7 +608,11 @@ public sealed class ConvexPolygon : Shape
             //The direction from the line to the circle middle.
             var direction = circlePos - lineColPoint;
 
-            result.Separation = direction.Normalized() * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr));
+            var dir = direction.Normalized();
+
+            result.Separation = dir * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr));
+
+            result.SeparationDirection = dir;
         }
         else
         {
@@ -614,8 +620,14 @@ public sealed class ConvexPolygon : Shape
             //The direction from the circle middle to the line.
             var direction = lineColPoint - circlePos;
 
-            result.Separation = direction.Normalized() * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr));
+            var dir = direction.Normalized();
+
+            result.Separation = dir * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr));
+
+            result.SeparationDirection = dir;
         }
+
+        
 
         result.Intersects = true;
     }

@@ -40,6 +40,8 @@ public sealed class CircleShape: Shape
         _Area = area;
 
         _Position = position;
+
+        CollisionRepetition = 2;
     }
 
     public override sealed Vector2 GetRange()
