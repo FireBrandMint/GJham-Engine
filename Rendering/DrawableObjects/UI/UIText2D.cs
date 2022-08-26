@@ -1,6 +1,7 @@
 using SFML.Graphics;
+using SFML.System;
 
-public class DrawableText2D : DrawableObject
+public class UIText2D
 {
     public int z {get; set;}
 
@@ -30,12 +31,14 @@ public class DrawableText2D : DrawableObject
 
     UIAdjustmentMode AdjustmentMode;
 
-    public DrawableText2D(string fontPath, Vector2 position)
+    public UIText2D(string fontPath, Vector2 position, UIAdjustmentMode adjMode)
     {
         FontPath = fontPath;
 
         Position = position;
         PastPosition = position;
+
+        AdjustmentMode = adjMode;
     }
 
     public void Draw(RenderArgs args)
@@ -56,14 +59,31 @@ public class DrawableText2D : DrawableObject
         {
             if(DObject.Font != TFont) DObject.Font = TFont;
 
-            var currPos = (Position - args.cameraPos).ToVectorF();
-            var lastPos = (PastPosition - args.cameraPos).ToVectorF();
+            var currPos = Position.ToVectorF();
 
-            var finalPos = RenderMath.Lerp(lastPos, currPos, args.lerp);
+            var visualScale = args.windowView;
+
+            if(AdjustmentMode == UIAdjustmentMode.Compact)
+            {
+                if(visualScale.X > visualScale.Y) visualScale.X = visualScale.Y;
+                else visualScale.Y = visualScale.X;
+
+                currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
+            }
+            else if (AdjustmentMode == UIAdjustmentMode.Extended)
+            {
+                currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
+            }
+
+            var finalPos = currPos;
+
+            float vScale = args.windowView.X;
+
+            if(vScale > args.windowView.Y) vScale = args.windowView.Y;
 
             DObject.Position = finalPos;
 
-            DObject.Scale = Scale.ToVectorF();
+            DObject.Scale = ((Scale.ToVectorF() * vScale)/1000.0f);
 
             DObject.Rotation = Rotation.ToFloat();
 
