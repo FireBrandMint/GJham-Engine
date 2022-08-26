@@ -7,7 +7,7 @@ public class UISprite2D : DrawableObject
     int _z = 0;
     public int z { get => _z; set => _z = value; }
 
-    Texture CurrTexture = null;
+    TextureHolder CurrTexture = null;
 
     bool SprChanged = true;
 
@@ -62,63 +62,72 @@ public class UISprite2D : DrawableObject
 
     public void Draw(RenderArgs args)
     {
-        VertexArray verts = new VertexArray(PrimitiveType.Quads, 4u);
 
-        var texture = TryCasheTexture();
+        Texture texture;
 
-        if(texture == null) return;
+        var cashedTextr = TryCasheTexture();
 
-        SolveNoSprSection();
+        if(cashedTextr == null) return;
 
-        var center = SprDrawData[0].ToVectorF();
-
-        center *= 0.01f;
-
-        var slp = (SprDrawData[1]).ToVectorF();
-
-        slp *= 0.01f;
-
-        var vSize = args.windowView;
-
-        center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
-
-        if(Mode == UIAdjustmentMode.Extended)
+        lock(cashedTextr)
         {
-            slp = new Vector2f(vSize.X * slp.X, vSize.Y * slp.Y);
+            if(cashedTextr.Disposed) return;
+            texture = cashedTextr.texture;
+
+            VertexArray verts = new VertexArray(PrimitiveType.Quads, 4u);
+
+            SolveNoSprSection(texture.Size);
+
+            var center = SprDrawData[0].ToVectorF();
+
+            center *= 0.01f;
+
+            var slp = (SprDrawData[1]).ToVectorF();
+
+            slp *= 0.01f;
+
+            var vSize = args.windowView;
+
+            center = new Vector2f(vSize.X * center.X, vSize.Y * center.Y);
+
+            if(Mode == UIAdjustmentMode.Extended)
+            {
+                slp = new Vector2f(vSize.X * slp.X, vSize.Y * slp.Y);
+            }
+            else if (Mode == UIAdjustmentMode.Compact)
+            {
+                float factor = vSize.X;
+                if(factor > vSize.Y) factor = vSize.Y;
+
+                slp = new Vector2f(factor * slp.X, factor * slp.Y);
+            }
+
+            //Console.WriteLine(slp);
+
+            //Top left
+            verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Color.White, SprSectionData[0]);
+            //Bottom left
+            verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Color.White, SprSectionData[1]);
+            //Bottom right
+            verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Color.White, SprSectionData[2]);
+            //Top right
+            verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Color.White, SprSectionData[3]);
+
+            RenderStates state = new RenderStates();
+
+            state.Texture = texture;
+
+            state.BlendMode = BlendMode.None;
+
+            state.Transform = Transform.Identity;
+
+            args.w.Draw(verts, state);
+
+            verts.Dispose();
         }
-        else if (Mode == UIAdjustmentMode.Compact)
-        {
-            float factor = vSize.X;
-            if(factor > vSize.Y) factor = vSize.Y;
-
-            slp = new Vector2f(factor * slp.X, factor * slp.Y);
-        }
-
-        //Console.WriteLine(slp);
-
-        //Top left
-        verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Color.White, SprSectionData[0]);
-        //Bottom left
-        verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Color.White, SprSectionData[1]);
-        //Bottom right
-        verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Color.White, SprSectionData[2]);
-        //Top right
-        verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Color.White, SprSectionData[3]);
-
-        RenderStates state = new RenderStates();
-
-        state.Texture = texture;
-
-        state.BlendMode = BlendMode.None;
-
-        state.Transform = Transform.Identity;
-
-        args.w.Draw(verts, state);
-
-        verts.Dispose();
     }
 
-    public Texture TryCasheTexture()
+    public TextureHolder TryCasheTexture()
     {
         if(SprChanged)
         {
@@ -130,11 +139,11 @@ public class UISprite2D : DrawableObject
         return CurrTexture;
     }
 
-    public void SolveNoSprSection()
+    public void SolveNoSprSection(Vector2u sizeU)
     {
         if(WholeSprite)
         {
-            var size = (Vector2f)CurrTexture.Size;
+            var size = (Vector2f)sizeU;
 
             SprSectionData = new Vector2f[]
             {

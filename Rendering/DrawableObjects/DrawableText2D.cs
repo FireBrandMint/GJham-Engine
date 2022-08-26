@@ -22,13 +22,11 @@ public class DrawableText2D : DrawableObject
 
     FInt Rotation = (FInt)0;
 
-    Font TFont = null;
+    FontHolder.FontRef TFont = null;
 
     Color TextColor = Color.White;
 
     Text DObject = null;
-
-    UIAdjustmentMode AdjustmentMode;
 
     public DrawableText2D(string fontPath, Vector2 position)
     {
@@ -52,35 +50,42 @@ public class DrawableText2D : DrawableObject
             DObject = new Text();
         }
 
-        if(Changed)
+        lock(TFont)
         {
-            if(DObject.Font != TFont) DObject.Font = TFont;
+            if(TFont.Disposed) return;
 
-            var currPos = (Position - args.cameraPos).ToVectorF();
-            var lastPos = (PastPosition - args.cameraPos).ToVectorF();
+            var font = TFont.ActualFont;
 
-            var finalPos = RenderMath.Lerp(lastPos, currPos, args.lerp);
+            if(Changed)
+            {
+                if(DObject.Font != font) DObject.Font = font;
 
-            DObject.Position = finalPos;
+                var currPos = (Position - args.cameraPos).ToVectorF();
+                var lastPos = (PastPosition - args.cameraPos).ToVectorF();
 
-            DObject.Scale = Scale.ToVectorF();
+                var finalPos = RenderMath.Lerp(lastPos, currPos, args.lerp);
 
-            DObject.Rotation = Rotation.ToFloat();
+                DObject.Position = finalPos;
 
-            DObject.FillColor = TextColor;
+                DObject.Scale = Scale.ToVectorF();
 
-            DObject.DisplayedString = TextString;
+                DObject.Rotation = Rotation.ToFloat();
 
-            DObject.LetterSpacing = TextSpacing;
+                DObject.FillColor = TextColor;
 
-            DObject.LineSpacing = LineSpacing;
+                DObject.DisplayedString = TextString;
 
-            DObject.CharacterSize = (uint)TextSize;
+                DObject.LetterSpacing = TextSpacing;
 
-            Changed = false;
+                DObject.LineSpacing = LineSpacing;
+
+                DObject.CharacterSize = (uint)TextSize;
+
+                Changed = false;
+            }
+
+            args.w.Draw(DObject);
         }
-
-        args.w.Draw(DObject);
     }
 
     public void DrawOptimizables(RenderArgs args, DrawableObject[] dObjects, uint index, uint count)

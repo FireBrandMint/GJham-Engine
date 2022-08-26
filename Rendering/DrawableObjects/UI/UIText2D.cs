@@ -23,7 +23,7 @@ public class UIText2D
 
     FInt Rotation = (FInt)0;
 
-    Font TFont = null;
+    FontHolder.FontRef TFont = null;
 
     Color TextColor = Color.White;
 
@@ -55,52 +55,59 @@ public class UIText2D
             DObject = new Text();
         }
 
-        if(Changed)
+        lock(TFont)
         {
-            if(DObject.Font != TFont) DObject.Font = TFont;
+            if(TFont.Disposed) return;
 
-            var currPos = Position.ToVectorF();
+            var font = TFont.ActualFont;
 
-            var visualScale = args.windowView;
-
-            if(AdjustmentMode == UIAdjustmentMode.Compact)
+            if(Changed)
             {
-                if(visualScale.X > visualScale.Y) visualScale.X = visualScale.Y;
-                else visualScale.Y = visualScale.X;
+                if(DObject.Font != font) DObject.Font = font;
 
-                currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
+                var currPos = Position.ToVectorF();
+
+                var visualScale = args.windowView;
+
+                if(AdjustmentMode == UIAdjustmentMode.Compact)
+                {
+                    if(visualScale.X > visualScale.Y) visualScale.X = visualScale.Y;
+                    else visualScale.Y = visualScale.X;
+
+                    currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
+                }
+                else if (AdjustmentMode == UIAdjustmentMode.Extended)
+                {
+                    currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
+                }
+
+                var finalPos = currPos;
+
+                float vScale = args.windowView.X;
+
+                if(vScale > args.windowView.Y) vScale = args.windowView.Y;
+
+                DObject.Position = finalPos;
+
+                DObject.Scale = ((Scale.ToVectorF() * vScale)/1000.0f);
+
+                DObject.Rotation = Rotation.ToFloat();
+
+                DObject.FillColor = TextColor;
+
+                DObject.DisplayedString = TextString;
+
+                DObject.LetterSpacing = TextSpacing;
+
+                DObject.LineSpacing = LineSpacing;
+
+                DObject.CharacterSize = (uint)TextSize;
+
+                Changed = false;
             }
-            else if (AdjustmentMode == UIAdjustmentMode.Extended)
-            {
-                currPos = (new Vector2f(currPos.X * visualScale.X, currPos.Y * visualScale.Y)) / 100.0f;
-            }
 
-            var finalPos = currPos;
-
-            float vScale = args.windowView.X;
-
-            if(vScale > args.windowView.Y) vScale = args.windowView.Y;
-
-            DObject.Position = finalPos;
-
-            DObject.Scale = ((Scale.ToVectorF() * vScale)/1000.0f);
-
-            DObject.Rotation = Rotation.ToFloat();
-
-            DObject.FillColor = TextColor;
-
-            DObject.DisplayedString = TextString;
-
-            DObject.LetterSpacing = TextSpacing;
-
-            DObject.LineSpacing = LineSpacing;
-
-            DObject.CharacterSize = (uint)TextSize;
-
-            Changed = false;
+            args.w.Draw(DObject);
         }
-
-        args.w.Draw(DObject);
     }
 
     public void DrawOptimizables(RenderArgs args, DrawableObject[] dObjects, uint index, uint count)

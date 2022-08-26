@@ -15,7 +15,7 @@ public class TextureHolder
 
     int refCount = 0;
 
-    bool disposed = false;
+    public bool Disposed = false;
 
     static ManualResetEvent operate = new ManualResetEvent(false);
 
@@ -72,11 +72,11 @@ public class TextureHolder
 
     void Dispose()
     {
-        if (disposed) return;
+        if (Disposed) return;
 
         texture.Dispose();
 
-        disposed = true;
+        Disposed = true;
     }
 
     ///<summary>
@@ -121,7 +121,11 @@ public class TextureHolder
                 {
                     var curr = ToRemove[i];
 
-                    if(curr.texPath == path)
+                    bool samePath = false;
+                    
+                    lock(curr) samePath = curr.texPath == path;
+
+                    if(samePath)
                     {
                         RegAgainInternal(curr, i);
                         return;
@@ -143,17 +147,17 @@ public class TextureHolder
         int hash = path.GetHashCode();
 
         TextureHolder holder = TextureDict[path];
-        lock (holder)
-        {
-            if (holder.RemoveRef())
-            {
-                TextureDict.Remove(path);
+        bool noRef = false;
 
-                lock(ToRemove)
-                {
-                    holder.TimeToKill = holder.TimeToKillLimit;
-                    ToRemove.Add(holder);
-                }
+        lock (holder) noRef = holder.RemoveRef();
+        if (noRef)
+        {
+            TextureDict.Remove(path);
+
+            lock(ToRemove)
+            {
+                lock (holder) holder.TimeToKill = holder.TimeToKillLimit;
+                ToRemove.Add(holder);
             }
         }
     }
@@ -177,7 +181,7 @@ public class TextureHolder
     ///Can return null in very rare ocasions
     ///or if there's no reference to the texture.
     ///</summary>
-    public static Texture GetTexture(ref String path)
+    public static TextureHolder GetTexture(ref String path)
     {
         lock (TextureDict)
         {
@@ -185,7 +189,7 @@ public class TextureHolder
 
             if(TextureDict.TryGetValue(path, out holder))
             {
-                lock (holder) return holder.texture;
+                return holder;
             }
 
             return null;

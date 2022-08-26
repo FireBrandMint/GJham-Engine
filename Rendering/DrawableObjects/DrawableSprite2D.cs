@@ -25,7 +25,7 @@ public sealed class DrawableSprite2D : DrawableObject
 
     FInt Rotation;
 
-    Texture CurrTexture = null;
+    TextureHolder CurrTexture = null;
 
     VertexArray Result = null;
 
@@ -60,20 +60,33 @@ public sealed class DrawableSprite2D : DrawableObject
     {
         RenderStates states = new RenderStates();
 
-        states.Texture = TryCashTexture();
+        Texture texture;
 
-        states.Transform = Transform.Identity;
+        var cashedTextr = TryCashTexture();
 
-        states.BlendMode = BlendMode.None;
+        if(cashedTextr == null) return;
 
-        if(states.Texture == null)
+        lock(cashedTextr)
         {
-            return;
+            if(cashedTextr.Disposed) return;
+            texture = cashedTextr.texture;
+        
+
+            states.Texture = texture;
+
+            states.Transform = Transform.Identity;
+
+            states.BlendMode = BlendMode.None;
+
+            if(states.Texture == null)
+            {
+                return;
+            }
+
+            TryRecalculateVertex(states.Texture.Size, args.lerp, args.cameraPos);
+
+            args.w.Draw(Result, states);
         }
-
-        TryRecalculateVertex(states.Texture.Size, args.lerp, args.cameraPos);
-
-        args.w.Draw(Result, states);
     }
 
     public bool Optimizable (DrawableObject obj)
@@ -83,36 +96,44 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void DrawOptimizables(RenderArgs args, DrawableObject[] dObjects, uint index, uint count)
     {
-        var texture = TryCashTexture();
+        Texture texture;
 
-        if(texture == null) return;
+        var cashedTextr = TryCashTexture();
 
-        float lerp = args.lerp;
-        Vector2u texSize = texture.Size;
+        if(cashedTextr == null) return;
 
-        RenderStates states = new RenderStates()
+        lock(cashedTextr)
         {
-            Texture = texture,
-            Transform = Transform.Identity,
-            BlendMode = BlendMode.None
-        };
+            if(cashedTextr.Disposed) return;
+            texture = cashedTextr.texture;
 
-        VertexArray arr = new VertexArray(PrimitiveType.Quads, count * 4);
+            float lerp = args.lerp;
+            Vector2u texSize = texture.Size;
 
-        uint vertIndex = 0;
+            RenderStates states = new RenderStates()
+            {
+                Texture = texture,
+                Transform = Transform.Identity,
+                BlendMode = BlendMode.None
+            };
 
-        for(uint i = index; i < index + count; ++i)
-        {
-            DrawableSprite2D curr = (DrawableSprite2D)dObjects[i];
+            VertexArray arr = new VertexArray(PrimitiveType.Quads, count * 4);
 
-            curr.FillBatch(arr, vertIndex, texSize, lerp, args.cameraPos);
+            uint vertIndex = 0;
 
-            vertIndex+=4;
+            for(uint i = index; i < index + count; ++i)
+            {
+                DrawableSprite2D curr = (DrawableSprite2D)dObjects[i];
+
+                curr.FillBatch(arr, vertIndex, texSize, lerp, args.cameraPos);
+
+                vertIndex+=4;
+            }
+
+            args.w.Draw(arr, states);
+
+            arr.Dispose();
         }
-
-        args.w.Draw(arr, states);
-
-        arr.Dispose();
     }
 
     public void FillBatch(VertexArray arr, uint index, Vector2u texSize, float lerp, Vector2 cameraPos)
@@ -189,7 +210,7 @@ public sealed class DrawableSprite2D : DrawableObject
         Result[3] = new Vertex(Vector2.RotateVec(new Vector2(pos.x + halves.x, pos.y - halves.y), pos, angle).ToVectorF(), Modulate, new Vector2f(texBotRig.X, texTopLef.Y));
     }
 
-    public Texture TryCashTexture()
+    public TextureHolder TryCashTexture()
     {
         if(TextureUpdated)
         {

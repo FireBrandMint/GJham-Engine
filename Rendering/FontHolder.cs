@@ -46,14 +46,14 @@ public static class FontHolder
     /// <summary>
     /// Gets cashed font, can return null if the font is still loading.
     /// </summary>
-    public static Font GetFont(string pathToFont)
+    public static FontRef GetFont(string pathToFont)
     {
         lock(FontCashe)
         {
             FontRef fRef;
             if(FontCashe.TryGetValue(pathToFont, out fRef))
             {
-                lock(fRef) return fRef.ActualFont;
+                return fRef;
             }
         }
 
@@ -130,6 +130,7 @@ public static class FontHolder
                         if(fRef.RefCount <= 0)
                         {
                             fRef.ActualFont.Dispose();
+                            fRef.Disposed = true;
                             lock(FontCashe) FontCashe.Remove(fRef.Path);
                         }
                     }
@@ -149,11 +150,13 @@ public static class FontHolder
         ProcessWait.Set();
     }
 
-    private class FontRef
+    public class FontRef
     {
-        public Font ActualFont = null;
+        public Font ActualFont;
         public int RefCount = 0;
         public string Path;
+
+        public bool Disposed = false;
 
         public FontRef(Font font, string path)
         {
