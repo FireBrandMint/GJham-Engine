@@ -214,13 +214,6 @@ public class RTestSpriteProvider : RenderEntity
 
             var colCount = colResults.Length;
 
-            int t = 0;
-
-            if(AudioNoise.Loaded)
-            {
-                t = AudioNoise.TimeMS;
-            }
-
             if(colCount != 0)
             {
                 CollisionResult result = new CollisionResult();
