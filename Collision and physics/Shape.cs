@@ -44,7 +44,7 @@ public class Shape: XYBoolHolder
 
     #region static grid
 
-    public bool Active = false;
+    bool Active = false;
 
     /// <summary>
     /// The object that is using this shape for collision.
@@ -120,8 +120,6 @@ public class Shape: XYBoolHolder
     public int CollisionRepetition = 1;
 
     public bool Solid = false;
-
-    public bool Static = false;
 
     ///<summary>
     ///Range is a vector

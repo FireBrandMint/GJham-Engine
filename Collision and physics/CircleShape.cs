@@ -196,19 +196,22 @@ public sealed class CircleShape: Shape
             return;
         }
 
+        FInt factor = new FInt();
+        factor.RawValue = 4150;
+
         if(IsInside)
         {
             //The direction from the circle to the line.
             var direction = lineColPoint - circlePos;
 
-            result.Separation = direction.Normalized() * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr));
+            result.Separation = direction.Normalized() * (circleArea + DeterministicMath.Sqrt(lowestDistanceSqr)) * factor;
         }
         else
         {
             //The direction from the line to the circle middle.
             var direction =  circlePos - lineColPoint;
 
-            result.Separation = direction.Normalized() * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr));
+            result.Separation = direction.Normalized() * (circleArea - DeterministicMath.Sqrt(lowestDistanceSqr)) * factor;
         }
 
         result.Intersects = true;
