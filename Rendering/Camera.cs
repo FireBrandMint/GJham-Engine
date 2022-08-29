@@ -70,6 +70,16 @@ public class Camera : Entity
     public bool IsDestroyed { get => _IsDestroyed; set => _IsDestroyed = value; }
     public int ZValue { get => 0; set{} }
 
+    bool _IsVisible = true;
+
+    public bool IsVisible { get => _IsVisible; set => _IsVisible = value; }
+
+    Entity _Parent = null;
+    NodeChildren<Entity> _Children = null;
+
+    public Entity Parent { get => _Parent; set => _Parent = value; }
+    public NodeChildren<Entity> Children { get => _Children; set => _Children = value; }
+
     public void EnterTree()
     {
         if(_IsMain) Engine.ViewPos = _Position;

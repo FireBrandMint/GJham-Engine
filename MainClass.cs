@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using SFML.System;
 using System.IO;
 
-class MainClass
+static class MainClass
 {
     public static bool Running = true;
 
@@ -30,8 +30,6 @@ class MainClass
 
     public static WTFDictionary<int, Entity> Entities;
 
-    private static List<RenderEntity> DrawableEntities;
-
     public static void Main(string[] args)
     {
         for (int i = 0; i< args.Length; ++i)
@@ -49,7 +47,6 @@ class MainClass
         Window = new Canvas(512, 512, "default");
 
         Entities = new WTFDictionary<int, Entity>(1000);
-        DrawableEntities = new List<RenderEntity>();
 
         #region TEST AREA
 
@@ -189,8 +186,6 @@ class MainClass
                 OnSecond();
                 secondTickCount-= swFrequency;
 
-                GC.Collect(0, GCCollectionMode.Forced, false);
-
                 operationExecuted = true;
             }
 
@@ -282,7 +277,19 @@ class MainClass
             Window.Close();
         }
 
+        bool measuring = AntiConsoleSpam.antiConsoleSpam.CanWriteLine(235, 60);
+
+        Stopwatch watch = null;
+
+        if(measuring) watch = Stopwatch.StartNew();
+
         ProcessEntities();
+
+        if(measuring)
+        {
+            Console.WriteLine($"TICK took {((double)watch.ElapsedTicks / Stopwatch.Frequency) * 1000}MS!");
+            watch.Stop();
+        }
     }
 
     ///<summary>
@@ -296,10 +303,33 @@ class MainClass
         {
             Entity e = ents[i];
 
-            if (e.CanProcess) e.Tick();
+            if(e.IsTickable && e.CanProcess)
+            {
+                e.Tick();
+            }
+
+            var eChildren = e.Children;
+            if(eChildren != null) TickChildrenInternal(eChildren);
         }
 
         GlobalCollision.Tick();
+    }
+
+    static void TickChildrenInternal (NodeChildren<Entity> children)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var currEntity = children[i];
+
+            if(currEntity.IsTickable && currEntity.CanProcess)
+            {
+                currEntity.Tick();
+            }
+
+            var eChildren = currEntity.Children;
+
+            if(eChildren != null) TickChildrenInternal(eChildren);
+        }
     }
 
     //Small value for a necessary processing.
@@ -312,38 +342,57 @@ class MainClass
         //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
 
+        bool measuring = AntiConsoleSpam.antiConsoleSpam.CanWriteLine(236, 60);
+
+        Stopwatch watch = null;
+
+        if(measuring) watch = Stopwatch.StartNew();
+
         //This 'if' prevents the program from updating the array of things to render
         //multiple times between ticks, wich isn't necessary and would be too
         //costly.
         if (LastTickCount != TickCount)
         {
-            //Creates buffer for rendering
+            //Creates array for rendering
             DrawableObject[] dObjects = new DrawableObject[RenderEntity.VisibleEntityCount];
 
             //the count of objects that aren't null on the array
             int count = 0;
 
-            //populates buffer with output from the entities that can be rendered
-            for (int i = 0; i< DrawableEntities.Count; ++i)
+            var toTryDraw = Entities.GetValues();
+
+            //populates array with output from the entities that can be rendered
+            for (int i = 0; i< Entities.Count; ++i)
             {
-                var entity = DrawableEntities[i];
+                var entity = toTryDraw[i];
 
-                if (entity.IsVisible)
+                if(entity.IsDrawable)
                 {
-                    var drawable = entity.GetDrawable();
-
-                    if (drawable != null)
+                    if (entity.IsVisible)
                     {
-                        dObjects[count] = drawable;
-                        ++count;
+                        var drawable = entity.GetDrawable();
+
+                        if (drawable != null)
+                        {
+                            dObjects[count] = drawable;
+                            ++count;
+                        }
                     }
                 }
+
+                if(entity.Children != null) StoreDrawableChildrenInternal(entity.Children, ref count, ref dObjects);
             }
 
             Array.Resize(ref dObjects, count);
             
             //Sends the things that must be rendered to the screen
             Window.SetDraw(dObjects, count);
+
+            if(measuring)
+            {
+                Console.WriteLine($"RENDER EXPORT took {((double)watch.ElapsedTicks / Stopwatch.Frequency) * 1000}MS!");
+                watch.Stop();
+            }
 
             LastTickCount = TickCount;
         }
@@ -357,7 +406,37 @@ class MainClass
         Window.Refresh();
     }
 
+    static void StoreDrawableChildrenInternal (NodeChildren<Entity> children, ref int count, ref DrawableObject[] dObjects)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var entity = children[i];
+
+            if (entity.IsVisible)
+            {
+                if(entity.IsDrawable)
+                {
+                    var drawable = entity.GetDrawable();
+
+                    if (drawable != null)
+                    {
+                        dObjects[count] = drawable;
+                        ++count;
+                    }
+                }
+
+                var eChildren = entity.Children;
+
+                if(eChildren != null) StoreDrawableChildrenInternal(eChildren, ref count, ref dObjects);
+            }
+            
+        }
+    }
+
     public static TickMeasurer measurer = new TickMeasurer();
+
+    //Gen to collect this second.
+    static int GenToCollect = 0;
 
     ///<summary>
     ///Runs every second mostly ro record performance.
@@ -376,6 +455,15 @@ class MainClass
         Console.WriteLine($"TPS: {TPS}");
 
         Console.WriteLine($"FPS: {FPS}");
+
+        GenToCollect/=2;
+
+        if(GenToCollect == 3)  GC.Collect(1, GCCollectionMode.Forced, false);
+        else if(GenToCollect == 5) GC.Collect(2, GCCollectionMode.Forced, false);
+        else GC.Collect(0, GCCollectionMode.Forced, false);
+
+        ++GenToCollect;
+        if(GenToCollect > 10) GenToCollect = 0;
     }
 
     ///<summary>
@@ -396,10 +484,6 @@ class MainClass
         {
             RemoveEntity(Entities[i]);
         }
-        for(int i = DrawableEntities.Count-1; i<=0; --i)
-        {
-            RemoveEntity(DrawableEntities[i]);
-        }
 
         Engine.EOC();
 
@@ -415,20 +499,36 @@ class MainClass
     ///</summary>
     public static void AddEntity (Entity entity)
     {
-        if (entity.IsTickable)
+        
+        if(!entity.IDSet)
         {
-            if(!entity.IDSet)
-            {
-                entity.ID = EntityIDNEXT;
+            entity.ID = EntityIDNEXT;
 
-                ++EntityIDNEXT;
-            }
-
-            Entities.Add(entity.ID, entity);
+            ++EntityIDNEXT;
         }
-        if (entity.IsDrawable) DrawableEntities.Add((RenderEntity)entity);
+
+        Entities.Add(entity.ID, entity);
 
         entity.EnterTree();
+
+        var eChildren = entity.Children;
+
+        if(eChildren != null) EnterTreeChildrenInternal(eChildren);
+    }
+
+    
+    static void EnterTreeChildrenInternal (NodeChildren<Entity> children)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var currEntity = children[i];
+
+            currEntity.EnterTree();
+
+            var eChildren = currEntity.Children;
+
+            if(eChildren != null) EnterTreeChildrenInternal(eChildren);
+        }
     }
 
     ///<summary>
@@ -442,10 +542,26 @@ class MainClass
 
         entity.LeaveTree();
 
-        if (entity.IsTickable) Entities.Remove(entity.ID);
+        var eChildren = entity.Children;
 
-        if(entity.IsDrawable) DrawableEntities.Remove((RenderEntity)entity);
+        if(eChildren != null) LeaveTreeChildrenInternal(eChildren);
+
+        Entities.Remove(entity.ID);
 
         entity.IsDestroyed = true;
+    }
+
+    static void LeaveTreeChildrenInternal (NodeChildren<Entity> children)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var currEntity = children[i];
+
+            currEntity.LeaveTree();
+
+            var eChildren = currEntity.Children;
+
+            if(eChildren != null) LeaveTreeChildrenInternal(eChildren);
+        }
     }
 }

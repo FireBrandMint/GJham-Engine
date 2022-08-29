@@ -40,7 +40,13 @@ public interface Entity
     ///Render order value.
     ///</summary>
 
+    bool IsVisible{get;set;}
+
     int ZValue {get;set;}
+
+    Entity Parent {get;set;}
+
+    NodeChildren<Entity> Children {get;set;}
 
     ///<summary>
     ///Function that is executed BEFORE ALL THE OTHERS

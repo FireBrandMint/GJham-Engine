@@ -6,7 +6,23 @@ public class EntityCommand
     public static void Instance (Entity entity)
     {
         entity.Init();
+
+        if(entity.Children != null) InitChildrenInternal(entity.Children);
         MainClass.AddEntity(entity);
+    }
+
+    static void InitChildrenInternal (NodeChildren<Entity> children)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var currEntity = children[i];
+            
+            currEntity.Init();
+
+            var eChildren = currEntity.Children;
+
+            if(eChildren != null) InitChildrenInternal(eChildren);
+        }
     }
 
     ///<summary>

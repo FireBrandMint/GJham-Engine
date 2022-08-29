@@ -22,7 +22,7 @@ public class DTestLineProvider : RenderEntity
     {
         LastPosition = Position;
 
-        int factor = (((int)Engine.MaxTPS) / 10);
+        int factor = (Engine.MaxTPS / 10);
         
         if (t < 60)
         {

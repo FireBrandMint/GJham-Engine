@@ -179,25 +179,25 @@ public static class EntityTypeList
     private static Entity InstanceCamera (ByteReader reader, int propertyCount)
     {
         Camera entity = new Camera();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -811270619: entity.IsMain = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 1716406495: entity.IDSet = reader.ReadBool(); break; case -1137859919: entity.ID = reader.ReadInt32(); break; case -811270619: entity.IsMain = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; }}
         return entity;
     }
     private static Entity InstanceDTestLineProvider (ByteReader reader, int propertyCount)
     {
         DTestLineProvider entity = new DTestLineProvider();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 1716406495: entity.IDSet = reader.ReadBool(); break; case -1137859919: entity.ID = reader.ReadInt32(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
     private static Entity InstanceRTestSpriteProvider (ByteReader reader, int propertyCount)
     {
         RTestSpriteProvider entity = new RTestSpriteProvider();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -63831078: entity.TexturePath = reader.ReadString(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -63831078: entity.TexturePath = reader.ReadString(); break; case 1716406495: entity.IDSet = reader.ReadBool(); break; case -1137859919: entity.ID = reader.ReadInt32(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
     private static Entity InstanceUITest (ByteReader reader, int propertyCount)
     {
         UITest entity = new UITest();
-        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
+        for(int i =0; i< propertyCount; ++i) { int fieldHashcode = reader.ReadInt32(); switch(fieldHashcode){case 1716406495: entity.IDSet = reader.ReadBool(); break; case -1137859919: entity.ID = reader.ReadInt32(); break; case -1877121003: entity.IsDestroyed = reader.ReadBool(); break; case 98611051: entity.CanProcess = reader.ReadBool(); break; case -1976236243: entity.ZValue = reader.ReadInt32(); break; case 428904464: entity.IsVisible = reader.ReadBool(); break; }}
         return entity;
     }
 

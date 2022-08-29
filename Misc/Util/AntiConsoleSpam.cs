@@ -11,7 +11,8 @@ public class AntiConsoleSpam
     {
         if (MessageAsktimeDict.ContainsKey(ID))
         {
-            int currTick = MessageAsktimeDict[ID] + 1;
+            MessageAsktimeDict[ID]+=1;
+            int currTick = MessageAsktimeDict[ID];
 
             if (currTick >= ticksToWait)
             {
@@ -34,7 +35,8 @@ public class AntiConsoleSpam
     {
         if (MessageAsktimeDict.ContainsKey(ID))
         {
-            int currTick = MessageAsktimeDict[ID] + 1;
+            MessageAsktimeDict[ID]+=1;
+            int currTick = MessageAsktimeDict[ID];
 
             if (currTick >= ticksToWait)
             {

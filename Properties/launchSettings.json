@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GJhamEngine": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

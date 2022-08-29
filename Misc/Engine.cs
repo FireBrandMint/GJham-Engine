@@ -19,12 +19,12 @@ public static class Engine
     ///<summary>
     ///The set amount of ticks the program MUST process every second.
     ///</summary>
-    public static readonly double MaxTPS = 60;
+    public static readonly int MaxTPS = 60;
 
     ///<summary>
     ///The set amount of rendered frames the program is set to try to process every second.
     ///</summary>
-    public static readonly double MaxFPS = 180;
+    public static readonly int MaxFPS = 120;
 
     ///<summary>
     ///Is the FPS limited to the 'MaxFPS' field on this same class.

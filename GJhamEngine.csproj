@@ -1,8 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>10.0</LangVersion>
+		<!--  lines below thanks to
+		https://docs.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector#background-gc -->
+		<ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="sfml-system" Version="2.4.2"/>

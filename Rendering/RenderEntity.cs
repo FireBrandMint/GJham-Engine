@@ -45,6 +45,12 @@ public abstract class RenderEntity : Entity
     }
     }
 
+    Entity _Parent = null;
+    NodeChildren<Entity> _Children = null;
+
+    public Entity Parent { get => _Parent; set => _Parent = value; }
+    public NodeChildren<Entity> Children { get => _Children; set => _Children = value; }
+
     ///<summary>
     ///Is the object truly visible if it's visible?
     ///</summary>
