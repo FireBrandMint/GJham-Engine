@@ -503,10 +503,12 @@ static class MainClass
         
         if(!entity.IDSet)
         {
-            entity.ID = EntityIDNEXT;
+            EntityCommand.SetID(entity, EntityIDNEXT);
 
             ++EntityIDNEXT;
         }
+
+        entity.IsDestroyed = false;
 
         Entities.Add(entity.ID, entity);
 
@@ -523,6 +525,8 @@ static class MainClass
         for(int i = 0; i < children.Count; ++i)
         {
             var currEntity = children[i];
+
+            currEntity.IsDestroyed = false;
 
             currEntity.EnterTree();
 
@@ -547,7 +551,11 @@ static class MainClass
 
         if(eChildren != null) LeaveTreeChildrenInternal(eChildren);
 
-        Entities.Remove(entity.ID);
+        if(entity.Parent == null) Entities.Remove(entity.ID);
+        else
+        {
+            entity.Parent.Children.Remove(entity);
+        }
 
         entity.IsDestroyed = true;
     }
@@ -559,6 +567,8 @@ static class MainClass
             var currEntity = children[i];
 
             currEntity.LeaveTree();
+
+            currEntity.IsDestroyed = true;
 
             var eChildren = currEntity.Children;
 

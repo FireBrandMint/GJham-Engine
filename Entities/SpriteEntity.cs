@@ -181,7 +181,7 @@ public class SpriteEntity : RenderEntity
         {
             drawable = new DrawableSprite2D(
                 ZValue, TexturePath,
-                LastPosition, Position, new Vector2(1, 1),
+                LastPosition, Position, Scale,
                 new Vector2u[]{TextureAreaTopLeft, TextureAreaBottomRight},
                 BoundriesSet, Rotation, IsStatic);
         }

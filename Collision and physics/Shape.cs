@@ -306,11 +306,6 @@ public class Shape: XYBoolHolder
         return (arr, arrSize);
     }*/
 
-    public virtual void Dispose()
-    {
-        throw new NotImplementedException();
-    }
-
     public static bool PointInConvexPolygon(Vector2 testPoint, Vector2[] polygon)
     {
         //From: https://stackoverflow.com/questions/1119627/how-to-test-if-a-point-is-inside-of-a-convex-polygon-in-2d-integer-coordinates

@@ -44,6 +44,31 @@ public class EntityCommand
         }
     }
 
+    public static void SetID(Entity entity, int ID)
+    {
+        while(entity.Parent!= null)
+        {
+            entity = entity.Parent;
+        }
+
+        entity.ID = ID;
+        entity.IDSet = true;
+
+        if (entity.Children != null) SetIDInternal(entity.Children, ID);
+    }
+
+    static void SetIDInternal(NodeChildren<Entity> children, int ID)
+    {
+        for(int i = 0; i < children.Count; ++i)
+        {
+            var currEntity = children[i];
+
+            currEntity.ID = ID;
+
+            if (currEntity.Children != null) SetIDInternal(currEntity.Children, ID);
+        }
+    }
+
     ///<summary>
     ///Rolls all entities forward except the entity in the argument.
     ///</summary>

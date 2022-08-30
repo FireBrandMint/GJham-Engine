@@ -631,14 +631,4 @@ public sealed class ConvexPolygon : Shape
 
         result.Intersects = true;
     }
-
-    bool Disposed = false;
-
-    public override void Dispose()
-    {
-        if(Disposed) return;
-        Disposed = true;
-
-        Deactivate();
-    }
 }

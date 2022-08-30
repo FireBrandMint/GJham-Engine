@@ -108,12 +108,12 @@ public class GlobalCollision
         }
     }
 
-    public void AddShape(int id, Shape shape)
+    public static void AddShape(int id, Shape shape)
     {
         ShapesDetecting.Add(id, shape);
     }
 
-    public void RemoveShape(int id)
+    public static void RemoveShape(int id)
     {
         ShapesDetecting.Remove(id);
     }
