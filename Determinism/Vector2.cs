@@ -327,6 +327,16 @@ public readonly struct Vector2
         return new Vector2 (v1.x / d2, v1.y / d2);
     }
 
+    public static Vector2 operator << (Vector2 v1, int d2)
+    {
+        return new Vector2(v1.x << d2, v1.y << d2);
+    }
+
+    public static Vector2 operator >> (Vector2 v1, int d2)
+    {
+        return new Vector2(v1.x >> d2, v1.y >> d2);
+    }
+
     public static Vector2 operator - (Vector2 v1)
     {
         return new Vector2(-v1.x, -v1.y);

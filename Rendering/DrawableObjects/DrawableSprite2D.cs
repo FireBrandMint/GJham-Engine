@@ -6,9 +6,6 @@ public sealed class DrawableSprite2D : DrawableObject
 {
 
     bool SprStatic;
-
-    bool Same = false;
-
     bool TextureUpdated = true;
 
     public string TexturePath;
@@ -171,9 +168,6 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void TryRecalculateVertex(Vector2u texSize, float lerp, Vector2 camPosition)
     {
-        //if(Same) return;
-
-        Same = true;
 
         ResolveNoBoundries(texSize);
 
@@ -224,16 +218,17 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void SetPosValues(Vector2 current, Vector2 last)
     {
-        Same = Same && CurrPos == current && LastPos == last;
-
         CurrPos = current;
         LastPos = last;
     }
 
+    public void SetScale(Vector2 newScale)
+    {
+        Scale = newScale;
+    }
+
     public void SetRotation(FInt rot)
     {
-        Same = Same & rot == Rotation;
-
         Rotation = rot;
     }
 
@@ -247,16 +242,12 @@ public sealed class DrawableSprite2D : DrawableObject
 
     public void ChangeBoundries(Vector2u texTopLef, Vector2u texBotRig)
     {
-        Same = Same && texTopLef == Bounderies[0] && texBotRig == Bounderies[1];
-
         Bounderies[0] = texTopLef;
         Bounderies[1] = texBotRig;
     }
 
     public void ChangeModulate(Color color)
     {
-        Same = Same && color == Modulate;
-
         Modulate = color;
     }
 }

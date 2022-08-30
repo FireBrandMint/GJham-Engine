@@ -27,8 +27,9 @@ static class MainClass
     //entity things below!
 
     static int EntityIDNEXT = 0;
-
     public static WTFDictionary<int, Entity> Entities;
+
+    //TODO: make rendering lighter for the PC.
 
     public static void Main(string[] args)
     {

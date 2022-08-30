@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-//TODO: try to finish this tommorow.
-
 namespace GJham.Physics.Util;
 
 public class XYList<T> where T:XYBoolHolder
