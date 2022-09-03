@@ -33,6 +33,21 @@ public sealed class ConvexPolygon : Shape
         }
     }
 
+    Vector2 _scale = new Vector2(1,1);
+
+    public Vector2 Scale
+    {
+        get => _scale;
+        set
+        {
+            Updated = Updated && value == _scale;
+
+            _scale = value;
+
+            UpdateModel();
+        }
+    }
+
     FInt _rot;
 
     ///<summary>
@@ -71,7 +86,7 @@ public sealed class ConvexPolygon : Shape
 
     public Vector2 Range;
 
-    public static ConvexPolygon CreateRect(Vector2 length, FInt rotation, Vector2 position)
+    public static ConvexPolygon CreateRect(Vector2 length, Vector2 scale, FInt rotation, Vector2 position)
     {
         FInt x = length.x * FInt.Half;
         FInt y = length.y * FInt.Half;
@@ -89,11 +104,12 @@ public sealed class ConvexPolygon : Shape
                 new Vector2(x, -y),
             },
             position,
+            scale,
             rotation
             );
     }
 
-    public static ConvexPolygon CreateTriangle(Vector2 length, FInt rotation, Vector2 position)
+    public static ConvexPolygon CreateTriangle(Vector2 length, Vector2 scale, FInt rotation, Vector2 position)
     {
         FInt x = length.x * FInt.Half;
         FInt y = length.y * FInt.Half;
@@ -109,17 +125,20 @@ public sealed class ConvexPolygon : Shape
                 new Vector2(x, y)
             },
             position,
+            scale,
             rotation
             );
     }
 
-    public ConvexPolygon(Vector2[] model, Vector2 position, FInt rotation)
+    public ConvexPolygon(Vector2[] model, Vector2 position, Vector2 scale, FInt rotation)
     {
         OriginalModel = model;
 
         _pos = position;
 
         _rot = rotation;
+
+        _scale = scale;
 
         ResultModel = new Vector2[model.Length];
 
@@ -138,12 +157,12 @@ public sealed class ConvexPolygon : Shape
     {
         if (Updated) return;
 
-        //solves rotation
+        //solves rotation and scale
         Vector2 center = Vector2.ZERO;
 
         for(int i = 0; i< OriginalModel.Length; ++i)
         {
-            Vector2 curr = OriginalModel[i];
+            Vector2 curr = OriginalModel[i] * _scale;
 
             ResultModel[i] = Vector2.RotateVec(curr, center, _rot);
         }

@@ -93,7 +93,7 @@ public class RTestSpriteProvider : RenderEntity
 
         if(player)
         {
-            poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
+            poly = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50),new Vector2(1,1), new FInt(), Position);
 
             //poly = new CircleShape(Position, (FInt)25);
 
@@ -105,7 +105,7 @@ public class RTestSpriteProvider : RenderEntity
         {
             if(shift)
             {
-                var rect = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new FInt(), Position);
+                var rect = ConvexPolygon.CreateRect(new Vector2((FInt) 50, (FInt) 50), new Vector2(1,1), new FInt(), Position);
                 FInt rot = (FInt) 0;
 
                 rect.Rotation = rot;

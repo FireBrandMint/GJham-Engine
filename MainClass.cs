@@ -25,8 +25,6 @@ static class MainClass
     public static List<int> CurrentKeys;
 
     //entity things below!
-
-    static int EntityIDNEXT = 0;
     public static WTFDictionary<int, Entity> Entities;
 
     //TODO: make rendering lighter for the PC.
@@ -503,9 +501,9 @@ static class MainClass
         
         if(!entity.IDSet)
         {
-            EntityCommand.SetID(entity, EntityIDNEXT);
+            EntityCommand.SetID(entity, EntityCommand.IDNEXT);
 
-            ++EntityIDNEXT;
+            ++EntityCommand.IDNEXT;
         }
 
         entity.IsDestroyed = false;

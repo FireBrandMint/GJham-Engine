@@ -1,0 +1,9 @@
+Update log since 02/09/2022.
+
+02/09/2022
+{
+- Made the EntityCommand and Shape IDNEXT values public,
+because these values are essential for rollback.
+
+- Created RectangleCollider.
+}

@@ -58,16 +58,16 @@ public interface Entity
     ///Function that is executed when the object is instanced.
     ///</summary>
     void EnterTree();
+    ///<summary>
+    ///Function that is executed every tick while the object is instanced. (duh)
+    ///</summary>
+    void Tick ();
 
     ///<summary>
     ///Function that is executed when the object is terminated.
     ///</summary>
     void LeaveTree();
 
-    ///<summary>
-    ///Function that is executed every tick while the object is instanced. (duh)
-    ///</summary>
-    void Tick ();
 
     ///<summary>
     ///Gets the object to draw from entities that are drawable.

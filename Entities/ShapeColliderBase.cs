@@ -22,6 +22,21 @@ public class ShapeColliderBase : Entity, CollisionAntenna
 
     public int ID { get => _ID; set {_IDSet = true; _ID = value;} }
 
+    bool ShapeIDSet = false;
+    int _ShapeID;
+
+    public int ShapeID
+    {
+        get => _ShapeID;
+        set
+        {
+            if(InTree) CollisionFodder.ID = _ShapeID;
+
+            _ShapeID = value;
+            ShapeIDSet = true;
+        }
+    }
+
     public bool IsDrawable => false;
 
     public bool IsTickable => false;
@@ -34,8 +49,9 @@ public class ShapeColliderBase : Entity, CollisionAntenna
     public int ZValue { get => _Z; set => _Z = value; }
     public Entity Parent { get => _Parent; set => _Parent = value; }
     public NodeChildren<Entity> Children { get => _Children; set => _Children = value; }
+    public bool IsStatic = false;
 
-    bool InTree = false;
+    protected bool InTree = false;
     
     bool _Active = true;
 
@@ -59,16 +75,16 @@ public class ShapeColliderBase : Entity, CollisionAntenna
         get => _Position;
         set
         {
-            CollisionFodder.Position = value;
+            if (InTree) CollisionFodder.Position = value;
             _Position = value;
         }
     }
 
-    Shape CollisionFodder = null;
+    protected Shape CollisionFodder = null;
 
     protected virtual Shape CreateShape()
     {
-        return ConvexPolygon.CreateRect(new Vector2(50,50), (FInt)0, Position);
+        return ConvexPolygon.CreateRect(new Vector2(50,50), new Vector2(1,1), (FInt)0, Position);
     }
 
     public void Activate(bool Initializing = false)
@@ -94,6 +110,8 @@ public class ShapeColliderBase : Entity, CollisionAntenna
     public void Init()
     {
         if(CollisionFodder == null) CollisionFodder = CreateShape();
+
+        if(ShapeIDSet) CollisionFodder.ID = ShapeID;
     }
 
     public void EnterTree()

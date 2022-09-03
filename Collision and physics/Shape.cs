@@ -11,8 +11,13 @@ using System.Runtime.CompilerServices;
 /// </summary>
 public class Shape: XYBoolHolder
 {
-
-    static int IDNEXT = 0;
+    /// <summary>
+    /// Value that determines entity ID, please change
+    /// this value back to the original of the tick wich
+    /// you're loading state, and also the IDNEXT of the
+    /// EntityCommand class.
+    /// </summary>
+    public static int IDNEXT = 0;
 
     public bool IDSet = false;
     
