@@ -11,7 +11,7 @@ public class RectangleCollider : ShapeColliderBase
         get => _Proportions;
         set
         {
-            if(InTree) throw new Exception("Can't change rectangle Proportions in real time.");
+            if(CollisionFodder != null) throw new Exception("Can't change rectangle Proportions in real time, try Scale instead.");
 
             _Proportions = value;
         }
@@ -23,7 +23,7 @@ public class RectangleCollider : ShapeColliderBase
         get => _Scale;
         set
         {
-            if(InTree) ((ConvexPolygon)CollisionFodder).Scale = value;
+            if(CollisionFodder != null) ((ConvexPolygon)CollisionFodder).Scale = value;
 
             _Scale = value;
         }
@@ -35,7 +35,7 @@ public class RectangleCollider : ShapeColliderBase
         get => _Rotation;
         set
         {
-            if(InTree) ((ConvexPolygon)CollisionFodder).Rotation = value;
+            if(CollisionFodder != null) ((ConvexPolygon)CollisionFodder).Rotation = value;
 
             _Rotation = value;
         }
