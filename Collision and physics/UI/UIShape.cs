@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class UIShape
 {
-    public static List<UIShape> Shapes = new List<UIShape>(10);
-
     public Vector2 Position;
 
     public UIAdjustmentMode Mode;
@@ -17,15 +15,5 @@ public class UIShape
     public virtual bool IsColliding(Vector2 point)
     {
         throw new NotImplementedException();
-    }
-
-    bool Disposed = false;
-
-    public void Dispose()
-    {
-        if(Disposed) return;
-        Disposed = true;
-
-        Shapes.Remove(this);
     }
 }

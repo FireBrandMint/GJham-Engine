@@ -2,8 +2,19 @@ Update log since 02/09/2022.
 
 02/09/2022
 {
-- Made the EntityCommand and Shape IDNEXT values public,
-because these values are essential for rollback.
+    - Made the EntityCommand and Shape IDNEXT values public,
+    because these values are essential for rollback.
 
-- Created RectangleCollider.
+    - Created RectangleCollider entity.
+}
+
+04/09/2022
+{
+    - Created CircleCollider entity.
+}
+
+05/09/2022
+{
+    - Created UICollider entity.
+    - Created UIRectangleCollider entity.
 }

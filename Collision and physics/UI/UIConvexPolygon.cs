@@ -1,6 +1,8 @@
 
 public class UIConvexPolygon : UIShape
 {
+    public Vector2 Scale = new Vector2(1,1);
+
     Vector2[] OriginalModel;
 
     public static UIConvexPolygon CreateRect (Vector2 position, Vector2 scale, UIAdjustmentMode mode)
@@ -54,8 +56,6 @@ public class UIConvexPolygon : UIShape
         Position = position;
 
         Mode = mode;
-
-        UIShape.Shapes.Add(this);
     }
 
     public override bool IsColliding(Vector2 mousePoint)
@@ -82,7 +82,7 @@ public class UIConvexPolygon : UIShape
 
         for(int i = 0; i < lenght; ++i)
         {
-            ProducedModel[i] = currPos + (( OriginalModel[i] * viewSize) / 100);
+            ProducedModel[i] = currPos + (( OriginalModel[i] * viewSize) / 100) * Scale;
         }
 
         return PointInConvexPolygon(mousePoint, ProducedModel);

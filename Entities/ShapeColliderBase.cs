@@ -11,7 +11,7 @@ public class ShapeColliderBase : Entity, CollisionAntenna
     bool _IDSet = false;
     int _ID = -1;
     bool _IsDestroyed = false;
-    bool _IsVisible = false;
+    bool _IsVisible = true;
     int _Z = 0;
     Entity _Parent = null;
     NodeChildren<Entity> _Children = null;
@@ -75,7 +75,7 @@ public class ShapeColliderBase : Entity, CollisionAntenna
         get => _Position;
         set
         {
-            if (InTree) CollisionFodder.Position = value;
+            if (CollisionFodder != null) CollisionFodder.Position = value;
             _Position = value;
         }
     }
