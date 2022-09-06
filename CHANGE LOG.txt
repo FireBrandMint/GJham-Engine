@@ -23,7 +23,7 @@ Update log since 02/09/2022.
     - Solved a bug that made entity system ticking and drawing not work
     as intended.
 
-    - Made OnCollisionEvent and ResolveOverlapEvent for all non UI CircleCollider
+    - Made OnCollisionEvent and ResolveOverlapEvent for all non UI colliders
     entities in 'Entities' folder.
 
     - Made OnMouseAboveEvent for UICollider.
