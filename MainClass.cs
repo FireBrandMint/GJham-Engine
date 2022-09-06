@@ -302,13 +302,14 @@ static class MainClass
         {
             Entity e = ents[i];
 
+            var eChildren = e.Children;
+
             if(e.IsTickable && e.CanProcess)
             {
                 e.Tick();
             }
-
-            var eChildren = e.Children;
-            if(eChildren != null) TickChildrenInternal(eChildren);
+            
+            if(e.CanProcess && eChildren != null) TickChildrenInternal(eChildren);
         }
 
         GlobalCollision.Tick();
@@ -320,14 +321,12 @@ static class MainClass
         {
             var currEntity = children[i];
 
+            var eChildren = currEntity.Children;
+
             if(currEntity.IsTickable && currEntity.CanProcess)
             {
                 currEntity.Tick();
-            }
-
-            var eChildren = currEntity.Children;
-
-            if(eChildren != null) TickChildrenInternal(eChildren);
+            }else if(currEntity.CanProcess && eChildren != null) TickChildrenInternal(eChildren);
         }
     }
 
@@ -365,21 +364,18 @@ static class MainClass
             {
                 var entity = toTryDraw[i];
 
-                if(entity.IsDrawable)
+                if(entity.IsDrawable && entity.IsVisible)
                 {
-                    if (entity.IsVisible)
-                    {
-                        var drawable = entity.GetDrawable();
+                    var drawable = entity.GetDrawable();
 
-                        if (drawable != null)
-                        {
-                            dObjects[count] = drawable;
-                            ++count;
-                        }
+                    if (drawable != null)
+                    {
+                        dObjects[count] = drawable;
+                        ++count;
                     }
                 }
 
-                if(entity.Children != null) StoreDrawableChildrenInternal(entity.Children, ref count, ref dObjects);
+                if(entity.IsVisible && entity.Children != null) StoreDrawableChildrenInternal(entity.Children, ref count, ref dObjects);
             }
 
             Array.Resize(ref dObjects, count);
@@ -411,24 +407,20 @@ static class MainClass
         {
             var entity = children[i];
 
-            if (entity.IsVisible)
+            var eChildren = entity.Children;
+
+            if (entity.IsVisible && entity.IsDrawable)
             {
-                if(entity.IsDrawable)
+                var drawable = entity.GetDrawable();
+
+                if (drawable != null)
                 {
-                    var drawable = entity.GetDrawable();
-
-                    if (drawable != null)
-                    {
-                        dObjects[count] = drawable;
-                        ++count;
-                    }
+                    dObjects[count] = drawable;
+                    ++count;
                 }
-
-                var eChildren = entity.Children;
-
-                if(eChildren != null) StoreDrawableChildrenInternal(eChildren, ref count, ref dObjects);
             }
-            
+
+            if(entity.IsVisible && eChildren != null) StoreDrawableChildrenInternal(eChildren, ref count, ref dObjects);
         }
     }
 

@@ -59,7 +59,7 @@ public class SpriteEntity : RenderEntity
     /// GET returns _Position.
     /// </summary>
     /// <value></value>
-    public Vector2 Position
+    public override sealed Vector2 Position
     {
         get => _Position;
         set

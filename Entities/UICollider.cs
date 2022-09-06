@@ -26,10 +26,10 @@ public class UICollider : Entity
 
     public bool IsDrawable => false;
 
-    public bool IsTickable => false;
+    public bool IsTickable => true;
     
-
-    public bool CanProcess { get => false; set {} }
+    bool _CanProcess = false;
+    public bool CanProcess { get => _CanProcess; set => _CanProcess = value; }
     public bool IsDestroyed { get => _IsDestroyed; set => _IsDestroyed = value; }
 
     public bool IsVisible { get => _IsVisible; set => _IsVisible = value; }
@@ -83,7 +83,7 @@ public class UICollider : Entity
         Active = false;
     }
 
-    public void Tick()
+    public virtual void Tick()
     {
         
     }
@@ -100,9 +100,9 @@ public class UICollider : Entity
         return CollisionFodder.IsColliding(cursor);
     }
 
-    public virtual void OnMouseAbove(bool clicked)
+    public void OnMouseAbove(bool clicked)
     {
-
+        OnMouseAboveEvent?.Invoke(clicked);
     }
 
     void SetActive(bool active, bool initializing = false)
@@ -126,4 +126,9 @@ public class UICollider : Entity
 
         Active = active;
     }
+
+    /// <summary>
+    /// Bool represent whether the mouse clicked or not.
+    /// </summary>
+    public Action<bool> OnMouseAboveEvent;
 }

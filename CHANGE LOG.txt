@@ -18,3 +18,13 @@ Update log since 02/09/2022.
     - Created UICollider entity.
     - Created UIRectangleCollider entity.
 }
+06/09/2022
+{
+    - Solved a bug that made entity system ticking and drawing not work
+    as intended.
+
+    - Made OnCollisionEvent and ResolveOverlapEvent for all non UI CircleCollider
+    entities in 'Entities' folder.
+
+    - Made OnMouseAboveEvent for UICollider.
+}

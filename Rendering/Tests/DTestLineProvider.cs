@@ -6,7 +6,13 @@ public class DTestLineProvider : RenderEntity
     //test for drawable entity
     public Vector2[] line = null;
 
-    Vector2 Position = new Vector2();
+    Vector2 _Position = new Vector2();
+
+    public override sealed Vector2 Position
+    {
+        get => _Position;
+        set => _Position = value;
+    }
 
     Vector2 LastPosition;
 

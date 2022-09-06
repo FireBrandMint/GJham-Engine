@@ -44,7 +44,11 @@ public interface Entity
 
     int ZValue {get;set;}
 
+    Vector2 Position {get;set;}
+
     Entity Parent {get;set;}
+
+    
 
     NodeChildren<Entity> Children {get;set;}
 

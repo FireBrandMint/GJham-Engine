@@ -38,8 +38,11 @@ public class RectangleCollider : ShapeColliderBase
             if(CollisionFodder != null) ((ConvexPolygon)CollisionFodder).Rotation = value;
 
             _Rotation = value;
+
         }
     }
+
+    
 
     protected override Shape CreateShape()
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class ShapeColliderBase : Entity, CollisionAntenna
 {
-    public delegate void ColResponse (CollisionAntenna colSubject, ref CollisionResult colInfo);
+    public delegate void ColSignal (CollisionAntenna colSubject, ref CollisionResult colInfo);
 
     bool _IDSet = false;
     int _ID = -1;
@@ -140,13 +140,16 @@ public class ShapeColliderBase : Entity, CollisionAntenna
         
     }
 
-    public virtual void OnCollision(CollisionAntenna colSubject, ref CollisionResult colInfo)
+    public void OnCollision(CollisionAntenna colSubject, ref CollisionResult colInfo)
     {
-        
+        OnCollisionEvent?.Invoke(colSubject, ref colInfo);
     }
 
-    public virtual void ResolveOverlap(CollisionAntenna colSubject, ref CollisionResult colInfo)
+    public void ResolveOverlap(CollisionAntenna colSubject, ref CollisionResult colInfo)
     {
-        
+        ResolveOverlapEvent?.Invoke(colSubject, ref colInfo);
     }
+
+    public event ColSignal OnCollisionEvent;
+    public event ColSignal ResolveOverlapEvent;
 }

@@ -1,3 +1,4 @@
+using System;
 
 public abstract class RenderEntity : Entity
 {
@@ -43,6 +44,18 @@ public abstract class RenderEntity : Entity
         if (!Visible && value && Initialized) ++VisibleEntityCount;
         Visible = value;
     }
+    }
+
+    public virtual Vector2 Position 
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+        set
+        {
+            throw new NotImplementedException();
+        }
     }
 
     Entity _Parent = null;

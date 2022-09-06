@@ -45,7 +45,13 @@ public class RTestSpriteProvider : RenderEntity
 
     Vector2 LastPosition;
 
-    public Vector2 Position = new Vector2();
+    Vector2 _Position = new Vector2();
+
+    public override sealed Vector2 Position
+    {
+        get => _Position;
+        set => _Position = value;
+    }
 
     public FInt Rotation = (FInt)0;
 
