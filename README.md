@@ -6,7 +6,7 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 # STATUS
 
--> Can finally be effectively used as some sort of deterministic framework library, but it may cause a lot of PAIN to do so.
+-> Can finally be effectively used as some sort of deterministic framework library, it may have caused a lot of PAIN to do so before but now that a lot of bugs were corrected, i don't think so anymore.
 
 # Current tasks to be done (skip to goals if you're new)
 
