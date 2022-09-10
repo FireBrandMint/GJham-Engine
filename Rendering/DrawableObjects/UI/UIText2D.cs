@@ -1,7 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 
-public class UIText2D
+public class UIText2D: DrawableObject
 {
     public int z {get; set;}
 
@@ -9,7 +9,7 @@ public class UIText2D
 
     string FontPath;
 
-    string TextString = "Lorem Lpsum";
+    string TextString = "";
 
     int TextSpacing = 2;
 
@@ -45,7 +45,7 @@ public class UIText2D
     {
         if(TFont == null)
         {
-            TFont = FontHolder.GetFont(FontPath);
+            if (FontPath != null && FontPath.Length != 0) TFont = FontHolder.GetFont(FontPath);
 
             if(TFont == null) return;
         }
