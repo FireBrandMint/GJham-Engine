@@ -6,6 +6,16 @@ using GJham.Rendering.Optimization;
 
 public class RTestSpriteProvider : RenderEntity
 {
+    public override int ID
+    {
+        get => _ID;
+        set
+        {
+            _IDSet = true;
+            _ID = value;
+        }
+    }
+
     bool HasTexture = false;
 
     string _TexturePath = "";
@@ -72,7 +82,7 @@ public class RTestSpriteProvider : RenderEntity
     static bool p = true;
     bool player;
 
-    CullingAABB RenderOpt = new CullingAABB(new AABB(new Vector2(0, 0), new Vector2(50, 50)));
+    CullingAABB RenderOpt;
 
     AudioPlayer AudioNoise;
 
@@ -83,7 +93,7 @@ public class RTestSpriteProvider : RenderEntity
 
         LastPosition = Position;
 
-        RenderOpt.ChangePosition(Position - new Vector2(25, 25));
+        RenderOpt = new CullingAABB(new AABB(Position - new Vector2(25, 25), new Vector2(50, 50)), ID, false);
 
         if(_TexturePath != null && _TexturePath != "")
         {

@@ -166,6 +166,7 @@ public class Canvas
             //cameraPos = CameraPos,
         };
 
+        if(tdLenght!=0)
         for (uint i = 0; i< tdLenght - 1; ++i)
         {
             DrawableObject tdr = toDraw[i];

@@ -13,6 +13,13 @@ public class EntityCommand
     ///</summary>
     public static void Instance (Entity entity)
     {
+        if(!entity.IDSet)
+        {
+            EntityCommand.SetID(entity, EntityCommand.IDNEXT);
+
+            ++EntityCommand.IDNEXT;
+        }
+
         entity.Init();
 
         if(entity.Children != null) InitChildrenInternal(entity.Children);

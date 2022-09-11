@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections.Generic;
 using SFML.System;
 using System.IO;
+using GJham.Rendering.Optimization;
 
 static class MainClass
 {
@@ -357,12 +358,15 @@ static class MainClass
             //the count of objects that aren't null on the array
             int count = 0;
 
-            var toTryDraw = Entities.GetValues();
+            //gets the values the culling says can render.
+            int[] visibleIds = CullingMaster.GetVisiblesIDS();
 
             //populates array with output from the entities that can be rendered
-            for (int i = 0; i< Entities.Count; ++i)
+            for (int i = 0; i< visibleIds.Length; ++i)
             {
-                var entity = toTryDraw[i];
+                Entity entity;
+
+                if(!Entities.TryGetValue(visibleIds[i], out entity)) continue;
 
                 if(entity.IsDrawable && entity.IsVisible)
                 {
@@ -385,7 +389,7 @@ static class MainClass
 
             if(measuring)
             {
-                Console.WriteLine($"RENDER EXPORT took {((double)watch.ElapsedTicks / Stopwatch.Frequency) * 1000}MS!");
+                Console.WriteLine($"RExport took {((double)watch.ElapsedTicks / Stopwatch.Frequency) * 1000}MS!");
                 watch.Stop();
             }
 
@@ -490,13 +494,6 @@ static class MainClass
     ///</summary>
     public static void AddEntity (Entity entity)
     {
-        
-        if(!entity.IDSet)
-        {
-            EntityCommand.SetID(entity, EntityCommand.IDNEXT);
-
-            ++EntityCommand.IDNEXT;
-        }
 
         entity.IsDestroyed = false;
 

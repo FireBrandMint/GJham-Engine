@@ -20,11 +20,35 @@ public class CullingAABB
 {
     CulValue CAABB;
 
-    public CullingAABB(AABB objectArea)
+    public bool AlwaysVisible
     {
-        CAABB = new CulValue(objectArea);
+        get
+        {
+            lock (CAABB) return CAABB.AlwaysVisible;
+        }
+        set
+        {
+            lock (CAABB) CAABB.AlwaysVisible = value;
+        }
+    }
 
-        lock (CAABB) CAABB.StartProcessing();
+    public int ItemID
+    {
+        get
+        {
+            lock (CAABB) return CAABB.ItemID;
+        }
+        set
+        {
+            lock (CAABB) CAABB.ItemID = value;
+        }
+    }
+
+    public CullingAABB(AABB objectArea, int itemID, bool AlwaysVisible)
+    {
+        CAABB = new CulValue(objectArea, itemID);
+
+        CAABB.StartProcessing();
     }
 
     public void RestartCulling()

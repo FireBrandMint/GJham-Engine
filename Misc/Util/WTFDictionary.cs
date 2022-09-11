@@ -444,6 +444,11 @@ public class WTFDictionary<K, T>
         return arr;
     }
 
+    public List<KeyValuePair<int, T>> GetInternalList()
+    {
+        return MasterList;
+    }
+
     private int[] Find (int key)
     {
         //Search algorithm intended to sqrt the amount

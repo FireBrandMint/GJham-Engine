@@ -36,3 +36,12 @@ Update log since 02/09/2022.
 
     - Created TextEntity.
 }
+11/09/2022
+{
+    - Created WTFHashSet because i was
+    concerned that the stock HashSet could
+    consume too much memory. (Guliver Jham speaking)
+
+    - Implemented true culling for rendering to boost
+    performance.
+}

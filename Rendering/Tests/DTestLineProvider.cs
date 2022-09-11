@@ -1,5 +1,6 @@
 using SFML.Graphics;
 using System;
+using GJham.Rendering.Optimization;
 
 public class DTestLineProvider : RenderEntity
 {
@@ -16,10 +17,14 @@ public class DTestLineProvider : RenderEntity
 
     Vector2 LastPosition;
 
+    CullingAABB Culling;
+
     public override void Init()
     {
         base.Init();
         LastPosition = Position;
+
+        Culling = new CullingAABB(new AABB(new Vector2(), new Vector2()), ID, true);
     }
 
     int t = 0;

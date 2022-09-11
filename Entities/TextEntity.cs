@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using GJham.Rendering.Optimization;
 
 public class TextEntity : RenderEntity
 {
@@ -28,6 +28,47 @@ public class TextEntity : RenderEntity
     int _LineSpacing = 2;
 
     int _CharacterSize = 10;
+
+    bool _IsCulling = false;
+
+    Vector2 _CullingRange = new Vector2(100, 100);
+
+    public override int ID
+    {
+        get => _ID;
+        set
+        {
+            if(InTree) RenderCulling.ItemID = value;
+
+            _IDSet = true;
+            _ID = value;
+        }
+    }
+    
+    public Vector2 CullingRange
+    {
+        get => _CullingRange;
+        set
+        {
+            _CullingRange = value;
+            if(InTree)
+            {
+                RenderCulling.ChangePosition(_Position - (value >> 1));
+                RenderCulling.ChangeRange(value);
+            }
+        }
+    }
+
+    public bool IsCulling
+    {
+        get => _IsCulling;
+        set
+        {
+            if(InTree) RenderCulling.AlwaysVisible = !_IsCulling;
+
+            _IsCulling = value;
+        }
+    }
 
     public override Vector2 Position
     {
@@ -139,9 +180,13 @@ public class TextEntity : RenderEntity
         }
     }
 
+    CullingAABB RenderCulling;
+
     public override void Init()
     {
         base.Init();
+
+        RenderCulling = new CullingAABB(new AABB(Position - (_CullingRange >> 1), _CullingRange), ID, !_IsCulling);
 
         FontHolder.RegisterReference(_Path);
 
@@ -150,6 +195,10 @@ public class TextEntity : RenderEntity
 
     public override void LeaveTree()
     {
+        RenderCulling.Dispose();
+
+        RenderCulling = null;
+
         FontHolder.UnregisterReference(_Path);
 
         InTree = false;

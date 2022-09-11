@@ -2,7 +2,7 @@ using System;
 
 public abstract class RenderEntity : Entity
 {
-    bool _IDSet = false;
+    protected bool _IDSet = false;
 
     public bool IDSet
     {
@@ -10,8 +10,8 @@ public abstract class RenderEntity : Entity
         set => _IDSet = value;
     }
 
-    int _ID;
-    public int ID
+    protected int _ID;
+    public virtual int ID
     {
         get => _ID;
         set

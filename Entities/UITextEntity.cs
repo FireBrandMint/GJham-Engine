@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using GJham.Rendering.Optimization;
 
 public class UITextEntity : RenderEntity
 {
@@ -139,9 +139,13 @@ public class UITextEntity : RenderEntity
         }
     }
 
+    CullingAABB RenderCulling;
+
     public override void Init()
     {
         base.Init();
+
+        RenderCulling = new CullingAABB(new AABB(Vector2.ZERO, Vector2.ZERO), ID, true);
 
         FontHolder.RegisterReference(_Path);
 

@@ -8,6 +8,18 @@ using GJham.Rendering.Optimization;
 
 public class SpriteEntity : RenderEntity
 {
+    public override int ID
+    {
+        get => _ID;
+        set
+        {
+            if(InTree) RenderCulling.ItemID = value;
+
+            _IDSet = true;
+            _ID = value;
+        }
+    }
+
     bool HasTexture = false;
 
     string _TexturePath = "";
@@ -22,7 +34,7 @@ public class SpriteEntity : RenderEntity
         }
         set
         {
-            if (inTree)
+            if (InTree)
             {
                 if(_TexturePath != "" && _TexturePath != null)
                 {
@@ -67,7 +79,7 @@ public class SpriteEntity : RenderEntity
             LastPosition = _Position;
             _Position = value;
 
-            if(inTree) RenderCulling.ChangePosition(_Position - (_CullingRange >> 1));
+            if(InTree) RenderCulling.ChangePosition(_Position - (_CullingRange >> 1));
         }
     }
 
@@ -96,7 +108,7 @@ public class SpriteEntity : RenderEntity
 
     SFML.Graphics.Color _Modulate = SFML.Graphics.Color.White;
 
-    public SFML.Graphics.Color Modulate
+    public SFML.Graphics.Color Color
     {
         get => _Modulate;
         set
@@ -106,7 +118,7 @@ public class SpriteEntity : RenderEntity
         }
     }
 
-    bool inTree = false;
+    bool InTree = false;
 
     Vector2u _TextureAreaTopLeft = new Vector2u();
     Vector2u _TextureAreaBottomRight = new Vector2u();
@@ -133,6 +145,19 @@ public class SpriteEntity : RenderEntity
         }
     }
 
+    bool _IsCulling = false;
+
+    public bool IsCulling
+    {
+        get => _IsCulling;
+        set
+        {
+            if(InTree) RenderCulling.AlwaysVisible = !_IsCulling;
+
+            _IsCulling = value;
+        }
+    }
+
     Vector2 _CullingRange = new Vector2(100, 100);
     
     public Vector2 CullingRange
@@ -141,7 +166,7 @@ public class SpriteEntity : RenderEntity
         set
         {
             _CullingRange = value;
-            if(inTree)
+            if(InTree)
             {
                 RenderCulling.ChangePosition(_Position - (value >> 1));
                 RenderCulling.ChangeRange(value);
@@ -151,7 +176,7 @@ public class SpriteEntity : RenderEntity
 
     bool BoundriesSet = false;
 
-    CullingAABB RenderCulling = new CullingAABB(new AABB(new Vector2(0, 0), new Vector2(50, 50)));
+    CullingAABB RenderCulling;
 
     public override sealed void Init()
     {
@@ -159,7 +184,7 @@ public class SpriteEntity : RenderEntity
 
         LastPosition = Position;
 
-        RenderCulling = new CullingAABB(new AABB(Position - (_CullingRange >> 1), _CullingRange));
+        RenderCulling = new CullingAABB(new AABB(Position - (_CullingRange >> 1), _CullingRange), ID, !_IsCulling);
 
         if(_TexturePath != null && _TexturePath != "")
         {
@@ -167,7 +192,7 @@ public class SpriteEntity : RenderEntity
             HasTexture = true;
         }
 
-        inTree = true;
+        InTree = true;
 
         this.CanProcess = false;
     }
@@ -195,7 +220,7 @@ public class SpriteEntity : RenderEntity
 
             drawable.SetRotation(Rotation);
 
-            drawable.ChangeModulate(Modulate);
+            drawable.ChangeModulate(Color);
 
             if (BoundriesSet) drawable.ChangeBoundries(TextureAreaTopLeft, TextureAreaBottomRight);
             
@@ -210,7 +235,7 @@ public class SpriteEntity : RenderEntity
         //Unregisters texture reference.
         TextureHolder.UnregisterTextureRef(ref _TexturePath);
         
-        inTree = false;
+        InTree = false;
 
         if(drawable != null)
         {
