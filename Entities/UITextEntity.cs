@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GJham.Rendering.Optimization;
 
-public class UITextEntity : RenderEntity
+public class UITextEntity : UIRenderEntity
 {
 
     string _Path = null;

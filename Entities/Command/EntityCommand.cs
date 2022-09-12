@@ -8,16 +8,41 @@ public class EntityCommand
     /// </summary>
     public static int IDNEXT = 0;
 
+    /// <summary>
+    /// Negative ID intended for game objects that are outside
+    /// of the gameplay like UI.
+    /// </summary>
+    public static int IDNEXT_NEGATIVE = int.MinValue;
+
+
+
     ///<summary>
     ///Adds entity to processing. (duh)
     ///</summary>
     public static void Instance (Entity entity)
     {
-        if(!entity.IDSet)
+        if(entity.IDSet)
         {
-            EntityCommand.SetID(entity, EntityCommand.IDNEXT);
+            EntityCommand.SetID(entity, entity.ID);
+        }
+        else
+        {
+            if(entity.NegativeIndexIdentity)
+            {
+                EntityCommand.SetID(entity, IDNEXT_NEGATIVE);
 
-            ++EntityCommand.IDNEXT;
+                ++IDNEXT_NEGATIVE;
+
+                if(IDNEXT_NEGATIVE == -1) IDNEXT_NEGATIVE = int.MinValue;
+            }
+            else
+            {
+                EntityCommand.SetID(entity, IDNEXT);
+
+                ++IDNEXT;
+
+                if(IDNEXT == int.MaxValue) IDNEXT = 0;
+            }
         }
 
         entity.Init();

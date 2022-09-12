@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 public class UICollider : Entity
 {
+    bool _NegativeIndex = true;
+
+    public bool NegativeIndexIdentity
+    {
+        get => _NegativeIndex;
+        set => _NegativeIndex = value;
+    }
+
     public static List<UICollider> UIColliders = new List<UICollider>();
 
     public delegate void ColResponse (CollisionAntenna colSubject, ref CollisionResult colInfo);

@@ -4,9 +4,9 @@ using System;
 /// Class that helped me implement entities that can be rendered
 /// less painfully. (Guliver Jham talking)
 /// </summary>
-public abstract class RenderEntity : Entity
+public abstract class UIRenderEntity : Entity
 {
-    bool _NegativeIndex = false;
+    bool _NegativeIndex = true;
 
     public bool NegativeIndexIdentity
     {

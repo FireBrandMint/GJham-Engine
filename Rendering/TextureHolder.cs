@@ -5,6 +5,11 @@ using System.Threading;
 using SFML.Graphics;
 using SFML.System;
 
+/// <summary>
+/// Very confusing class, do not read.
+/// It loads textures asynchronously,
+/// as 'references'.
+/// </summary>
 public class TextureHolder
 {
     private static GDictionary<string, TextureHolder> TextureDict = new GDictionary<string, TextureHolder>();

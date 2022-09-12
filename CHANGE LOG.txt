@@ -45,3 +45,10 @@ Update log since 02/09/2022.
     - Implemented true culling for rendering to boost
     performance.
 }
+12/09/2022
+{
+    - Added NegativeIdentity to Entity class
+    so that UI elements and other non-gameplay
+    objects don't interfere with gameplay element
+    IDS.
+}

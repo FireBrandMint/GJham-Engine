@@ -9,6 +9,7 @@ using GJham.Rendering.Optimization;
 
 static class MainClass
 {
+    //Is the program running?
     public static bool Running = true;
 
     //The actual window of 'MainThread'
@@ -28,26 +29,39 @@ static class MainClass
     //entity things below!
     public static WTFDictionary<int, Entity> Entities;
 
-    //TODO: make rendering lighter for the PC.
+    //FINALIZED: make rendering lighter for the PC.
 
     public static void Main(string[] args)
     {
         for (int i = 0; i< args.Length; ++i)
         {
+            //To debug or publish the game,
+            //the game needs to first list
+            //ALL entities to a class so the
+            //prefab system can work without
+            //reflection or bottleneck;
+            //that's what this 'if' is for
             if (args[i] == "doListing")
             {
+                //Lists all existing entities to the
+                //EntityTypeList class.
                 EntityTypeList.ListAll();
+                //Ends the operation with the lines below.
                 Console.WriteLine("\nEntity instancer class complete.");
 
                 GC.Collect();
                 return;
             }
         }
-
+        //Intializes rendering window.
         Window = new Canvas(512, 512, "default");
 
+        //Initializes entity list (entities are like nodes
+        //in other engines, except more 'manual' in the
+        //way you need to use them.)
         Entities = new WTFDictionary<int, Entity>(1000);
 
+        //Test area for testing things.
         #region TEST AREA
 
         EntityCommand.Instance(new Camera(){
@@ -254,7 +268,7 @@ static class MainClass
     }
 
     ///<summary>
-    ///Processes gets the inputs pressend and ticks.
+    ///Processes gets the inputs pressed and ticks.
     ///</summary>
     static void Tick ()
     {
@@ -272,6 +286,7 @@ static class MainClass
             */
         }
 
+        //TODO: delete this if when the engine is usable.
         if(CurrentKeys.Contains((int)SFML.Window.Keyboard.Key.Escape))
         {
             Window.Close();
@@ -293,7 +308,7 @@ static class MainClass
     }
 
     ///<summary>
-    ///Ticks entities, what did you expect?
+    ///Ticks all instanced entities.
     ///</summary>
     public static void ProcessEntities ()
     {
@@ -316,6 +331,7 @@ static class MainClass
         GlobalCollision.Tick();
     }
 
+    //Ticks a specific entity like a node.
     static void TickChildrenInternal (NodeChildren<Entity> children)
     {
         for(int i = 0; i < children.Count; ++i)
@@ -331,7 +347,7 @@ static class MainClass
         }
     }
 
-    //Small value for a necessary processing.
+    //Small value for necessary processing.
     //But you never need to know what it does,
     //so don't even ask.
     private static long LastTickCount = -1;
@@ -340,18 +356,21 @@ static class MainClass
     {
         //If the window is still rendering something else, just give up on the operation
         if(Window.Updating) return;
-
-        bool measuring = AntiConsoleSpam.antiConsoleSpam.CanWriteLine(236, 60);
-
-        Stopwatch watch = null;
-
-        if(measuring) watch = Stopwatch.StartNew();
-
         //This 'if' prevents the program from updating the array of things to render
         //multiple times between ticks, wich isn't necessary and would be too
         //costly.
         if (LastTickCount != TickCount)
         {
+            //Any operation related to this bool 'measuring' is occasionaly
+            //measuring the amount of time it takes to give all the resources
+            //the screen needs to render the frame.
+            bool measuring = AntiConsoleSpam.antiConsoleSpam.CanWriteLine(236, 60);
+
+            Stopwatch watch = null;
+
+            if(measuring) watch = Stopwatch.StartNew();
+
+
             //Creates array for rendering
             DrawableObject[] dObjects = new DrawableObject[RenderEntity.VisibleEntityCount];
 
@@ -405,6 +424,7 @@ static class MainClass
         Window.Refresh();
     }
 
+    //Stores drawables in 'dObjects' treating entities like nodes.
     static void StoreDrawableChildrenInternal (NodeChildren<Entity> children, ref int count, ref DrawableObject[] dObjects)
     {
         for(int i = 0; i < children.Count; ++i)
@@ -488,9 +508,9 @@ static class MainClass
     }
 
     ///<summary>
-    ///Adds entity to processing, duh.
-    ///Same method can be executed from the EntityCommand class at Misc/EntityCommand,
-    ///it's name there is 'Instance'.
+    ///[DO NOT USE]
+    ///Helper method for Instance method.
+    ///EntityCommand class at Misc/EntityCommand
     ///</summary>
     public static void AddEntity (Entity entity)
     {
@@ -506,7 +526,7 @@ static class MainClass
         if(eChildren != null) EnterTreeChildrenInternal(eChildren);
     }
 
-    
+    //Executes EnterTree method in entities as if processing nodes.
     static void EnterTreeChildrenInternal (NodeChildren<Entity> children)
     {
         for(int i = 0; i < children.Count; ++i)
@@ -533,6 +553,7 @@ static class MainClass
         if (entity.IsDestroyed) return;
 
         entity.LeaveTree();
+        entity.IsDestroyed = true;
 
         var eChildren = entity.Children;
 
@@ -543,10 +564,9 @@ static class MainClass
         {
             entity.Parent.Children.Remove(entity);
         }
-
-        entity.IsDestroyed = true;
     }
 
+    //Executes LeaveTree method in entities as if processing nodes.
     static void LeaveTreeChildrenInternal (NodeChildren<Entity> children)
     {
         for(int i = 0; i < children.Count; ++i)

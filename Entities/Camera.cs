@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 public class Camera : Entity
 {
+    bool _NegativeIndex = true;
+
+    public bool NegativeIndexIdentity
+    {
+        get => _NegativeIndex;
+        set => _NegativeIndex = value;
+    }
+
     bool _IDSet = false;
 
     public bool IDSet

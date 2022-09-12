@@ -1,5 +1,17 @@
 public interface Entity
 {
+    /// <summary>
+    /// Wether or not the entity has an alto generated
+    /// negative index instead of a positive one.
+    /// The negative index is intended for
+    /// elements that are not a part of the gameplay
+    /// so that, in a online context, a UI element for example
+    /// does not take the ID of a gameplay element and desyncs
+    /// the entire game.
+    /// </summary>
+    /// <value></value>
+    bool NegativeIndexIdentity {get; set;}
+
     ///<summary>
     ///Is the ID already set?
     ///</summary>
@@ -9,7 +21,9 @@ public interface Entity
     ///The ID of the object in the main entity list,
     ///as long as the entity is added with the same ID on the
     ///main entity list, the execution will be deterministic.
-    ///IMPORTANT: Changing the ID while the entity is still
+    ///IMPORTANT: Change the ID of the entity in front AKA the entity
+    ///that is the parent of all potential children to change its ID.
+    ///Changing the ID of the parent of all entities while its still
     ///instanced WILL lead to a crash.
     ///</summary>
     int ID {get; set;}

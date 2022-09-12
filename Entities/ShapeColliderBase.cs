@@ -18,6 +18,14 @@ public class ShapeColliderBase : Entity, CollisionAntenna
 
     Vector2 _Position = new Vector2();
 
+    bool _NegativeIndex = false;
+
+    public bool NegativeIndexIdentity
+    {
+        get => _NegativeIndex;
+        set => _NegativeIndex = value;
+    }
+
     public bool IDSet { get => _IDSet; set => _IDSet = value; }
 
     public int ID { get => _ID; set {_IDSet = true; _ID = value;} }
