@@ -10,7 +10,7 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 # Current tasks to be done (skip to goals if you're new)
 
--> Start fase 3, aka making the actual entities that will be used for production in the future. (NOTE TO SELF: use main class for main 'collision hub')
+-> Complete fase 3, aka making the actual entities that will be used for production in the future. (NOTE TO SELF: use main class for main 'collision hub')
 
 -> Make prefab system. (NOTE TO SELF: to deserialize store each entity in a array and then add children according to their index in the array)
 
