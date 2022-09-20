@@ -370,15 +370,16 @@ static class MainClass
 
             if(measuring) watch = Stopwatch.StartNew();
 
+            int visNodes;
+
+            //gets the values the culling says can render.
+            int[] visibleIds = CullingMaster.GetVisiblesIDS(out visNodes);
 
             //Creates array for rendering
-            DrawableObject[] dObjects = new DrawableObject[RenderEntity.VisibleEntityCount];
+            DrawableObject[] dObjects = new DrawableObject[visNodes];
 
             //the count of objects that aren't null on the array
             int count = 0;
-
-            //gets the values the culling says can render.
-            int[] visibleIds = CullingMaster.GetVisiblesIDS();
 
             //populates array with output from the entities that can be rendered
             for (int i = 0; i< visibleIds.Length; ++i)

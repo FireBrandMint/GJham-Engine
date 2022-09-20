@@ -26,6 +26,8 @@ public static class CullingMaster
     static int CanDrawCount = 0;
     static int[] CanDrawIDS = new int[50]; 
 
+    static int VisibleNodesCount = 0;
+
     static bool ProgramExists = true;
 
     static List<CulValue> ToAdd = new List<CulValue>();
@@ -57,9 +59,13 @@ public static class CullingMaster
         {
             Thread.Sleep(30);
 
-            lock(ToAdd)
+            int tAddC = 0;
+
+            lock(ToAdd) tAddC = ToAdd.Count;
+
+            for(int i = tAddC - 1; i >= 0; --i)
             {
-                for(int i = ToAdd.Count - 1; i >= 0; --i)
+                lock(ToAdd)
                 {
                     ToProcess.Add(ToAdd[i]);
 
@@ -67,9 +73,13 @@ public static class CullingMaster
                 }
             }
 
-            lock(ToRemove)
+            int tRemoveC = 0;
+
+            lock(ToRemove) tRemoveC = ToRemove.Count;
+
+            for(int i = tRemoveC - 1; i >= 0; --i)
             {
-                for(int i = ToRemove.Count - 1; i >= 0; --i)
+                lock(ToRemove)
                 {
                     ToProcess.Remove(ToRemove[i]);
 
@@ -82,6 +92,8 @@ public static class CullingMaster
             culHashSet.Clear();
 
             AABB screenAABB = new AABB(Engine.ViewPos, Engine.WindowSize);
+
+            int visNodesCount = 0;
 
             for(int i = 0; i < ToProcess.Count; ++i)
             {
@@ -97,13 +109,19 @@ public static class CullingMaster
                     curr.CanRender = canRender;
                 }
 
-                if(canRender) culHashSet.AddIfNonexist(ID);
+                if(canRender)
+                {
+                    culHashSet.AddIfNonexist(ID);
+                    ++visNodesCount;
+                }
             }
 
             var visibleIds = culHashSet.GetInternalList();
 
             lock(CanDrawIDS)
             {
+                VisibleNodesCount = visNodesCount;
+
                 int length = visibleIds.Count;
                 if(CanDrawIDS.Length < length) Array.Resize(ref CanDrawIDS, length);
 
@@ -113,17 +131,21 @@ public static class CullingMaster
                 }
 
                 CanDrawCount = length;
+
+
             }
         }
     }
 
-    public static int[] GetVisiblesIDS()
+    public static int[] GetVisiblesIDS(out int visibleNodesCount)
     {
         lock(CanDrawIDS)
         {
             int[] fodder = new int[CanDrawCount];
 
             Array.Copy(CanDrawIDS, fodder, CanDrawCount);
+
+            visibleNodesCount = VisibleNodesCount;
 
             return fodder;
         }

@@ -19,6 +19,8 @@ public class UISprite2D : DrawableObject
 
     Vector2f [] SprSectionData = null;
 
+    Color Modulate = Color.White;
+
     UIAdjustmentMode Mode;
     /// <summary>
     /// centerPercent is the coords of the center of the sprite position in the screen
@@ -105,13 +107,13 @@ public class UISprite2D : DrawableObject
             //Console.WriteLine(slp);
 
             //Top left
-            verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Color.White, SprSectionData[0]);
+            verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Modulate, SprSectionData[0]);
             //Bottom left
-            verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Color.White, SprSectionData[1]);
+            verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Modulate, SprSectionData[1]);
             //Bottom right
-            verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Color.White, SprSectionData[2]);
+            verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Modulate, SprSectionData[2]);
             //Top right
-            verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Color.White, SprSectionData[3]);
+            verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Modulate, SprSectionData[3]);
 
             RenderStates state = new RenderStates();
 
@@ -208,6 +210,25 @@ public class UISprite2D : DrawableObject
         TreatSprSections(sprSectionTopLeft, sprSectionBottomRight);
     }
 
+    public void ChangeTexture(ref string newTexture, Vector2u sprSectionTopLeft, Vector2u sprSectionBottomRight)
+    {
+        TexturePath = newTexture;
+
+        var actualTexture = TexturePath != "" && TexturePath != null;
+
+        SprChanged = actualTexture;
+
+        WholeSprite = actualTexture;
+
+        if(!actualTexture)
+        {
+            CurrTexture = null;
+            return;
+        }
+
+        TreatSprSections(new Vector2((int)sprSectionTopLeft.X, (int)sprSectionTopLeft.Y), new Vector2((int)sprSectionBottomRight.X, (int)sprSectionBottomRight.Y));
+    }
+
     public void ChangePosition (Vector2 newPos)
     {
         SprDrawData[0] = newPos;
@@ -216,6 +237,16 @@ public class UISprite2D : DrawableObject
     public void ChangeSize (Vector2 newSize)
     {
         SprDrawData[1] = newSize;
+    }
+
+    public void ChangeModulate (Color color)
+    {
+        Modulate = color;
+    }
+
+    public void ChangeBoundries (Vector2u topLeft, Vector2u bottomRight)
+    {
+        TreatSprSections(new Vector2((int)topLeft.X, (int)topLeft.Y), new Vector2((int)bottomRight.X, (int)bottomRight.Y));
     }
 
     private void TreatSprSections(Vector2 topLeft, Vector2 bottomRight)
