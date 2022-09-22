@@ -68,7 +68,7 @@ static class MainClass
             IsMain = true,
         });
         
-        Vector2 a = new Vector2(20, 210);
+        /*Vector2 a = new Vector2(20, 210);
         Vector2 b = new Vector2(40, 230);
 
         for (int i = 0; i< 100; ++i)
@@ -82,7 +82,7 @@ static class MainClass
             EntityCommand.Instance(lp);
 
             b = new Vector2(b.x + 1, b.y);
-        }
+        }*/
 
         /*EntityCommand.Instance(new RTestSpriteProvider
         {
@@ -107,10 +107,17 @@ static class MainClass
             }
         }
 
-        EntityCommand.Instance(new UITest
+        EntityCommand.Instance(new UISpriteEntity
         {
-            TexturePath = @".\assets\Generic2.png",
+            TexturePath = @".\assets\Generic.png",
+            
             ZValue = 5000,
+
+            TextureAreaTopLeft = new Vector2u(0u, 0u),
+            TextureAreaBottomRight = new Vector2u(50u, 50u),
+            Position = new Vector2(5,5),
+            Scale = new Vector2(10, 10),
+            Color = SFML.Graphics.Color.White
         });
 
         #endregion TEST AREA
@@ -354,16 +361,23 @@ static class MainClass
 
     public static void Render(double lerp)
     {
-        //If the window is still rendering something else, just give up on the operation
+        //If the window is still rendering something else, just give up on the operation entirely.
         if(Window.Updating) return;
+
         //This 'if' prevents the program from updating the array of things to render
         //multiple times between ticks, wich isn't necessary and would be too
         //costly.
+
+        //TL;DR: sending objects that were already sent to the screen is
+        //a bad fucking idea, this ensures that it doesn't.
         if (LastTickCount != TickCount)
         {
-            //Any operation related to this bool 'measuring' is occasionaly
+            //Any operation related to this bool that is named 'measuring' is occasionaly
             //measuring the amount of time it takes to give all the resources
-            //the screen needs to render the frame.
+            //the screen needs to render the frame. Confusing?
+            
+            //TL;DR: this bool is part of the chronometer that measures a 'talk' between
+            //this thread and the screen.
             bool measuring = AntiConsoleSpam.antiConsoleSpam.CanWriteLine(236, 60);
 
             Stopwatch watch = null;

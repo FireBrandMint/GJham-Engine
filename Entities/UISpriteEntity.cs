@@ -95,7 +95,7 @@ public class UISpriteEntity : RenderEntity
         }
     }
 
-    /*private FInt _Rotation = (FInt)0;
+    private FInt _Rotation = (FInt)0;
     public FInt Rotation
     {
         get => _Rotation;
@@ -104,7 +104,7 @@ public class UISpriteEntity : RenderEntity
             Changed = Changed || _Rotation != value;
             _Rotation = value;
         }
-    }*/
+    }
 
     UIAdjustmentMode _AdjustmentMode = UIAdjustmentMode.Compact;
 
@@ -168,6 +168,8 @@ public class UISpriteEntity : RenderEntity
         LastPosition = Position;
 
         RenderCulling = new CullingAABB(new AABB(Position, new Vector2()), ID, true);
+        Console.WriteLine("shit");
+        Console.WriteLine(ID);
 
         if(_TexturePath != null && _TexturePath != "")
         {
@@ -197,7 +199,7 @@ public class UISpriteEntity : RenderEntity
 
             if(TextureChanged) drawable.ChangeTexture(ref _TexturePath, TextureAreaTopLeft, TextureAreaBottomRight);
 
-            //drawable.SetRotation(Rotation);
+            drawable.ChangeRotation(Rotation);
 
             drawable.ChangeModulate(Color);
 

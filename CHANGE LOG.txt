@@ -55,8 +55,16 @@ Update log since 02/09/2022.
 20/09/2022
 {
     //Sorry, i was burnt out, that's why i took so long.
+    
     - Increased rendering performance significantly; the main
     thread no longer struggles to ask the screen to render stuff.
 
     - Created UISpriteEntity.
+}
+22/09/2022
+{
+    - Fixed a bug where the culling system wouldn't let culling free entities
+    be drawn.
+
+    - Completed UISpriteEntity.
 }

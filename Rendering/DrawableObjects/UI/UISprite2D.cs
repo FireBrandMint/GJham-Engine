@@ -9,6 +9,8 @@ public class UISprite2D : DrawableObject
 
     TextureHolder CurrTexture = null;
 
+    FInt Rotation = (FInt) 0;
+
     bool SprChanged = true;
 
     bool WholeSprite = true;
@@ -106,14 +108,33 @@ public class UISprite2D : DrawableObject
 
             //Console.WriteLine(slp);
 
+            var centerTrue = new Vector2((FInt)center.X, (FInt) center.Y);
+            var slpTrue = new Vector2((FInt)slp.X, (FInt) slp.Y) >> 1;
+
             //Top left
-            verts[0] = new Vertex(new Vector2f(center.X - slp.X, center.Y - slp.Y), Modulate, SprSectionData[0]);
+            verts[0] = new Vertex(
+                Vector2.RotateVec(new Vector2(centerTrue.x - slpTrue.y, centerTrue.y - slpTrue.y), centerTrue, Rotation).ToVectorF(),
+                Modulate,
+                SprSectionData[0]
+                );
             //Bottom left
-            verts[1] = new Vertex(new Vector2f(center.X - slp.X, center.Y + slp.Y), Modulate, SprSectionData[1]);
+            verts[1] = new Vertex(
+                Vector2.RotateVec(new Vector2(centerTrue.x - slpTrue.x, centerTrue.y + slpTrue.y), centerTrue, Rotation).ToVectorF(),
+                Modulate,
+                SprSectionData[1]
+                );
             //Bottom right
-            verts[2] = new Vertex(new Vector2f(center.X + slp.X, center.Y + slp.Y), Modulate, SprSectionData[2]);
+            verts[2] = new Vertex(
+                Vector2.RotateVec(new Vector2(centerTrue.x + slpTrue.x, centerTrue.y + slpTrue.y), centerTrue, Rotation).ToVectorF(),
+                Modulate,
+                SprSectionData[2]
+                );
             //Top right
-            verts[3] = new Vertex(new Vector2f(center.X + slp.X, center.Y - slp.Y), Modulate, SprSectionData[3]);
+            verts[3] = new Vertex(
+                Vector2.RotateVec(new Vector2(centerTrue.x + slpTrue.x, centerTrue.y - slpTrue.y), centerTrue, Rotation).ToVectorF(),
+                Modulate,
+                SprSectionData[3]
+                );
 
             RenderStates state = new RenderStates();
 
@@ -242,6 +263,11 @@ public class UISprite2D : DrawableObject
     public void ChangeModulate (Color color)
     {
         Modulate = color;
+    }
+
+    public void ChangeRotation (FInt rotDegrees)
+    {
+        Rotation = rotDegrees;
     }
 
     public void ChangeBoundries (Vector2u topLeft, Vector2u bottomRight)

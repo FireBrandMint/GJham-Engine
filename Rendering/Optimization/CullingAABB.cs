@@ -44,9 +44,11 @@ public class CullingAABB
         }
     }
 
-    public CullingAABB(AABB objectArea, int itemID, bool AlwaysVisible)
+    public CullingAABB(AABB objectArea, int itemID, bool alwaysVisible)
     {
         CAABB = new CulValue(objectArea, itemID);
+
+        AlwaysVisible = alwaysVisible;
 
         CAABB.StartProcessing();
     }
