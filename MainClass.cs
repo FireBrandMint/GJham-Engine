@@ -52,6 +52,12 @@ static class MainClass
                 GC.Collect();
                 return;
             }
+            //Executes editor
+            else if (args[i] == "editorMode")
+            {
+                EditorMain.Run();
+                return;
+            }
         }
         //Intializes rendering window.
         Window = new Canvas(512, 512, "default");

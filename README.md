@@ -6,11 +6,9 @@ Still in development, any help is appreciated, if you wanna help please enter my
 
 # STATUS
 
--> Can finally be effectively used as some sort of deterministic framework library, it may have caused a lot of PAIN to do so before but now that a lot of bugs were corrected, i don't think so anymore.
+-> Prefab system and editor.
 
 # Current tasks to be done (skip to goals if you're new)
-
--> Complete fase 3, aka making the actual entities that will be used for production in the future. (NOTE TO SELF: use main class for main 'collision hub')
 
 -> Make prefab system. (NOTE TO SELF: to deserialize store each entity in a array and then add children according to their index in the array)
 

@@ -170,9 +170,9 @@ public class RTestSpriteProvider : RenderEntity
                 (int)SFML.Window.Keyboard.Key.D,
             };
 
-            FInt speed = FInt.Create(10);
+            FInt speed = FInt.Create(600);
 
-            if(Engine.MaxTPS < 60) speed *= 2;
+            speed /= Engine.MaxTPS;
 
             foreach(int inp in MainClass.CurrentKeys)
             {
