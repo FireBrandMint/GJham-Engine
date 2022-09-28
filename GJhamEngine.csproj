@@ -8,10 +8,10 @@
 		<ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="sfml-system" Version="2.4.2"/>
-		<PackageReference Include="SFML.Net" Version="2.5.0"/>
-		<PackageReference Include="SFML.Window" Version="2.5.0"/>
-		<PackageReference Include="SFML.Graphics" Version="2.5.0"/>
+		<PackageReference Include="sfml-system" Version="2.4.2" />
+		<PackageReference Include="SFML.Net" Version="2.5.0" />
+		<PackageReference Include="SFML.Window" Version="2.5.0" />
+		<PackageReference Include="SFML.Graphics" Version="2.5.0" />
 
 		<!-- 3 lines below thanks to 2nd answer in here, without it i would be toast
 		https://stackoverflow.com/questions/54762744/net-core-include-folder-in-publish -->

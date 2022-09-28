@@ -1,11 +1,8 @@
 using System.IO;
 using System;
 using System.Collections.Generic;
-
 using System.Reflection;
-
 using System.Linq;
-
 using System.Diagnostics;
 
 delegate Entity ETypeCreate (ByteReader reader, int propertyCount);
@@ -151,7 +148,7 @@ public static class EntityTypeList
     }
 
     private static IEnumerable<Type> GetTypesWithInterface(Assembly asm) {
-        var it = typeof (Entity);
+        Type it = typeof (Entity);
         return GetLoadableTypes(asm).Where(it.IsAssignableFrom).ToList();
     }
 
@@ -173,6 +170,8 @@ public static class EntityTypeList
             return hash1 + (hash2*1566083941);
         }
     }
+
+
 
     //Below line marks where the program rewrites the code, DO NOT modify it even a little bit.
     //Activation methods!

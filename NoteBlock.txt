@@ -8,3 +8,11 @@ https://docs.microsoft.com/pt-br/dotnet/standard/io/how-to-use-named-pipes-for-n
 For compilation.
 https://stackoverflow.com/questions/45702/how-to-compile-a-net-application-to-native-code
 https://stackoverflow.com/questions/54542158/c-sharp-compile-net-core-3-0-to-native-code-through-visual-studio-2019
+
+For real time compilation.
+https://stackoverflow.com/questions/234217/is-it-possible-to-compile-and-execute-new-code-at-runtime-in-net
+https://stackoverflow.com/questions/1353456/recompile-c-sharp-while-running-without-appdomains
+https://stackoverflow.com/questions/60822607/how-to-modify-net-assembly-at-runtime-and-keep-these-changes
+https://github.com/dotnet/corefx/issues/12180#issuecomment-414111092
+https://learn.microsoft.com/pt-br/dotnet/core/tools/dotnet-build
+https://web.archive.org/web/20140427001134/http://blogs.msdn.com/b/suzcook/archive/2003/07/08/57211.aspx

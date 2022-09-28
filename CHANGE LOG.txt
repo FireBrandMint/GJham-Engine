@@ -68,3 +68,7 @@ Update log since 02/09/2022.
 
     - Completed UISpriteEntity.
 }
+28/09/2022
+{
+    - Finally made progress with assembly.
+}
