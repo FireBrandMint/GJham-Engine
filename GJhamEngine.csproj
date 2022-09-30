@@ -19,6 +19,8 @@
 		<Content Include="Assets\**"> 
     		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
   		</Content>
+
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" />
 	</ItemGroup>
 
 	

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
+using System.Security.Policy;
 
 
 public class EditorMain
@@ -23,6 +23,7 @@ public class EditorMain
 
         while(Running)
         {
+            Console.Write('>');
             string command = Console.ReadLine();
 
             if(!TestCommands(command)) return;
@@ -33,10 +34,10 @@ public class EditorMain
 
     static bool TestCommands(string command)
     {
-        if(command.StartsWith("compile"))
+        if(command.StartsWith("asmcompile"))
         {
             string[] args = command.Split(' ');
-            if(args.Length < 3 || args.Length > 3) Console.WriteLine("bad args");
+            if(args.Length < 3 || args.Length > 3) goto BadArgs;
 
             try
             {
@@ -46,7 +47,57 @@ public class EditorMain
             {
                 Console.WriteLine("ERROR: \n" + e.Message + "\n\n" + e.StackTrace);
 
-                return false;
+                return true;
+            }
+        }
+        else if (command.StartsWith("asmtest"))
+        {
+            string[] args = command.Split(' ');
+            if(args.Length == 1) goto BadArgs;
+
+            try
+            {
+                if (args[1] == "help")
+                {
+                    Console.WriteLine("asm_test <\"assembly path\"> <interface classes to herit>");
+                }
+                else if(command.Contains('\"'))
+                {
+                    var ind = command.IndexOf('\"');
+                    var ind2 = command.IndexOf('\"', ind + 1);
+
+                    ind +=1;
+
+                    string path = command.Substring(ind, ind2 - ind);
+
+                    string trf = command.Substring(ind2 + 2, (command.Length - 1) - (ind2 + 1));
+
+                    Console.WriteLine(path + '\n' + trf);
+
+                    var asm = AssemblyUtilities.LoadAssembly(path);
+
+                    var it = AssemblyUtilities.TypesWithInterface(trf, asm.Asm);
+
+                    for (int i = 0; i< it.Length; ++i)
+                    {
+                        Console.WriteLine();
+                        Console.Write(it[i].Name + ", ");
+                    }
+
+                    Console.WriteLine();
+
+                    asm.Dispose();
+                }
+                else
+                {
+                    goto BadArgs;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: \n" + e.Message + "\n\n" + e.StackTrace);
+
+                return true;
             }
         }
         else if (command == "end")
@@ -57,6 +108,12 @@ public class EditorMain
         {
             Console.WriteLine("Bad command!");
         }
+
+        return true;
+
+        BadArgs:
+
+        Console.WriteLine("Bad args!");
 
         return true;
     }

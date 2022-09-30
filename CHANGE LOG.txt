@@ -72,3 +72,7 @@ Update log since 02/09/2022.
 {
     - Finally made progress with assembly.
 }
+30/09/2022
+{
+    - Discovered how to compile and load own assembly on the fly.
+}
