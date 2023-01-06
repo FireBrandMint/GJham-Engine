@@ -4,6 +4,8 @@ Now that i know more about memory and stuff, i see the piles of problems this en
 
 Though i isolated and optimized the intersection engine, it's called GJP, check the project out.
 
+Also, if you want to continue developing this thing, please tell me anywhere here, i will see it and explain how this works, if you want.
+
 # GJhamEngine
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
