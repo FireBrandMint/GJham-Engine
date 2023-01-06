@@ -1,3 +1,9 @@
+# ABANDONED PROJECT
+
+Now that i know more about memory and stuff, i see the piles of problems this engine has, and i honestly think it's not worth it to complete it anymore, since this is probably going to be neasher than most neash game engines since it only serves to support a very specific type of netcode that's not performant.
+
+Though i isolated and optimized the intersection engine, it's called GJP, check the project out.
+
 # GJhamEngine
 
 Actually a library because the UI will probably look 15 years old, executable by BATs and there will be more than one editor........
